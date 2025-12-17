@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NEXT CUP - Pannello Admin (Firebase)</title>
+
+    <!-- Favicon -->
+   <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color:#0d1a2f; color:#fff; min-height:100vh; }
+        #root { padding-top:5rem; padding-bottom:5rem; }
+        .nx-text-gradient { background:-webkit-linear-gradient(45deg,#FFD700,#FBBF24,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .admin-section { background-color:#1f2937; padding:2rem; border-radius:1rem; margin-bottom:2.5rem; box-shadow:0 10px 25px rgba(0,0,0,0.5); }
+        .loading-dot { width:10px; height:10px; background-color:#fcd34d; border-radius:50%; display:inline-block; margin:0 5px; animation:bounce 1.4s infinite ease-in-out both; }
+        .loading-dot:nth-child(1){ animation-delay:-0.32s } .loading-dot:nth-child(2){ animation-delay:-0.16s }
+        @keyframes bounce { 0%,80%,100%{ transform:scale(0) } 40%{ transform:scale(1.0) } }
+    </style>
+</head>
+<body>
+    <header class="fixed top-0 left-0 w-full z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-xl">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <a href="admin.html" class="text-3xl font-black nx-text-gradient">NEXT CUP</a>
+            </div>
+        </nav>
+    </header>
+
+    <div id="root" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"></div>
+
+    <div id="custom-alert-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl max-w-sm w-full">
+            <h4 id="custom-alert-title" class="text-xl font-semibold mb-2"></h4>
+            <p id="custom-alert-message" class="text-gray-300 mb-4"></p>
+            <button id="custom-alert-close" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-500 transition">Chiudi</button>
+        </div>
+    </div>
+   
+    <!-- CONFIG -->
+    <script>
+        window.__firebase_config = JSON.stringify({
+          apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+          authDomain: "torneo-585ac.firebaseapp.com",
+          projectId: "torneo-585ac",
+          storageBucket: "torneo-585ac.firebasestorage.app",
+          messagingSenderId: "79275251686",
+          appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+          measurementId: "G-S2NZJJXKWW"
+        });
+
+        // Metti qui la tua email admin esatta (solo lei potrà accedere)
+        window.__admin_allowed_emails = ["soscup2025@gmail.com"]; // <-- sostituisci con la tua email
+        window.__admin_allowed_emails = ["nextcup2026@gmail.com"]; // <-- sostituisci con la tua email
+        window.__initial_auth_token = null;
+        window.__app_id = window.__app_id || "nextcup-app";
+    </script>
+
+    <!-- FIREBASE INIT -->
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+        getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+        getFirestore, collection, doc, addDoc, setDoc, deleteDoc,
+        query, onSnapshot, getDocs, writeBatch, where, setLogLevel,
+        // NON serve più FieldValue, ma importiamo direttamente
+        serverTimestamp as firebaseServerTimestamp // Rinominiamo per evitare conflitti, se necessario
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = (() => {
+        try { return JSON.parse(window.__firebase_config ?? "{}"); } catch (e) { console.error(e); return {}; }
+    })();
+
+    if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+        document.getElementById('root').innerHTML = `<div class="p-6 bg-red-700 rounded-lg text-white m-6"><h2 class="text-xl font-bold">ERRORE: Firebase Config mancante</h2></div>`;
+        throw new Error("Firebase config mancante");
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const baseAuth = getAuth(app);
+    // setLogLevel('debug');
+
+    const authWrapper = {
+        signInWithEmailAndPassword: (email, pass) => signInWithEmailAndPassword(baseAuth, email, pass),
+        signOut: () => signOut(baseAuth),
+        onAuthStateChanged: (cb) => onAuthStateChanged(baseAuth, cb),
+        setPersistence: () => setPersistence(baseAuth, browserLocalPersistence),
+        getCurrentUser: () => baseAuth.currentUser ?? null
+    };
+
+    window.firebaseTools = {
+        db,
+        auth: authWrapper,
+        appId: window.__app_id,
+        
+        // --- COLLEZIONI PRINCIPALI ---
+        getTeamsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/teams`),
+        getResultsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/results`),
+        getNewsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/news`),
+
+        // --- CRUD TEAMS ---
+        addTeam: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), data),
+        updateTeam: (id, data) => setDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), id), data, { merge: true }),
+        deleteTeam: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), id)),
+
+        // --- CRUD RESULTS ---
+        addResult: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/results`), data),
+        deleteResult: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/results`), id)),
+
+        // --- CRUD NEWS ---
+        addNews: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/news`), data), 
+        deleteNews: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/news`), id)),
+        
+        // --- UTILS ---
+        onSnapshot,
+        serverTimestamp: firebaseServerTimestamp, // CORREZIONE QUI: usa la funzione importata direttamente
+        
+        // --- AZIONI COMPLESSE ---
+        resetAllResults: async () => {
+            const q = query(collection(db, `artifacts/${window.__app_id}/public/data/results`));
+            const snap = await getDocs(q);
+            if (snap.empty) return;
+            const batch = writeBatch(db);
+            snap.docs.forEach(d => batch.delete(d.ref));
+            await batch.commit();
+        },
+        deleteResultsByTeamName: async (teamName) => {
+            const resultsRef = collection(db, `artifacts/${window.__app_id}/public/data/results`);
+            const q1 = query(resultsRef, where("team1", "==", teamName));
+            const q2 = query(resultsRef, where("team2", "==", teamName));
+            const [s1, s2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+            if ((s1.empty) && (s2.empty)) return;
+            const batch = writeBatch(db);
+            s1.docs.forEach(d => batch.delete(d.ref));
+            s2.docs.forEach(d => batch.delete(d.ref));
+            await batch.commit();
+        }
+    };
+
+    document.getElementById('custom-alert-close')?.addEventListener('click', () => {
+        document.getElementById('custom-alert-modal')?.classList.add('hidden');
+    });
+
+    console.log("Firebase inizializzato e window.firebaseTools pronto (incluso News)");
+    </script>
+
+    <!-- REACT APP (completa) -->
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useMemo } = React;
+
+        const showCustomModal = (title, message, type='info') => {
+            const modal = document.getElementById('custom-alert-modal');
+            const t = document.getElementById('custom-alert-title');
+            const m = document.getElementById('custom-alert-message');
+            t.textContent = title;
+            m.textContent = message;
+            t.className = "text-xl font-semibold mb-2 " + (type==='error' ? 'text-red-500' : (type==='success' ? 'text-green-500' : 'text-yellow-500'));
+            modal.classList.remove('hidden');
+        };
+
+        const ConfirmationModal = ({ isVisible, title, message, onConfirm, onCancel }) => {
+            if (!isVisible) return null;
+            return (
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" onClick={onCancel}>
+                    <div className="bg-gray-900 p-8 rounded-xl shadow-2xl max-w-lg w-full border border-red-500" onClick={(e)=>e.stopPropagation()}>
+                        <h4 className="text-2xl font-bold text-red-500 mb-4">{title}</h4>
+                        <p className="text-gray-300 mb-6">{message}</p>
+                        <div className="flex justify-end space-x-4">
+                            <button onClick={onCancel} className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Annulla</button>
+                            <button onClick={onConfirm} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500">Conferma</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const SystemAlert = ({ isVisible, title, message, type, onClose }) => {
+            if (!isVisible) return null;
+            const base = "fixed top-4 right-4 p-4 rounded-lg shadow-xl z-50 max-w-sm transition-all duration-300 transform";
+            let color = "bg-yellow-100 border border-yellow-400 text-yellow-700";
+            if (type === 'error') color = "bg-red-100 border border-red-400 text-red-700";
+            if (type === 'success') color = "bg-green-100 border border-green-400 text-green-700";
+            return (
+                <div className={`${base} ${color}`} role="alert">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <strong className="font-bold">{title}</strong>
+                            <p className="block sm:inline mt-1 text-sm">{message}</p>
+                        </div>
+                        <button onClick={onClose} className={`ml-4 ${type === 'error' ? 'text-red-500' : 'text-gray-700'} hover:opacity-75`}>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const styles = {
+            input: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500",
+        };
+
+        // LoginPanel (email/password only; no registration UI)
+        const LoginPanel = ({ firebaseTools }) => {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            const submit = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                try {
+                    await firebaseTools.auth.setPersistence();
+                    await firebaseTools.auth.signInWithEmailAndPassword(email, password);
+                    // onAuthStateChanged will handle rest
+                } catch (err) {
+                    console.error('login err', err);
+                    showCustomModal('Errore login', err.message || String(err), 'error');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex items-center justify-center p-4">
+                    <div className="w-full max-w-md bg-gray-900 p-6 rounded-xl shadow-xl border border-gray-700">
+                        <h3 className="text-2xl font-bold text-white mb-4">Accesso Pannello Admin</h3>
+                        <form onSubmit={submit}>
+                            <label className="block text-sm text-gray-300 mb-1">Email</label>
+                            <input className={styles.input} type="email" required value={email} onChange={(e)=>setEmail(e.target.value)} />
+                            <label className="block text-sm text-gray-300 mb-1 mt-3">Password</label>
+                            <input className={styles.input} type="password" required value={password} onChange={(e)=>setPassword(e.target.value)} />
+                            <div className="flex justify-end mt-4">
+                                <button disabled={loading} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-500">{loading ? 'Caricamento...' : 'Accedi'}</button>
+                            </div>
+                        </form>
+                        <div className="mt-4 text-sm text-gray-400">
+                            <p>Nota: la registrazione è disabilitata qui. Crea il tuo account admin nella Firebase Console (Authentication → Users → Add user).</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // TeamManager (full)
+        const TeamManager = ({ authReady, currentTeams, showMessage, firebaseTools }) => {
+            const [teamName, setTeamName] = useState('');
+            const [players, setPlayers] = useState(['', '', '', '', '']);
+            const [editTeam, setEditTeam] = useState(null);
+            const [isSaving, setIsSaving] = useState(false);
+            const isEditMode = !!editTeam;
+
+            const handlePlayerChange = (index, value) => {
+                const newPlayers = [...players];
+                newPlayers[index] = value;
+                setPlayers(newPlayers);
+            };
+            const addPlayer = () => setPlayers([...players, '']);
+            const removePlayer = (index) => {
+                if (players.length > 5) {
+                    setPlayers(players.filter((_, i) => i !== index));
+                } else {
+                    showMessage('Ogni squadra deve avere almeno 5 giocatori.', 'error', 'team');
+                }
+            };
+            const resetForm = () => {
+                setTeamName('');
+                setPlayers(['', '', '', '', '']);
+                setEditTeam(null);
+            };
+            const startEdit = (team) => {
+                setTeamName(team.name);
+                const initialPlayers = (team.players && team.players.length < 5) ? [...team.players, ...Array(5 - team.players.length).fill('')] : (team.players || ['','','','','']);
+                setPlayers(initialPlayers);
+                setEditTeam(team);
+                document.getElementById('team-form-title')?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const handleSaveTeam = async () => {
+                if (!authReady) {
+                    showMessage('Autenticazione richiesta', 'Attendi il completamento dell\'accesso o ricarica la pagina.', 'error');
+                    return;
+                }
+                setIsSaving(true);
+                const trimmedName = teamName.trim();
+                const validPlayers = players.map(p => p.trim()).filter(p => p);
+
+                if (!trimmedName || validPlayers.length < 5) {
+                    showMessage('Nome e almeno 5 giocatori sono obbligatori.', 'error', 'team');
+                    setIsSaving(false);
+                    return;
+                }
+
+                try {
+                    const teamData = {
+                        name: trimmedName,
+                        players: validPlayers,
+                        lastUpdate: new Date().toISOString()
+                    };
+
+                    if (isEditMode) {
+                        await firebaseTools.updateTeam(editTeam.id, teamData);
+                        showMessage(`Squadra ${trimmedName} aggiornata con successo!`, 'success', 'team');
+                    } else {
+                        await firebaseTools.addTeam(teamData);
+                        showMessage(`Squadra ${trimmedName} aggiunta con successo!`, 'success', 'team');
+                    }
+                    resetForm();
+                } catch (error) {
+                    console.error("Errore nel salvataggio della squadra:", error);
+                    showMessage("Errore nel salvataggio della squadra: " + (error.message || String(error)), 'error', 'team');
+                } finally {
+                    setIsSaving(false);
+                }
+            };
+
+            const handleDeleteTeam = async (teamId, teamName) => {
+                if (!authReady) return;
+                try {
+                    await firebaseTools.deleteTeam(teamId);
+                    showMessage(`Squadra ${teamName} eliminata.`, 'success', 'team');
+                    await firebaseTools.deleteResultsByTeamName(teamName);
+                } catch (error) {
+                    console.error("Errore nell'eliminazione della squadra:", error);
+                    showMessage("Errore nell'eliminazione della squadra: " + (error.message || String(error)), 'error', 'team');
+                }
+            };
+
+            const sortedTeams = (currentTeams || []).filter(t => t.name).sort((a, b) => a.name.localeCompare(b.name));
+
+            return (
+                <div id="teams" className="admin-section border-l-8 border-yellow-400">
+                    <h3 className="text-4xl font-bold text-yellow-400 mb-6">Gestione Squadre</h3>
+
+                    {/* Form */}
+                    <div className="mb-8 p-6 bg-gray-900 rounded-lg border border-yellow-500/50">
+                        <h4 id="team-form-title" className="text-2xl font-semibold mb-4 text-white">
+                            {isEditMode ? `Modifica Squadra: ${teamName}` : 'Aggiungi Nuova Squadra'}
+                        </h4>
+                        <input type="text" id="team-name-input" className={styles.input} placeholder="Nome Squadra (es: FC Zenith)"
+                               value={teamName} onChange={(e)=>setTeamName(e.target.value)} disabled={isSaving || !authReady} />
+                        <div className="space-y-2 mb-4 mt-4">
+                            <h5 className="text-lg font-medium text-gray-300">Giocatori (minimo 5)</h5>
+                            {players.map((player, index) => (
+                                <div key={index} className="flex space-x-2 items-center">
+                                    <input type="text" className="player-input w-full bg-gray-700 text-white p-2 rounded-lg"
+                                           placeholder={`Nome Giocatore ${index + 1}`} value={player}
+                                           onChange={(e)=>handlePlayerChange(index, e.target.value)} disabled={isSaving || !authReady} />
+                                    <button onClick={()=>removePlayer(index)} className="text-red-400 hover:text-red-300 disabled:opacity-30"
+                                            disabled={players.length <= 5 || isSaving || !authReady} title="Rimuovi Giocatore">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button onClick={addPlayer} className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-500 transition duration-300 mt-2 disabled:opacity-50" disabled={isSaving || !authReady}>Aggiungi Giocatore</button>
+
+                        <div className="flex space-x-4 mt-6">
+                            <button onClick={handleSaveTeam} className={`w-full font-bold py-3 rounded-lg shadow-md transition duration-300 disabled:opacity-50 ${isEditMode ? 'bg-orange-600 hover:bg-orange-500' : 'bg-green-600 hover:bg-green-500'}`} disabled={isSaving || !authReady}>
+                                {isSaving ? 'Salvataggio...' : (isEditMode ? 'Aggiorna Squadra' : 'Salva Nuova Squadra')}
+                            </button>
+                            {isEditMode && (
+                                <button onClick={resetForm} className="w-full bg-gray-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-gray-500 transition duration-300 disabled:opacity-50" disabled={isSaving || !authReady}>Annulla Modifica</button>
+                            )}
+                        </div>
+                        {!authReady && <p className="text-red-400 text-sm mt-2">Attendere l'autenticazione per salvare i dati.</p>}
+                    </div>
+
+                    {/* Lista */}
+                    <h4 className="text-2xl font-semibold mb-4 text-white">Squadre Iscritte ({sortedTeams.length})</h4>
+                    <ul className="space-y-3">
+                        {sortedTeams.length === 0 ? (
+                            <li className="p-3 bg-gray-800 rounded-lg text-gray-400 text-center">Nessuna squadra iscritta.</li>
+                        ) : (
+                            sortedTeams.map(team => (
+                                <li key={team.id} className="p-4 bg-gray-900 rounded-lg flex justify-between items-center border-l-4 border-yellow-400/50">
+                                    <div>
+                                        <p className="text-xl font-semibold text-white">{team.name}</p>
+                                        <p className="text-sm text-gray-400">{(team.players || []).length} Giocatori</p>
+                                    </div>
+                                    <div className="flex space-x-2">
+                                        <button onClick={()=>startEdit(team)} className="text-indigo-400 hover:text-indigo-300 p-2 rounded-full hover:bg-gray-800 transition disabled:opacity-50" title="Modifica" disabled={!authReady}>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7-7l4 4m-4-4l-4 4m8-4l-4 4m0 0l-4 4m4-4l-4 4M15 5l2 2m-2-2l-2 2"></path></svg>
+                                        </button>
+                                        <button onClick={()=>showMessage('Elimina squadra', `Sei sicuro di voler eliminare definitivamente la squadra ${team.name}? Verranno eliminati anche tutti i risultati associati.`, 'confirm', () => handleDeleteTeam(team.id, team.name))} className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-800 transition disabled:opacity-50" title="Elimina" disabled={!authReady}>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
+                                </li>
+                            ))
+                        )}
+                    </ul>
+                </div>
+            );
+        };
+
+        // ResultsManager (full)
+        const ResultsManager = ({ authReady, currentTeams, currentResults, showMessage, firebaseTools }) => {
+            const [team1Name, setTeam1Name] = useState('');
+            const [team2Name, setTeam2Name] = useState('');
+            const [score1, setScore1] = useState(0);
+            const [score2, setScore2] = useState(0);
+            const [isAdding, setIsAdding] = useState(false);
+
+            useEffect(() => {
+                const availableNames = (currentTeams || []).map(t => t.name);
+                if (availableNames.length > 0) {
+                    if (!team1Name || !availableNames.includes(team1Name)) setTeam1Name(availableNames[0] || '');
+                    if (availableNames.length > 1) {
+                        const other = availableNames.find(n => n !== (availableNames[0] || ''));
+                        if (!team2Name || !availableNames.includes(team2Name) || team2Name === team1Name) setTeam2Name(other || '');
+                    } else {
+                        setTeam2Name('');
+                    }
+                } else {
+                    setTeam1Name(''); setTeam2Name('');
+                }
+            }, [currentTeams]);
+
+            const handleAddResult = async () => {
+                if (!authReady) { showMessage('Autenticazione richiesta','Attendi l\'accesso','error'); return; }
+                if (!team1Name || !team2Name || team1Name === team2Name) { showMessage('Seleziona due squadre diverse.','error','result'); return; }
+                setIsAdding(true);
+                const s1 = parseInt(score1);
+                const s2 = parseInt(score2);
+                if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) { showMessage('I punteggi devono essere numeri non negativi.','error','result'); setIsAdding(false); return; }
+                try {
+                    const resultData = { team1: team1Name, team2: team2Name, score1: s1, score2: s2, timestamp: new Date().toISOString() };
+                    await firebaseTools.addResult(resultData);
+                    showMessage(`Risultato ${team1Name} ${s1} - ${s2} ${team2Name} aggiunto.`, 'success', 'result');
+                    setScore1(0); setScore2(0);
+                } catch (error) {
+                    console.error("Errore nell'aggiunta del risultato:", error);
+                    showMessage("Errore nell'aggiunta del risultato: " + (error.message || String(error)), 'error', 'result');
+                } finally {
+                    setIsAdding(false);
+                }
+            };
+
+            const handleDeleteResult = async (resultId) => {
+                if (!authReady) return;
+                try {
+                    await firebaseTools.deleteResult(resultId);
+                    showMessage('Risultato eliminato.', 'success', 'result');
+                } catch (error) {
+                    console.error("Errore nell'eliminazione del risultato:", error);
+                    showMessage("Errore nell'eliminazione del risultato: " + (error.message || String(error)), 'error', 'result');
+                }
+            };
+
+            const handleResetAll = async () => {
+                if (!authReady) return;
+                try {
+                    await firebaseTools.resetAllResults();
+                    showMessage('Classifica e tutti i risultati resettati con successo!', 'success', 'result');
+                } catch (error) {
+                    console.error("Errore nel reset della classifica:", error);
+                    showMessage("Errore nel reset della classifica: " + (error.message || String(error)), 'error', 'result');
+                }
+            };
+
+            const sortedTeams = (currentTeams || []).filter(t => t.name).sort((a, b) => a.name.localeCompare(b.name));
+            const teamOptions = sortedTeams.map(team => (<option key={team.id} value={team.name}>{team.name}</option>));
+            const sortedResults = (currentResults || []).slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            const standings = useMemo(() => {
+                const map = (currentTeams || []).reduce((acc, team) => ({ ...acc, [team.name]: { name: team.name, played:0, wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0, points:0 } }), {});
+                (currentResults || []).forEach(result => {
+                    const { team1, team2, score1, score2 } = result;
+                    if (map[team1] && map[team2]) {
+                        map[team1].played += 1;
+                        map[team2].played += 1;
+                        map[team1].goalsFor += score1;
+                        map[team1].goalsAgainst += score2;
+                        map[team2].goalsFor += score2;
+                        map[team2].goalsAgainst += score1;
+                        if (score1 > score2) { map[team1].wins += 1; map[team2].losses += 1; map[team1].points += 3; }
+                        else if (score1 < score2) { map[team2].wins += 1; map[team1].losses += 1; map[team2].points += 3; }
+                        else { map[team1].draws += 1; map[team2].draws += 1; map[team1].points += 1; map[team2].points += 1; }
+                    }
+                });
+
+                return Object.values(map).filter(team => (currentTeams || []).some(t => t.name === team.name)).sort((a,b) => {
+                    if (b.points !== a.points) return b.points - a.points;
+                    const diffA = a.goalsFor - a.goalsAgainst;
+                    const diffB = b.goalsFor - b.goalsAgainst;
+                    if (diffB !== diffA) return diffB - diffA;
+                    return b.goalsFor - a.goalsFor;
+                });
+            }, [currentTeams, currentResults]);
+
+            return (
+                <div id="results" className="admin-section border-l-8 border-blue-400">
+                    <h3 className="text-4xl font-bold text-blue-400 mb-6">Gestione Risultati</h3>
+
+                    <div className="mb-8 p-6 bg-gray-900 rounded-lg border border-yellow-500/50">
+                        <h4 className="text-2xl font-semibold text-yellow-400 mb-4">Classifica (Dati in Tempo Reale)</h4>
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-700 text-sm">
+                                <thead>
+                                    <tr>
+                                        <th className="p-2 text-left text-gray-400">#</th>
+                                        <th className="p-2 text-left text-gray-400">Squadra</th>
+                                        <th className="p-2 text-gray-400">G</th>
+                                        <th className="p-2 text-gray-400">V</th>
+                                        <th className="p-2 text-gray-400">N</th>
+                                        <th className="p-2 text-gray-400">P</th>
+                                        <th className="p-2 text-gray-400">GF</th>
+                                        <th className="p-2 text-gray-400">GS</th>
+                                        <th className="p-2 text-gray-400">DR</th>
+                                        <th className="p-2 text-gray-400">Pt</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-800">
+                                    {standings.length === 0 && (currentTeams || []).length > 0 ? (
+                                        <tr><td colSpan="10" className="p-4 text-center text-gray-500">Nessun risultato ancora inserito.</td></tr>
+                                    ) : standings.length === 0 && (currentTeams || []).length === 0 ? (
+                                        <tr><td colSpan="10" className="p-4 text-center text-gray-500">Nessuna squadra iscritta.</td></tr>
+                                    ) : (
+                                        standings.map((team, index) => (
+                                            <tr key={team.name} className="hover:bg-gray-800">
+                                                <td className="p-2 font-bold text-yellow-400">{index+1}</td>
+                                                <td className="p-2 font-medium text-white">{team.name}</td>
+                                                <td className="p-2 text-center">{team.played}</td>
+                                                <td className="p-2 text-center">{team.wins}</td>
+                                                <td className="p-2 text-center">{team.draws}</td>
+                                                <td className="p-2 text-center">{team.losses}</td>
+                                                <td className="p-2 text-center">{team.goalsFor}</td>
+                                                <td className="p-2 text-center">{team.goalsAgainst}</td>
+                                                <td className="p-2 text-center font-semibold">{team.goalsFor - team.goalsAgainst}</td>
+                                                <td className="p-2 text-center font-extrabold text-lg text-indigo-400">{team.points}</td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div className="p-6 bg-gray-900 rounded-lg border border-blue-500/50 mb-8">
+                        <h4 className="text-2xl font-semibold text-white mb-4">Inserisci Match Giocato</h4>
+                        {!authReady && <p className="text-red-400 text-sm mb-4">Attendere l'autenticazione per inserire risultati.</p>}
+
+                        {(currentTeams || []).length < 2 ? (
+                             <p className="text-red-400">Servono almeno 2 squadre per inserire un risultato.</p>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                                <select id="team1-result" className={styles.input + ' col-span-2 p-3'} value={team1Name} onChange={(e)=>setTeam1Name(e.target.value)} disabled={!authReady}>
+                                    {teamOptions}
+                                </select>
+                                <div className="flex space-x-2 justify-center col-span-1">
+                                    <input type="number" id="score1" className="bg-gray-700 text-white p-3 rounded-lg w-16 text-center focus:ring-blue-500 focus:border-blue-500" min="0" value={score1} onChange={(e)=>setScore1(Math.max(0, parseInt(e.target.value) || 0))} disabled={!authReady} />
+                                    <span className="text-2xl font-bold text-gray-300">-</span>
+                                    <input type="number" id="score2" className="bg-gray-700 text-white p-3 rounded-lg w-16 text-center focus:ring-blue-500 focus:border-blue-500" min="0" value={score2} onChange={(e)=>setScore2(Math.max(0, parseInt(e.target.value) || 0))} disabled={!authReady} />
+                                </div>
+                                <select id="team2-result" className={styles.input + ' col-span-2 p-3'} value={team2Name} onChange={(e)=>setTeam2Name(e.target.value)} disabled={!authReady}>
+                                    {sortedTeams.filter(team => team.name !== team1Name).map(team => (<option key={team.id} value={team.name}>{team.name}</option>))}
+                                </select>
+                            </div>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row justify-center mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button id="add-result-button" onClick={handleAddResult} className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-500 transition duration-300 disabled:opacity-50" disabled={isAdding || !authReady || (currentTeams||[]).length < 2 || team1Name === team2Name || !team1Name || !team2Name}>
+                                {isAdding ? 'Aggiunta...' : 'Aggiungi Risultato'}
+                            </button>
+                            <button id="reset-button" onClick={()=>showCustomModal('Reset Classifica','Sei sicuro di voler eliminare TUTTI i risultati e resettare la classifica? Questa azione è irreversibile.','info')} className="bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-red-500 transition duration-300 disabled:opacity-50" disabled={!authReady}>
+                                Reset Classifica
+                            </button>
+                        </div>
+                    </div>
+
+                    <h4 className="text-2xl font-semibold mb-4 text-white">Storico Partite ({sortedResults.length})</h4>
+                    <div className="overflow-x-auto bg-gray-900 rounded-lg border border-blue-400/50">
+                        <table className="min-w-full divide-y divide-gray-700">
+                            <thead>
+                                <tr>
+                                    <th className="p-3 text-left text-sm font-semibold text-gray-300 w-1/2">Match</th>
+                                    <th className="p-3 text-sm font-semibold text-gray-300 w-1/4">Risultato</th>
+                                    <th className="p-3 text-sm font-semibold text-gray-300 w-1/4">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-800">
+                                {sortedResults.length === 0 ? (
+                                    <tr><td colSpan="3" className="p-4 text-center text-gray-500">Nessun risultato inserito.</td></tr>
+                                ) : (
+                                    sortedResults.map(result => (
+                                        <tr key={result.id} className="hover:bg-gray-800 transition">
+                                            <td className="p-3 text-gray-300 font-medium">{result.team1} vs {result.team2}</td>
+                                            <td className="p-3 text-center font-bold text-yellow-400">{result.score1} - {result.score2}</td>
+                                            <td className="p-3 text-center">
+                                                <button onClick={()=>showCustomModal('Elimina Risultato', `Sei sicuro di voler eliminare il risultato ${result.team1} ${result.score1} - ${result.score2} ${result.team2}?`, 'confirm')} className="text-red-400 hover:text-red-300 p-1 rounded-full hover:bg-gray-700 transition disabled:opacity-50" title="Elimina Risultato" disabled={!authReady}>
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        };
+
+        // NEWSMANAGER
+        const NewsManager = ({ authReady, currentNews, showMessage, firebaseTools }) => {
+            const [title, setTitle] = useState('');
+            const [content, setContent] = useState('');
+            const [isAdding, setIsAdding] = useState(false);
+
+            const handleAddNews = async () => {
+                if (!authReady) { showMessage('Autenticazione richiesta','Attendi l\'accesso','error'); return; }
+                if (!title.trim() || !content.trim()) { showMessage('Titolo e contenuto sono obbligatori.','error','news'); return; }
+
+                setIsAdding(true);
+                try {
+                    const newsData = { 
+                        title: title.trim(), 
+                        content: content.trim(), 
+                        timestamp: firebaseTools.serverTimestamp() // Usa il timestamp del server per maggiore precisione
+                    };
+                    await firebaseTools.addNews(newsData);
+                    showMessage(`Notizia "${title}" aggiunta con successo!`, 'success', 'news');
+                    setTitle(''); 
+                    setContent('');
+                } catch (error) {
+                    console.error("Errore nell'aggiunta della notizia:", error);
+                    showMessage("Errore nell'aggiunta della notizia: " + (error.message || String(error)), 'error', 'news');
+                } finally {
+                    setIsAdding(false);
+                }
+            };
+
+            const handleDeleteNews = async (newsId, newsTitle) => {
+                if (!authReady) return;
+                try {
+                    await firebaseTools.deleteNews(newsId);
+                    showMessage(`Notizia "${newsTitle}" eliminata.`, 'success', 'news');
+                } catch (error) {
+                    console.error("Errore nell'eliminazione della notizia:", error);
+                    showMessage("Errore nell'eliminazione della notizia: " + (error.message || String(error)), 'error', 'news');
+                }
+            };
+
+            const sortedNews = (currentNews || []).slice().sort((a, b) => b.timestamp - a.timestamp);
+
+            return (
+                <div id="news" className="admin-section border-l-8 border-purple-400 mt-10">
+                    <h3 className="text-4xl font-bold text-purple-400 mb-6">Gestione News</h3>
+
+                    {/* Form Aggiungi News */}
+                    <div className="p-6 bg-gray-900 rounded-lg border border-purple-500/50 mb-8">
+                        <h4 className="text-2xl font-semibold text-white mb-4">Aggiungi Nuova Notizia</h4>
+                        {!authReady && <p className="text-red-400 text-sm mb-4">Attendere l'autenticazione per aggiungere notizie.</p>}
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="news-title" className="block text-sm font-medium text-gray-300">Titolo</label>
+                                <input type="text" id="news-title" className={styles.input + ' mt-1 block w-full'} placeholder="Titolo della notizia" value={title} onChange={(e) => setTitle(e.target.value)} disabled={!authReady} />
+                            </div>
+                            <div>
+                                <label htmlFor="news-content" className="block text-sm font-medium text-gray-300">Contenuto (Breve)</label>
+                                <textarea id="news-content" rows="4" className={styles.input + ' mt-1 block w-full'} placeholder="Inserisci il contenuto o il riassunto della notizia..." value={content} onChange={(e) => setContent(e.target.value)} disabled={!authReady}></textarea>
+                            </div>
+                            <button onClick={handleAddNews} className="w-full bg-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-purple-500 transition duration-300 disabled:opacity-50" disabled={isAdding || !authReady || !title.trim() || !content.trim()}>
+                                {isAdding ? 'Aggiunta...' : 'Pubblica Notizia'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Storico News */}
+                    <h4 className="text-2xl font-semibold mb-4 text-white">Notizie Pubblicate ({sortedNews.length})</h4>
+                    <div className="space-y-3">
+                        {sortedNews.length === 0 ? (
+                            <p className="text-gray-500 p-4 bg-gray-800 rounded-lg">Nessuna notizia pubblicata.</p>
+                        ) : (
+                            sortedNews.map(news => (
+                                <div key={news.id} className="p-4 bg-gray-800 rounded-lg flex justify-between items-center hover:bg-gray-700 transition">
+                                    <div>
+                                        <p className="text-lg font-semibold text-purple-300">{news.title}</p>
+                                        <p className="text-sm text-gray-400 truncate max-w-lg">{news.content}</p>
+                                    </div>
+                                    <button 
+                                        onClick={()=>showCustomModal('Elimina Notizia', `Sei sicuro di voler eliminare la notizia: "${news.title}"?`, 'confirm', ()=>handleDeleteNews(news.id, news.title))} 
+                                        className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-700 transition disabled:opacity-50" 
+                                        title="Elimina Notizia" 
+                                        disabled={!authReady}
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                 </div>
+                             ))
+                        )}
+                    </div>
+                 </div>
+             );
+        };
+
+        // MAIN APP
+        const App = () => {
+            const [isFirebaseInitialized, setIsFirebaseInitialized] = useState(false);
+            const [authReady, setAuthReady] = useState(false);
+            const [user, setUser] = useState(null);
+            const [loadingData, setLoadingData] = useState(true);
+            const [currentTeams, setCurrentTeams] = useState([]);
+            const [currentResults, setCurrentResults] = useState([]);
+            const [currentNews, setCurrentNews] = useState([]);
+
+            const [systemMessage, setSystemMessage] = useState({ isVisible:false, title:'', message:'', type:'info' });
+            const [modal, setModal] = useState({ isVisible:false, title:'', message:'', onConfirm:()=>{} });
+
+            const showMessage = useCallback((title, message, type='info', onConfirm=null) => {
+                if (type === 'confirm' && onConfirm) {
+                    setModal({ isVisible:true, title, message, onConfirm: () => { onConfirm(); setModal({ isVisible:false, title:'', message:'', onConfirm:()=>{} }); } });
+                } else {
+                    setSystemMessage({ isVisible:true, title, message, type });
+                    setTimeout(()=>setSystemMessage(prev=>({...prev,isVisible:false})), 5000);
+                }
+            }, []);
+
+            const [firebaseTools, setFirebaseTools] = useState(null);
+
+            useEffect(()=> {
+                if (window.firebaseTools) {
+                    setFirebaseTools(window.firebaseTools);
+                    setIsFirebaseInitialized(true);
+                    const { auth } = window.firebaseTools;
+                    const unsubscribe = auth.onAuthStateChanged((u) => {
+                        setUser(u || null);
+                        setAuthReady(true);
+                        console.log(u ? `Utente autenticato. UID: ${u.uid}` : 'Nessun utente autenticato.');
+                    });
+                    return () => { if (typeof unsubscribe === 'function') unsubscribe(); };
+                }
+            }, []);
+
+            useEffect(()=> {
+              if (!authReady || !firebaseTools) return;
+                if (!user) { setCurrentTeams([]); setCurrentResults([]); setCurrentNews([]); setLoadingData(false); return; } 
+
+                setLoadingData(true);
+                const teamsRef = firebaseTools.getTeamsCollectionRef();
+                const resultsRef = firebaseTools.getResultsCollectionRef();
+                const newsRef = firebaseTools.getNewsCollectionRef(); 
+
+                const unsubscribeTeams = firebaseTools.onSnapshot(teamsRef, (snapshot) => {
+                    const teamsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    setCurrentTeams(teamsData);
+                    setLoadingData(false);
+                }, (error) => {
+                    console.error("Errore onSnapshot Squadre:", error);
+                    showMessage("Errore nel caricamento delle squadre.", 'error');
+                    setLoadingData(false);
+                });
+
+                const unsubscribeResults = firebaseTools.onSnapshot(resultsRef, (snapshot) => {
+                    const resultsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    setCurrentResults(resultsData);
+                    setLoadingData(false);
+                }, (error) => {
+                    console.error("Errore onSnapshot Risultati:", error);
+                    showMessage("Errore nel caricamento dei risultati.", 'error');
+                    setLoadingData(false);
+                });
+
+                const unsubscribeNews = firebaseTools.onSnapshot(newsRef, (snapshot) => {
+                    const newsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    setCurrentNews(newsData.map(n => ({...n, timestamp: n.timestamp?.toDate ? n.timestamp.toDate().getTime() : new Date(n.timestamp).getTime()}))); // Conversione del timestamp per l'ordinamento
+                    setLoadingData(false);
+                }, (error) => {
+                    console.error("Errore onSnapshot Notizie:", error);
+                    showMessage("Errore nel caricamento delle notizie.", 'error');
+                    setLoadingData(false);
+                });
+                return () => {
+                    try { unsubscribeTeams && unsubscribeTeams(); } catch(e) {}
+                    try { unsubscribeResults && unsubscribeResults(); } catch(e) {}
+                    try { unsubscribeNews && unsubscribeNews(); } catch(e) {}
+                };
+            }, [authReady, firebaseTools, user, showMessage]);
+
+            const isLoading = !isFirebaseInitialized || !authReady || loadingData;
+
+            // Authorization check against allowed emails
+            const isUserAuthorized = useMemo(()=> {
+                const allowed = window.__admin_allowed_emails || [];
+                if (!user) return false;
+                if (!allowed || allowed.length === 0) return true;
+                return !!user.email && allowed.includes(user.email);
+            }, [user]);
+
+            const handleLogout = async () => {
+                try {
+                    await firebaseTools.auth.signOut();
+                    setUser(null);
+                    showMessage('Logout eseguito','Sei stato disconnesso.','success');
+                } catch (err) {
+                    console.error('Errore logout', err);
+                    showMessage('Errore logout: ' + (err.message || String(err)), 'error');
+                }
+            };
+
+            if (isLoading) {
+                return (
+                    <div className="flex flex-col justify-center items-center min-h-screen">
+                        <div className="flex space-x-2"><div className="loading-dot"></div><div className="loading-dot"></div><div className="loading-dot"></div></div>
+                        <p className="mt-6 text-gray-400 text-xl font-semibold">{(!isFirebaseInitialized || !authReady) ? "Connessione al Database e Autenticazione..." : "Caricamento Dati in Tempo Reale..."}</p>
+                    </div>
+                );
+            }
+
+            if (!user) {
+                return (
+                    <div>
+                        <SystemAlert isVisible={systemMessage.isVisible} title={systemMessage.title} message={systemMessage.message} type={systemMessage.type} onClose={()=>setSystemMessage(prev=>({...prev,isVisible:false}))} />
+                        <LoginPanel firebaseTools={firebaseTools} />
+                    </div>
+                );
+            }
+
+            if (!isUserAuthorized) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="bg-gray-900 p-8 rounded-xl shadow-xl text-center max-w-lg">
+                            <h3 className="text-2xl font-bold text-red-400 mb-4">Accesso non autorizzato</h3>
+                            <p className="text-gray-300 mb-4">L'account con cui hai effettuato l'accesso non è nella lista degli amministratori.</p>
+                            <p className="text-sm text-gray-400 mb-6">Controlla l'email o contatta l'amministratore.</p>
+                            <button onClick={handleLogout} className="bg-indigo-600 text-white px-4 py-2 rounded-lg">Esci</button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="w-full">
+                    <SystemAlert isVisible={systemMessage.isVisible} title={systemMessage.title} message={systemMessage.message} type={systemMessage.type} onClose={()=>setSystemMessage(prev=>({...prev,isVisible:false}))} />
+                    <ConfirmationModal isVisible={modal.isVisible} title={modal.title} message={modal.message} onConfirm={modal.onConfirm} onCancel={()=>setModal(prev=>({...prev,isVisible:false}))} />
+
+                    <h2 className="text-6xl font-extrabold text-center mb-6 nx-text-gradient pt-16">PANNELLO DI AMMINISTRAZIONE</h2>
+                    <p className="text-center text-xl text-green-400 mb-8 font-semibold">Accesso Real-Time con Firebase</p>
+
+                    <div className="admin-section border-t-4 border-yellow-500 max-w-xl mx-auto mb-10 text-center">
+                        <h2 className="text-xl font-semibold text-gray-300 mb-4">Stato Connessione Database</h2>
+                        <p className="text-sm text-gray-400"><strong>Utente:</strong> <span className="font-mono bg-gray-700 p-1 rounded text-xs text-yellow-300 break-all">{user.email || user.uid}</span></p>
+                        <p className="text-xs text-gray-500 mt-2">I dati (squadre/risultati) sono salvati in tempo reale sul tuo progetto Firebase.</p>
+                        <div className="mt-3"><button onClick={handleLogout} className="bg-red-600 text-white px-3 py-1 rounded">Logout</button></div>
+                    </div>
+
+                    <TeamManager authReady={true} currentTeams={currentTeams} showMessage={showMessage} firebaseTools={firebaseTools} />
+                    <ResultsManager authReady={true} currentTeams={currentTeams} currentResults={currentResults} showMessage={showMessage} firebaseTools={firebaseTools} />
+                    <NewsManager authReady={true} currentNews={currentNews} showMessage={showMessage} firebaseTools={firebaseTools} />
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    
+    
+    </script>
+
+</body>
+</html>

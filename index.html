@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXT CUP - Home Page Ufficiale</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1a2f;
+            color: #ffffff;
+        }
+
+        .nx-text-gradient {
+            background: -webkit-linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nx-button-hover {
+            transition: all 0.3s ease;
+        }
+
+        .nx-button-hover:hover {
+            background: linear-gradient(90deg, #facc15, #f59e0b);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .hero-section {
+            background-image: linear-gradient(rgba(13, 26, 47, 0.8), rgba(13, 26, 47, 0.9)), url('sfondo.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hidden a {
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+
+<body class="antialiased">
+    <!-- Navbar (Consistent) -->
+    <header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-xl">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img class="w-24 h-24 rounded-full border-4 border-gray-600 mb-3" src="logo.png" alt="Logo torneo">
+                <a href="index.html" class="text-3xl font-black nx-text-gradient" style="padding-left: 15px">NEXT CUP</a>
+                
+            </div>
+
+            <div class="hidden md:flex space-x-8 font-semibold">
+                <a href="index.html" class="text-yellow-400 transition duration-300">Home</a>
+                <a href="teams.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Squadre</a>
+                <a href="news.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Notizie</a>
+                <a href="match_preview.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Anteprima Match AI</a>
+                <a href="results.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Risultati & Classifica</a>
+                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Contatti & Iscrizione</a>
+            </div>
+
+            <button class="md:hidden text-gray-300 hover:text-yellow-400 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+    </header>
+    <!-- Hero Section with Countdown -->
+    <section class="hero-section text-center py-24 sm:py-32 lg:py-48 min-h-[70vh] flex items-center">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-7xl sm:text-8xl lg:text-9xl font-black leading-tight mb-6">
+                <span class="nx-text-gradient">NEXT CUP</span>
+            </h1>
+
+            <p class="text-xl sm:text-2xl text-gray-300 font-medium mb-10">
+                La partita che Decide Tutto: Team 1 vs Team 2
+            </p>
+            <!-- Countdown Timer Display -->
+            <div id="countdown" class="bg-gray-900/70 p-4 sm:p-6 rounded-xl shadow-2xl inline-block mb-10 border border-yellow-400/50">
+                <div class="flex justify-center space-x-4 sm:space-x-8 text-white">
+                    <div class="flex flex-col">
+                        <span id="days" class="text-4xl sm:text-5xl font-extrabold nx-text-gradient">00</span>
+                        <span class="text-xs sm:text-base text-gray-400 font-semibold mt-1">GIORNI</span>
+                    </div>
+                    <div class="text-4xl sm:text-5xl font-extrabold nx-text-gradient">:</div>
+                    <div class="flex flex-col">
+                        <span id="hours" class="text-4xl sm:text-5xl font-extrabold nx-text-gradient">00</span>
+                        <span class="text-xs sm:text-base text-gray-400 font-semibold mt-1">ORE</span>
+                    </div>
+
+                    <div class="text-4xl sm:text-5xl font-extrabold nx-text-gradient">:</div>
+                    <div class="flex flex-col">
+                        <span id="minutes" class="text-4xl sm:text-5xl font-extrabold nx-text-gradient">00</span>
+                        <span class="text-xs sm:text-base text-gray-400 font-semibold mt-1">MINUTI</span>
+                    </div>
+                    <div class="text-4xl sm:text-5xl font-extrabold nx-text-gradient">:</div>
+                    <div class="flex flex-col">
+                        <span id="seconds" class="text-4xl sm:text-5xl font-extrabold nx-text-gradient">00</span>
+                        <span class="text-xs sm:text-base text-gray-400 font-semibold mt-1">SECONDI</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Call to Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <a href="match_preview.html" class="nx-button-hover bg-yellow-500 text-gray-900 font-bold py-3 px-8 rounded-lg text-lg shadow-lg">
+                    Anteprima Match AI
+                </a>
+                <a href="results.html" class="bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-600 transition duration-300 shadow-lg">
+                    Risultati & Classifica
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- Overview Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-5xl font-bold text-center mb-12 text-white">Il Torneo di Calcio Giovanile più Prestigioso</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <!-- Stat Card 1 -->
+                <div class="bg-gray-900 p-8 rounded-xl shadow-2xl border-t-4 border-yellow-400">
+                    <p class="text-6xl font-black nx-text-gradient mb-3">8</p>
+                    <p class="text-xl font-semibold text-white">Team in Gara</p>
+                    <p class="text-gray-400 text-sm mt-2">Le migliori squadre giovanili si sfidano per la gloria.</p>
+                </div>
+                <!-- Stat Card 2 -->
+                <div class="bg-gray-900 p-8 rounded-xl shadow-2xl border-t-4 border-yellow-400">
+                    <p class="text-6xl font-black nx-text-gradient mb-3">Nome Cognome</p>
+                    <p class="text-xl font-semibold text-white">Capocannoniere</p>
+                    <p class="text-gray-400 text-sm mt-2">Segui il resto della classifica nella pagina risultati e classifica!</p>
+                </div>
+                <!-- Stat Card 3 -->
+                <div class="bg-gray-900 p-8 rounded-xl shadow-2xl border-t-4 border-yellow-400">
+                    <p class="text-6xl font-black nx-text-gradient mb-3">Nome Cognome</p>
+                    <p class="text-xl font-semibold text-white">Assist man</p>
+                    <p class="text-gray-400 text-sm mt-2">Segui il resto della classifica nella pagina risultati e classifica!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Next Match Teaser Section (Consistent with Match Preview) -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-5xl font-bold mb-12 nx-text-gradient">PROSSIMA PARTITA</h2>
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border border-blue-700/50">
+                <p class="text-gray-400 mb-6 text-lg font-semibold">QUARTI DI FINALE | xx/xx/xxxx (CET)</p>
+                <div class="flex justify-center items-center space-x-6 sm:space-x-12">
+                    <!-- Team 1 -->
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/100x100/1e3a8a/FFD700?text=A" alt="Logo Team Alpha Elite" class="w-24 h-24 rounded-full border-4 border-yellow-400 mb-2">
+                        <p class="text-2xl font-bold text-white">SQUADRA 1</p>
+                    </div>
+                    <div class="text-4xl font-extrabold text-red-500">VS</div>
+                    <!-- Team 2 -->
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/100x100/dc2626/FFFFFF?text=R" alt="Logo Red Devils J." class="w-24 h-24 rounded-full border-4 border-gray-600 mb-2">
+                        <p class="text-2xl font-bold text-white">SQUADRA 2</p>
+                    </div>
+                </div>
+                <a href="match_preview.html" class="mt-8 inline-block nx-button-hover bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300">
+                    Leggi l'Analisi AI
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- Footer / Contatti (Consistent) -->
+    <footer class="bg-gray-950 py-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+            <div class="text-gray-400">
+                <p class="text-xl font-bold nx-text-gradient mb-2">NEXT CUP</p>
+                <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
+            </div>
+            <div class="space-y-2">
+                <p class="text-white font-semibold">Contattaci</p>
+                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com" class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
+                <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
+                <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
+            </div>
+
+            <div class="flex space-x-4 text-gray-400">
+                <a href="#" class="hover:text-yellow-400 transition duration-300">[Image of Logo di Instagram]</a>
+                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
+                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
+            </div>
+        </div>
+    </footer>
+    <!-- JavaScript for Countdown Timer -->
+    <script>
+        function startCountdown() {
+            // Data e ora del prossimo match (17 Giugno, 19:00 CET)
+            const matchDate = new Date("2026-06-01T19:00:00").getTime();
+            const interval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = matchDate - now;
+                if (distance < 0) {
+                    clearInterval(interval);
+                    document.getElementById("countdown").innerHTML = '<p class="text-xl font-bold text-red-500">MATCH IN CORSO!</p>';
+                    return;
+                }
+                // Calcoli per giorni, ore, minuti, secondi
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                // Funzione helper per aggiungere lo zero iniziale se il numero è < 10
+                const pad = (num) => String(num).padStart(2, '0');
+                // Aggiorna l'HTML
+                document.getElementById("days").innerHTML = pad(days);
+                document.getElementById("hours").innerHTML = pad(hours);
+                document.getElementById("minutes").innerHTML = pad(minutes);
+                document.getElementById("seconds").innerHTML = pad(seconds);
+            }, 1000);
+        }
+        window.onload = startCountdown;
+    </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXT CUP - Squadre Iscritte</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1a2f;
+            color: #ffffff;
+        }
+        .nx-text-gradient {
+            background: -webkit-linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .team-card {
+            background-color: #1f2937;
+        }
+
+        .hidden a {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- FIREBASE CONFIG -->
+<script>
+    window.__firebase_config = JSON.stringify({
+        apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+        authDomain: "torneo-585ac.firebaseapp.com",
+        projectId: "torneo-585ac",
+        storageBucket: "torneo-585ac.firebasestorage.app",
+        messagingSenderId: "79275251686",
+        appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+        measurementId: "G-S2NZJJXKWW"
+    });
+
+    window.__app_id = "nextcup-app";  
+</script>
+
+<!-- Navbar (Consistent) -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-xl">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <img class="w-24 h-24 rounded-full border-4 border-gray-600 mb-3" src="logo.png" alt="Logo torneo">
+            <a href="index.html" class="text-3xl font-black nx-text-gradient" style="padding-left: 15px">NEXT CUP</a>
+        </div>
+        <div class="hidden md:flex space-x-8 font-semibold">
+            <a href="index.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Home</a>
+            <a href="teams.html" class="text-yellow-400">Squadre</a>
+            <a href="news.html" class="text-gray-300 hover:text-yellow-400">Notizie</a>
+            <a href="match_preview.html" class="text-gray-300 hover:text-yellow-400">Anteprima Match AI</a>
+            <a href="results.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Risultati & Classifica</a>
+            <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Contatti & Iscrizione</a>
+        </div>
+        <button class="md:hidden text-gray-300 hover:text-yellow-400 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+    </nav>
+</header>
+
+<!-- SEZIONE SQUADRE -->
+<section class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-800 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+        
+        <h2 class="text-6xl font-extrabold text-center mb-6 nx-text-gradient">SQUADRE PARTECIPANTI</h2>
+        <p class="text-center text-xl text-gray-300 mb-12">
+            Scopri le formazioni che parteciperanno alla Next Cup.
+        </p>
+
+        <div class="text-center mb-8">
+            <!-- 🔐 LINK ADMIN BEN VISIBILE -->
+            <a href="admin.html"
+               class="text-red-400 font-bold text-sm underline hover:text-red-300 transition">
+               🔒 Accedi al Pannello Admin
+            </a>
+        </div>
+
+        <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="team-card p-6 rounded-xl shadow-2xl text-center">
+                <p class="text-gray-400">Caricamento squadre...</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+    <!-- Footer / Contatti (Consistent) -->
+    <footer class="bg-gray-950 py-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+            <div class="text-gray-400">
+                <p class="text-xl font-bold nx-text-gradient mb-2">NEXT CUP</p>
+                <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
+            </div>
+            <div class="space-y-2">
+                <p class="text-white font-semibold">Contattaci</p>
+                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com" class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
+                <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
+                <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
+            </div>
+            <div class="flex space-x-4 text-gray-400">
+                <a href="#" class="hover:text-yellow-400 transition duration-300">[Image of Logo di Instagram]</a>
+                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
+                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
+            </div>
+        </div>
+    </footer>
+
+<!-- FIREBASE -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = JSON.parse(window.__firebase_config);
+    const appId = window.__app_id;
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const TEAMS_PATH = `artifacts/${appId}/public/data/teams`;
+
+    // Accesso pubblico
+    onAuthStateChanged(auth, (user) => {
+        if (!user) signInAnonymously(auth);
+    });
+
+    // Renderizza
+    function renderTeams(list) {
+        const grid = document.getElementById("teams-grid");
+
+        if (list.length === 0) {
+            grid.innerHTML = `
+                <div class="team-card p-6 rounded-xl shadow-2xl col-span-full text-center">
+                    <p class="text-xl text-gray-300 font-semibold">Nessuna squadra iscritta.</p>
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = list
+            .map(team => `
+                <div class="team-card p-6 rounded-xl shadow-2xl">
+                    <h3 class="text-3xl font-bold text-yellow-400 mb-3">${team.name}</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        ${
+                            team.players && team.players.length
+                                ? team.players.map(p => `<li>${p}</li>`).join("")
+                                : `<li class="text-gray-500">Nessun giocatore disponibile</li>`
+                        }
+                    </ul>
+                </div>
+            `)
+            .join("");
+    }
+
+    // Listener Firestore LIVE
+    onSnapshot(collection(db, TEAMS_PATH), (snapshot) => {
+        const teams = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderTeams(teams);
+    });
+</script>
+
+</body>
+</html>
+
