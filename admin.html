@@ -1,56 +1,114 @@
 <!doctype html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NEXT CUP - Pannello Admin (Firebase)</title>
 
     <!-- Favicon -->
-   <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color:#0d1a2f; color:#fff; min-height:100vh; }
-        #root { padding-top:5rem; padding-bottom:5rem; }
-        .nx-text-gradient { background:-webkit-linear-gradient(45deg,#FFD700,#FBBF24,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .admin-section { background-color:#1f2937; padding:2rem; border-radius:1rem; margin-bottom:2.5rem; box-shadow:0 10px 25px rgba(0,0,0,0.5); }
-        .loading-dot { width:10px; height:10px; background-color:#fcd34d; border-radius:50%; display:inline-block; margin:0 5px; animation:bounce 1.4s infinite ease-in-out both; }
-        .loading-dot:nth-child(1){ animation-delay:-0.32s } .loading-dot:nth-child(2){ animation-delay:-0.16s }
-        @keyframes bounce { 0%,80%,100%{ transform:scale(0) } 40%{ transform:scale(1.0) } }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1a2f;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        #root {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+
+        .nx-text-gradient {
+            background: -webkit-linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-section {
+            background-color: #1f2937;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .loading-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #fcd34d;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 5px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) {
+            animation-delay: -0.32s
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: -0.16s
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0)
+            }
+
+            40% {
+                transform: scale(1.0)
+            }
+        }
     </style>
 </head>
+
 <body>
     <header class="fixed top-0 left-0 w-full z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-xl">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2">
                 <a href="admin.html" class="text-3xl font-black nx-text-gradient">NEXT CUP</a>
             </div>
+            <div class="flex space-x-4 text-sm font-semibold">
+                <a href="index.html" class="text-gray-300 hover:text-white transition">Home</a>
+                <a href="torneo.html" class="text-gray-300 hover:text-white transition">Torneo</a>
+                <a href="sondaggi.html" class="text-gray-300 hover:text-white transition">Sondaggi</a>
+            </div>
         </nav>
     </header>
 
     <div id="root" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"></div>
 
-    <div id="custom-alert-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]">
+    <div id="custom-alert-modal"
+        class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]">
         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl max-w-sm w-full">
             <h4 id="custom-alert-title" class="text-xl font-semibold mb-2"></h4>
             <p id="custom-alert-message" class="text-gray-300 mb-4"></p>
-            <button id="custom-alert-close" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-500 transition">Chiudi</button>
+            <button id="custom-alert-close"
+                class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-500 transition">Chiudi</button>
         </div>
     </div>
-   
+
     <!-- CONFIG -->
     <script>
         window.__firebase_config = JSON.stringify({
-          apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
-          authDomain: "torneo-585ac.firebaseapp.com",
-          projectId: "torneo-585ac",
-          storageBucket: "torneo-585ac.firebasestorage.app",
-          messagingSenderId: "79275251686",
-          appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
-          measurementId: "G-S2NZJJXKWW"
+            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+            authDomain: "torneo-585ac.firebaseapp.com",
+            projectId: "torneo-585ac",
+            storageBucket: "torneo-585ac.firebasestorage.app",
+            messagingSenderId: "79275251686",
+            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+            measurementId: "G-S2NZJJXKWW"
         });
 
         // Metti qui la tua email admin esatta (solo lei potrà accedere)
@@ -62,106 +120,246 @@
 
     <!-- FIREBASE INIT -->
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import {
-        getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import {
-        getFirestore, collection, doc, addDoc, setDoc, deleteDoc,
-        query, onSnapshot, getDocs, writeBatch, where, setLogLevel,
-        // NON serve più FieldValue, ma importiamo direttamente
-        serverTimestamp as firebaseServerTimestamp // Rinominiamo per evitare conflitti, se necessario
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore, collection, doc, addDoc, setDoc, deleteDoc, getDoc,
+            query, onSnapshot, getDocs, writeBatch, where, setLogLevel, increment,
+            // NON serve più FieldValue, ma importiamo direttamente
+            serverTimestamp as firebaseServerTimestamp // Rinominiamo per evitare conflitti, se necessario
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const firebaseConfig = (() => {
-        try { return JSON.parse(window.__firebase_config ?? "{}"); } catch (e) { console.error(e); return {}; }
-    })();
+        const firebaseConfig = (() => {
+            try { return JSON.parse(window.__firebase_config ?? "{}"); } catch (e) { console.error(e); return {}; }
+        })();
 
-    if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-        document.getElementById('root').innerHTML = `<div class="p-6 bg-red-700 rounded-lg text-white m-6"><h2 class="text-xl font-bold">ERRORE: Firebase Config mancante</h2></div>`;
-        throw new Error("Firebase config mancante");
-    }
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const baseAuth = getAuth(app);
-    // setLogLevel('debug');
-
-    const authWrapper = {
-        signInWithEmailAndPassword: (email, pass) => signInWithEmailAndPassword(baseAuth, email, pass),
-        signOut: () => signOut(baseAuth),
-        onAuthStateChanged: (cb) => onAuthStateChanged(baseAuth, cb),
-        setPersistence: () => setPersistence(baseAuth, browserLocalPersistence),
-        getCurrentUser: () => baseAuth.currentUser ?? null
-    };
-
-    window.firebaseTools = {
-        db,
-        auth: authWrapper,
-        appId: window.__app_id,
-        
-        // --- COLLEZIONI PRINCIPALI ---
-        getTeamsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/teams`),
-        getResultsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/results`),
-        getNewsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/news`),
-
-        // --- CRUD TEAMS ---
-        addTeam: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), data),
-        updateTeam: (id, data) => setDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), id), data, { merge: true }),
-        deleteTeam: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), id)),
-
-        // --- CRUD RESULTS ---
-        addResult: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/results`), data),
-        deleteResult: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/results`), id)),
-
-        // --- CRUD NEWS ---
-        addNews: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/news`), data), 
-        deleteNews: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/news`), id)),
-        
-        // --- UTILS ---
-        onSnapshot,
-        serverTimestamp: firebaseServerTimestamp, // CORREZIONE QUI: usa la funzione importata direttamente
-        
-        // --- AZIONI COMPLESSE ---
-        resetAllResults: async () => {
-            const q = query(collection(db, `artifacts/${window.__app_id}/public/data/results`));
-            const snap = await getDocs(q);
-            if (snap.empty) return;
-            const batch = writeBatch(db);
-            snap.docs.forEach(d => batch.delete(d.ref));
-            await batch.commit();
-        },
-        deleteResultsByTeamName: async (teamName) => {
-            const resultsRef = collection(db, `artifacts/${window.__app_id}/public/data/results`);
-            const q1 = query(resultsRef, where("team1", "==", teamName));
-            const q2 = query(resultsRef, where("team2", "==", teamName));
-            const [s1, s2] = await Promise.all([getDocs(q1), getDocs(q2)]);
-            if ((s1.empty) && (s2.empty)) return;
-            const batch = writeBatch(db);
-            s1.docs.forEach(d => batch.delete(d.ref));
-            s2.docs.forEach(d => batch.delete(d.ref));
-            await batch.commit();
+        if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+            document.getElementById('root').innerHTML = `<div class="p-6 bg-red-700 rounded-lg text-white m-6"><h2 class="text-xl font-bold">ERRORE: Firebase Config mancante</h2></div>`;
+            throw new Error("Firebase config mancante");
         }
-    };
 
-    document.getElementById('custom-alert-close')?.addEventListener('click', () => {
-        document.getElementById('custom-alert-modal')?.classList.add('hidden');
-    });
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const baseAuth = getAuth(app);
+        // setLogLevel('debug');
 
-    console.log("Firebase inizializzato e window.firebaseTools pronto (incluso News)");
+        const authWrapper = {
+            signInWithEmailAndPassword: (email, pass) => signInWithEmailAndPassword(baseAuth, email, pass),
+            signOut: () => signOut(baseAuth),
+            onAuthStateChanged: (cb) => onAuthStateChanged(baseAuth, cb),
+            setPersistence: () => setPersistence(baseAuth, browserLocalPersistence),
+            getCurrentUser: () => baseAuth.currentUser ?? null
+        };
+
+        window.firebaseTools = {
+            db,
+            auth: authWrapper,
+            appId: window.__app_id,
+
+            // --- COLLEZIONI PRINCIPALI ---
+            getTeamsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/teams`),
+            getResultsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/results`),
+            getNewsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/news`),
+
+            // --- CRUD TEAMS ---
+            addTeam: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), data),
+            updateTeam: (id, data) => setDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), id), data, { merge: true }),
+            deleteTeam: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), id)),
+
+            // --- CRUD RESULTS ---
+            addResult: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/results`), data),
+            deleteResult: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/results`), id)),
+
+            // --- CRUD NEWS ---
+            addNews: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/news`), data),
+            deleteNews: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/news`), id)),
+
+            // --- CRUD CALENDAR ---
+            addScheduledMatch: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/matches`), data),
+            updateScheduledMatch: (id, data) => setDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/matches`), id), data, { merge: true }),
+            deleteScheduledMatch: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/matches`), id)),
+            onScheduledMatchesSnapshot: (cb) => onSnapshot(query(collection(db, `artifacts/${window.__app_id}/public/data/matches`)), (snap) => {
+                // Sort by date/time (timestamp)
+                const sorted = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.timestamp || '').localeCompare(b.timestamp || ''));
+                cb(sorted);
+            }),
+
+            // --- CRUD POLLS ---
+            addPoll: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/polls`), data),
+            deletePoll: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/polls`), id)),
+            updatePoll: (id, data) => setDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/polls`), id), data, { merge: true }),
+            onPollsSnapshot: (cb) => onSnapshot(query(collection(db, `artifacts/${window.__app_id}/public/data/polls`)), (snap) => {
+                const sorted = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); // Descending
+                cb(sorted);
+            }),
+
+            // --- UTILS ---
+            onSnapshot,
+            serverTimestamp: firebaseServerTimestamp, // CORREZIONE QUI: usa la funzione importata direttamente
+
+            // --- AZIONI COMPLESSE ---
+            // --- AZIONI COMPLESSE ---
+            resetAllResults: async () => {
+                // STEP 1: Delete all RESULTS
+                const q = query(collection(db, `artifacts/${window.__app_id}/public/data/results`));
+                const snap = await getDocs(q);
+
+                const batch = writeBatch(db);
+                snap.docs.forEach(d => batch.delete(d.ref));
+
+                // STEP 2: Delete all STATS (Scorers, Assists, CleanSheets, Cards)
+                const statsBase = `artifacts/${window.__app_id}/public/data`;
+                const statsCollections = ['scorers', 'assists', 'cleanSheets', 'cards'];
+
+                for (const colName of statsCollections) {
+                    const sSnap = await getDocs(collection(db, `${statsBase}/${colName}`));
+                    sSnap.docs.forEach(d => batch.delete(d.ref));
+                }
+
+                await batch.commit();
+            },
+            increment: increment,
+            getDoc: getDoc, // Espongo getDoc
+
+            // --- QUESTE FUNZIONI CRUD BASE RIMANGONO, MA PER I RISULTATI useremo logica custom nel componente ---
+            // addResult: ... (lo faremo custom con batch)
+            deleteResultString: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/results`), id)), // rinomino per chiarezza, useremo una custom
+
+            deleteResultsByTeamName: async (teamName) => {
+                const batch = writeBatch(db);
+                const appId = window.__app_id;
+
+                // 1. Delete Results
+                const resultsRef = collection(db, `artifacts/${appId}/public/data/results`);
+                const q1 = query(resultsRef, where("team1", "==", teamName));
+                const q2 = query(resultsRef, where("team2", "==", teamName));
+                const [s1, s2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+
+                s1.docs.forEach(d => batch.delete(d.ref));
+                s2.docs.forEach(d => batch.delete(d.ref));
+
+                // 2. Delete Player Stats for this team
+                const statsBase = `artifacts/${appId}/public/data`;
+                const statsCollections = ['scorers', 'assists', 'cleanSheets', 'cards'];
+
+                for (const colName of statsCollections) {
+                    const q = query(collection(db, `${statsBase}/${colName}`), where("team", "==", teamName));
+                    const snap = await getDocs(q);
+                    snap.docs.forEach(d => batch.delete(d.ref));
+                }
+
+                await batch.commit();
+            },
+
+            addResultWithStats: async (resultData, matchEvents) => {
+                const batch = writeBatch(db);
+                const appId = window.__app_id;
+
+                // 1. Create Result Document
+                const resultsRef = collection(db, `artifacts/${appId}/public/data/results`);
+                const newResultRef = doc(resultsRef);
+                batch.set(newResultRef, { ...resultData, stats: matchEvents });
+
+                // 2. Update Stats
+                const statsBase = `artifacts/${appId}/public/data`;
+
+                // Helper to get doc ref (Sanitize IDs)
+                const getStatDoc = (collectionName, player, team) => {
+                    const id = `${team.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${player.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`;
+                    return doc(db, `${statsBase}/${collectionName}`, id);
+                };
+
+                matchEvents.forEach(event => {
+                    const { type, player, team } = event;
+                    if (!player || !team) return;
+
+                    if (type === 'goal') {
+                        const ref = getStatDoc('scorers', player, team);
+                        batch.set(ref, { name: player, team: team, goals: increment(1) }, { merge: true });
+                    } else if (type === 'assist') {
+                        const ref = getStatDoc('assists', player, team);
+                        batch.set(ref, { name: player, team: team, assists: increment(1) }, { merge: true });
+                    } else if (type === 'cleanSheet') {
+                        const ref = getStatDoc('cleanSheets', player, team);
+                        batch.set(ref, { name: player, team: team, cleanSheets: increment(1) }, { merge: true });
+                    } else if (type === 'yellow') {
+                        const ref = getStatDoc('cards', player, team);
+                        batch.set(ref, { name: player, team: team, yellow: increment(1) }, { merge: true });
+                    } else if (type === 'red') {
+                        const ref = getStatDoc('cards', player, team);
+                        batch.set(ref, { name: player, team: team, red: increment(1), yellow: increment(0) }, { merge: true }); // Ensure yellow field exists
+                    }
+                });
+
+                await batch.commit();
+            },
+
+            deleteResultWithStats: async (resultId) => {
+                const batch = writeBatch(db);
+                const appId = window.__app_id;
+                const resultRef = doc(db, `artifacts/${appId}/public/data/results`, resultId);
+
+                // 1. Get the result to know what stats to rollback
+                const snap = await getDoc(resultRef);
+                if (!snap.exists()) throw new Error("Risultato non trovato");
+                const data = snap.data();
+                const matchEvents = data.stats || [];
+
+                // 2. Delete Result
+                batch.delete(resultRef);
+
+                // 3. Rollback Stats
+                const statsBase = `artifacts/${appId}/public/data`;
+                const getStatDoc = (collectionName, player, team) => {
+                    const id = `${team.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${player.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`;
+                    return doc(db, `${statsBase}/${collectionName}`, id);
+                };
+
+                matchEvents.forEach(event => {
+                    const { type, player, team } = event;
+                    if (!player || !team) return;
+
+                    if (type === 'goal') {
+                        const ref = getStatDoc('scorers', player, team);
+                        batch.set(ref, { goals: increment(-1) }, { merge: true });
+                    } else if (type === 'assist') {
+                        const ref = getStatDoc('assists', player, team);
+                        batch.set(ref, { assists: increment(-1) }, { merge: true });
+                    } else if (type === 'cleanSheet') {
+                        const ref = getStatDoc('cleanSheets', player, team);
+                        batch.set(ref, { cleanSheets: increment(-1) }, { merge: true });
+                    } else if (type === 'yellow') {
+                        const ref = getStatDoc('cards', player, team);
+                        batch.set(ref, { yellow: increment(-1) }, { merge: true });
+                    } else if (type === 'red') {
+                        const ref = getStatDoc('cards', player, team);
+                        batch.set(ref, { red: increment(-1) }, { merge: true });
+                    }
+                });
+
+                await batch.commit();
+            }
+        };
+
+        document.getElementById('custom-alert-close')?.addEventListener('click', () => {
+            document.getElementById('custom-alert-modal')?.classList.add('hidden');
+        });
+
+        console.log("Firebase inizializzato e window.firebaseTools pronto (incluso News)");
     </script>
-
     <!-- REACT APP (completa) -->
     <script type="text/babel">
         const { useState, useEffect, useCallback, useMemo } = React;
 
-        const showCustomModal = (title, message, type='info') => {
+        const showCustomModal = (title, message, type = 'info') => {
             const modal = document.getElementById('custom-alert-modal');
             const t = document.getElementById('custom-alert-title');
             const m = document.getElementById('custom-alert-message');
             t.textContent = title;
             m.textContent = message;
-            t.className = "text-xl font-semibold mb-2 " + (type==='error' ? 'text-red-500' : (type==='success' ? 'text-green-500' : 'text-yellow-500'));
+            t.className = "text-xl font-semibold mb-2 " + (type === 'error' ? 'text-red-500' : (type === 'success' ? 'text-green-500' : 'text-yellow-500'));
             modal.classList.remove('hidden');
         };
 
@@ -169,7 +367,7 @@
             if (!isVisible) return null;
             return (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" onClick={onCancel}>
-                    <div className="bg-gray-900 p-8 rounded-xl shadow-2xl max-w-lg w-full border border-red-500" onClick={(e)=>e.stopPropagation()}>
+                    <div className="bg-gray-900 p-8 rounded-xl shadow-2xl max-w-lg w-full border border-red-500" onClick={(e) => e.stopPropagation()}>
                         <h4 className="text-2xl font-bold text-red-500 mb-4">{title}</h4>
                         <p className="text-gray-300 mb-6">{message}</p>
                         <div className="flex justify-end space-x-4">
@@ -206,6 +404,240 @@
             input: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500",
         };
 
+        // MatchScheduler (Calendar & Live)
+        const MatchScheduler = ({ authReady, teams, showMessage, firebaseTools }) => {
+            const [date, setDate] = useState('');
+            const [time, setTime] = useState('');
+            const [team1, setTeam1] = useState('');
+            const [team2, setTeam2] = useState('');
+            const [stage, setStage] = useState('Girone A');
+            const [scheduledMatches, setScheduledMatches] = useState([]);
+            const [isSaving, setIsSaving] = useState(false);
+
+            // Live Management State
+            const [managingMatch, setManagingMatch] = useState(null);
+            const [liveScore1, setLiveScore1] = useState(0);
+            const [liveScore2, setLiveScore2] = useState(0);
+            const [liveStatus, setLiveStatus] = useState('SCHEDULED');
+            const [newScorer, setNewScorer] = useState({ team: '', player: '', minute: '' });
+            const [scorers, setScorers] = useState([]);
+
+            useEffect(() => {
+                const unsubscribe = firebaseTools.onScheduledMatchesSnapshot(setScheduledMatches);
+                return () => unsubscribe();
+            }, []);
+
+            // Open Live Manager
+            const openLiveManager = (match) => {
+                setManagingMatch(match);
+                setLiveScore1(match.score1 || 0);
+                setLiveScore2(match.score2 || 0);
+                setLiveStatus(match.status || 'SCHEDULED'); // SCHEDULED, LIVE, FINISHED
+                setScorers(match.scorers || []);
+            };
+
+            const closeLiveManager = () => {
+                setManagingMatch(null);
+            };
+
+            const handleSchedule = async () => {
+                if (!authReady || !date || !time || !team1 || !team2) return showMessage('Compila tutti i campi', 'error');
+                if (team1 === team2) return showMessage('Le squadre devono essere diverse', 'error');
+
+                setIsSaving(true);
+                try {
+                    await firebaseTools.addScheduledMatch({
+                        date, time, team1, team2, stage,
+                        timestamp: new Date(`${date}T${time}`).toISOString(),
+                        status: 'SCHEDULED', score1: 0, score2: 0, scorers: []
+                    });
+                    showMessage('Partita programmata!', 'success');
+                    setDate(''); setTime(''); setTeam1(''); setTeam2('');
+                } catch (e) {
+                    showMessage('Errore: ' + e.message, 'error');
+                }
+                setIsSaving(false);
+            };
+
+            const handleDelete = async (id) => {
+                if (!confirm('Eliminare partita programmata?')) return;
+                try {
+                    await firebaseTools.deleteScheduledMatch(id);
+                    showMessage('Partita eliminata', 'success');
+                } catch (e) {
+                    showMessage('Errore eliminazione', 'error');
+                }
+            };
+
+            // LIVE UPDATES
+            const saveLiveUpdate = async () => {
+                if (!managingMatch) return;
+                try {
+                    await firebaseTools.updateScheduledMatch(managingMatch.id, {
+                        score1: parseInt(liveScore1),
+                        score2: parseInt(liveScore2),
+                        status: liveStatus,
+                        scorers: scorers
+                    });
+                    showMessage('Aggiornamento Live salvato!', 'success');
+                    setManagingMatch(null);
+                } catch (e) {
+                    showMessage('Errore update live: ' + e.message, 'error');
+                }
+            };
+
+            const addScorer = () => {
+                if (!newScorer.player || !newScorer.minute || !newScorer.team) return showMessage('Dati marcatore incompleti', 'error');
+                setScorers([...scorers, newScorer]);
+                setNewScorer({ team: '', player: '', minute: '' });
+            };
+
+            const removeScorer = (index) => {
+                const newS = [...scorers];
+                newS.splice(index, 1);
+                setScorers(newS);
+            }
+
+            return (
+                <div className="admin-section border-l-8 border-purple-500">
+                    <h3 className="text-4xl font-bold text-purple-400 mb-6">Gestione Calendario & Live</h3>
+
+                    {!managingMatch ? (
+                        <>
+                            {/* FORM PROGRAMMAZIONE */}
+                            <div className="mb-8 p-6 bg-gray-900 rounded-lg border border-purple-500/50">
+                                <h4 className="text-xl font-semibold mb-4 text-white">Programma Nuova Partita</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                                    <input type="date" value={date} onChange={e => setDate(e.target.value)} className={styles.input} />
+                                    <input type="time" value={time} onChange={e => setTime(e.target.value)} className={styles.input} />
+                                    <select value={team1} onChange={e => setTeam1(e.target.value)} className={styles.input}>
+                                        <option value="">Squadra 1</option>
+                                        {teams.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
+                                    </select>
+                                    <select value={team2} onChange={e => setTeam2(e.target.value)} className={styles.input}>
+                                        <option value="">Squadra 2</option>
+                                        {teams.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
+                                    </select>
+                                    <select value={stage} onChange={e => setStage(e.target.value)} className={styles.input}>
+                                        <option value="Girone A">Girone A</option>
+                                        <option value="Girone B">Girone B</option>
+                                        <option value="Girone C">Girone C</option>
+                                        <option value="Girone D">Girone D</option>
+                                        <option value="Ottavi">Ottavi</option>
+                                        <option value="Quarti">Quarti</option>
+                                        <option value="Semifinale">Semifinale</option>
+                                        <option value="Finale">Finale</option>
+                                    </select>
+                                </div>
+                                <button onClick={handleSchedule} disabled={isSaving} className="mt-4 w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded transition">
+                                    {isSaving ? 'Salvataggio...' : 'Programma Partita'}
+                                </button>
+                            </div>
+
+                            {/* LISTA PARTITE */}
+                            <div className="space-y-4">
+                                {scheduledMatches.map(m => (
+                                    <div key={m.id} className="bg-gray-800 p-4 rounded flex justify-between items-center border border-gray-700">
+                                        <div>
+                                            <div className="flex items-center space-x-2">
+                                                <span className="text-purple-400 font-bold block">{m.date} {m.time} - {m.stage}</span>
+                                                {m.status === 'LIVE' && <span className="bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded animate-pulse">LIVE</span>}
+                                                {m.status === 'FINISHED' && <span className="bg-gray-600 text-white text-xs font-bold px-2 py-0.5 rounded">FINITO</span>}
+                                            </div>
+                                            <span className="text-xl text-white font-semibold">{m.team1} <span className="text-yellow-400">{m.score1 || 0}</span> - <span className="text-yellow-400">{m.score2 || 0}</span> {m.team2}</span>
+                                        </div>
+                                        <div className="flex space-x-3">
+                                            <button onClick={() => openLiveManager(m)} className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-500 text-sm font-bold">Gestisci Live</button>
+                                            <button onClick={() => handleDelete(m.id)} className="text-red-500 hover:text-red-400 text-sm">Elimina</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        /* LIVE MANAGER PANEL */
+                        <div className="bg-gray-900 p-6 rounded-xl border-2 border-green-500 shadow-2xl animate-fade-in">
+                            <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+                                <h4 className="text-2xl font-bold text-white">Gestione Live: <span className="text-yellow-400">{managingMatch.team1} vs {managingMatch.team2}</span></h4>
+                                <button onClick={closeLiveManager} className="text-gray-400 hover:text-white">Chiudi X</button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {/* STATO & PUNTEGGIO */}
+                                <div>
+                                    <label className="block text-sm text-gray-400 mb-2">Stato Partita</label>
+                                    <div className="flex space-x-2 mb-6">
+                                        {['SCHEDULED', 'LIVE', 'FINISHED'].map(s => (
+                                            <button key={s}
+                                                onClick={() => setLiveStatus(s)}
+                                                className={`px-4 py-2 rounded font-bold ${liveStatus === s
+                                                    ? (s === 'LIVE' ? 'bg-green-500 text-black' : (s === 'FINISHED' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'))
+                                                    : 'bg-gray-700 text-gray-400'
+                                                    }`}
+                                            >
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <label className="block text-sm text-gray-400 mb-2">Punteggio</label>
+                                    <div className="flex items-center space-x-6 mb-6">
+                                        <div className="text-center">
+                                            <p className="text-white mb-1 font-bold">{managingMatch.team1}</p>
+                                            <div className="flex items-center space-x-2">
+                                                <button onClick={() => setLiveScore1(Math.max(0, liveScore1 - 1))} className="w-8 h-8 bg-gray-700 rounded text-white">-</button>
+                                                <input type="number" value={liveScore1} onChange={e => setLiveScore1(e.target.value)} className="w-16 text-center bg-black border border-gray-600 rounded text-xl text-yellow-400 font-mono" />
+                                                <button onClick={() => setLiveScore1(parseInt(liveScore1) + 1)} className="w-8 h-8 bg-green-600 rounded text-white">+</button>
+                                            </div>
+                                        </div>
+                                        <span className="text-2xl font-bold text-gray-500">-</span>
+                                        <div className="text-center">
+                                            <p className="text-white mb-1 font-bold">{managingMatch.team2}</p>
+                                            <div className="flex items-center space-x-2">
+                                                <button onClick={() => setLiveScore2(Math.max(0, liveScore2 - 1))} className="w-8 h-8 bg-gray-700 rounded text-white">-</button>
+                                                <input type="number" value={liveScore2} onChange={e => setLiveScore2(e.target.value)} className="w-16 text-center bg-black border border-gray-600 rounded text-xl text-yellow-400 font-mono" />
+                                                <button onClick={() => setLiveScore2(parseInt(liveScore2) + 1)} className="w-8 h-8 bg-green-600 rounded text-white">+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* MARCATORI */}
+                                <div>
+                                    <label className="block text-sm text-gray-400 mb-2">Aggiungi Marcatore</label>
+                                    <div className="flex space-x-2 mb-2">
+                                        <select value={newScorer.team} onChange={e => setNewScorer({ ...newScorer, team: e.target.value })} className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 flex-1">
+                                            <option value="">Squadra...</option>
+                                            <option value={managingMatch.team1}>{managingMatch.team1}</option>
+                                            <option value={managingMatch.team2}>{managingMatch.team2}</option>
+                                        </select>
+                                        <input type="text" placeholder="Giocatore" value={newScorer.player} onChange={e => setNewScorer({ ...newScorer, player: e.target.value })} className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 w-1/3" />
+                                        <input type="number" placeholder="Min" value={newScorer.minute} onChange={e => setNewScorer({ ...newScorer, minute: e.target.value })} className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 w-20" />
+                                    </div>
+                                    <button onClick={addScorer} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-1 rounded mb-4">Aggiungi Gol</button>
+
+                                    <div className="bg-black/50 p-2 rounded max-h-48 overflow-y-auto">
+                                        {scorers.map((s, idx) => (
+                                            <div key={idx} className="flex justify-between items-center text-sm border-b border-gray-800 py-1">
+                                                <span><span className="text-yellow-400 font-bold">{s.minute}'</span> {s.player} ({s.team})</span>
+                                                <button onClick={() => removeScorer(idx)} className="text-red-500 hover:text-white px-2">x</button>
+                                            </div>
+                                        ))}
+                                        {scorers.length === 0 && <p className="text-gray-500 italic text-center text-xs">Nessun marcatore</p>}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 flex justify-end space-x-4">
+                                <button onClick={closeLiveManager} className="px-6 py-3 rounded text-gray-300 hover:text-white font-semibold">Annulla</button>
+                                <button onClick={saveLiveUpdate} className="px-8 py-3 rounded bg-green-600 hover:bg-green-500 text-black font-bold shadow-lg transform hover:scale-105 transition">SALVA AGGIORNAMENTI</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
         // LoginPanel (email/password only; no registration UI)
         const LoginPanel = ({ firebaseTools }) => {
             const [email, setEmail] = useState('');
@@ -233,9 +665,9 @@
                         <h3 className="text-2xl font-bold text-white mb-4">Accesso Pannello Admin</h3>
                         <form onSubmit={submit}>
                             <label className="block text-sm text-gray-300 mb-1">Email</label>
-                            <input className={styles.input} type="email" required value={email} onChange={(e)=>setEmail(e.target.value)} />
+                            <input className={styles.input} type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
                             <label className="block text-sm text-gray-300 mb-1 mt-3">Password</label>
-                            <input className={styles.input} type="password" required value={password} onChange={(e)=>setPassword(e.target.value)} />
+                            <input className={styles.input} type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                             <div className="flex justify-end mt-4">
                                 <button disabled={loading} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-500">{loading ? 'Caricamento...' : 'Accedi'}</button>
                             </div>
@@ -247,21 +679,32 @@
                 </div>
             );
         };
-
         // TeamManager (full)
         const TeamManager = ({ authReady, currentTeams, showMessage, firebaseTools }) => {
             const [teamName, setTeamName] = useState('');
-            const [players, setPlayers] = useState(['', '', '', '', '']);
+            const [logoUrl, setLogoUrl] = useState(''); // NEW: Logo URL
+            const [group, setGroup] = useState('A'); // NEW: Group
+
+            // Players ora è array di oggetti: { name, number, age, role }
+            const [players, setPlayers] = useState([
+                { name: '', number: '', age: '', role: 'Giocatore' },
+                { name: '', number: '', age: '', role: 'Giocatore' },
+                { name: '', number: '', age: '', role: 'Giocatore' },
+                { name: '', number: '', age: '', role: 'Giocatore' },
+                { name: '', number: '', age: '', role: 'Giocatore' }
+            ]);
             const [editTeam, setEditTeam] = useState(null);
             const [isSaving, setIsSaving] = useState(false);
             const isEditMode = !!editTeam;
 
-            const handlePlayerChange = (index, value) => {
+            const handlePlayerChange = (index, field, value) => {
                 const newPlayers = [...players];
-                newPlayers[index] = value;
+                newPlayers[index] = { ...newPlayers[index], [field]: value };
                 setPlayers(newPlayers);
             };
-            const addPlayer = () => setPlayers([...players, '']);
+
+            const addPlayer = () => setPlayers([...players, { name: '', number: '', age: '', role: 'Giocatore' }]);
+
             const removePlayer = (index) => {
                 if (players.length > 5) {
                     setPlayers(players.filter((_, i) => i !== index));
@@ -269,14 +712,32 @@
                     showMessage('Ogni squadra deve avere almeno 5 giocatori.', 'error', 'team');
                 }
             };
+
             const resetForm = () => {
                 setTeamName('');
-                setPlayers(['', '', '', '', '']);
+                setLogoUrl(''); // Reset logo
+                setGroup('A'); // Reset group
+                setPlayers(Array(5).fill({ name: '', number: '', age: '', role: 'Giocatore' }));
                 setEditTeam(null);
             };
+
             const startEdit = (team) => {
                 setTeamName(team.name);
-                const initialPlayers = (team.players && team.players.length < 5) ? [...team.players, ...Array(5 - team.players.length).fill('')] : (team.players || ['','','','','']);
+                setLogoUrl(team.logoUrl || ''); // Load logo
+                setGroup(team.group || 'A'); // Load group
+
+                // Migrazione dati vecchi (stringhe) -> oggetti
+                let initialPlayers = [];
+                if (team.players && team.players.length > 0) {
+                    initialPlayers = team.players.map(p => {
+                        if (typeof p === 'string') return { name: p, number: '', age: '', role: 'Giocatore' };
+                        return p;
+                    });
+                }
+                // Ensure at least 5
+                if (initialPlayers.length < 5) {
+                    initialPlayers = [...initialPlayers, ...Array(5 - initialPlayers.length).fill({ name: '', number: '', age: '', role: 'Giocatore' })];
+                }
                 setPlayers(initialPlayers);
                 setEditTeam(team);
                 document.getElementById('team-form-title')?.scrollIntoView({ behavior: 'smooth' });
@@ -289,10 +750,12 @@
                 }
                 setIsSaving(true);
                 const trimmedName = teamName.trim();
-                const validPlayers = players.map(p => p.trim()).filter(p => p);
+
+                // Validate
+                const validPlayers = players.filter(p => p.name.trim() !== '');
 
                 if (!trimmedName || validPlayers.length < 5) {
-                    showMessage('Nome e almeno 5 giocatori sono obbligatori.', 'error', 'team');
+                    showMessage('Nome squadra e almeno 5 nomi giocatori sono obbligatori.', 'error', 'team');
                     setIsSaving(false);
                     return;
                 }
@@ -300,7 +763,14 @@
                 try {
                     const teamData = {
                         name: trimmedName,
-                        players: validPlayers,
+                        logoUrl: logoUrl.trim(), // Save logo
+                        group: group, // Save group
+                        players: validPlayers.map(p => ({
+                            name: p.name.trim(),
+                            number: p.number.trim(),
+                            age: p.age.trim(),
+                            role: p.role.trim() || 'Giocatore'
+                        })),
                         lastUpdate: new Date().toISOString()
                     };
 
@@ -343,24 +813,72 @@
                         <h4 id="team-form-title" className="text-2xl font-semibold mb-4 text-white">
                             {isEditMode ? `Modifica Squadra: ${teamName}` : 'Aggiungi Nuova Squadra'}
                         </h4>
-                        <input type="text" id="team-name-input" className={styles.input} placeholder="Nome Squadra (es: FC Zenith)"
-                               value={teamName} onChange={(e)=>setTeamName(e.target.value)} disabled={isSaving || !authReady} />
-                        <div className="space-y-2 mb-4 mt-4">
+
+                        <div className="flex flex-col md:flex-row gap-4 mb-4">
+                            <div class="flex-grow">
+                                <label className="block text-sm text-gray-400 mb-1">Nome Squadra</label>
+                                <input type="text" id="team-name-input" className={styles.input} placeholder="Es: FC Zenith"
+                                    value={teamName} onChange={(e) => setTeamName(e.target.value)} disabled={isSaving || !authReady} />
+                            </div>
+                            <div className="md:w-1/4">
+                                <label className="block text-sm text-gray-400 mb-1">Girone</label>
+                                <select className={styles.input} value={group} onChange={(e) => setGroup(e.target.value)} disabled={isSaving || !authReady}>
+                                    <option value="A">Girone A</option>
+                                    <option value="B">Girone B</option>
+                                    <option value="C">Girone C</option>
+                                    <option value="D">Girone D</option>
+                                </select>
+                            </div>
+                            <div className="md:w-1/3">
+                                <label className="block text-sm text-gray-400 mb-1">URL Logo (Opzionale)</label>
+                                <input type="text" className={styles.input} placeholder="https://..."
+                                    value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} disabled={isSaving || !authReady} />
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 mb-4 mt-4">
                             <h5 className="text-lg font-medium text-gray-300">Giocatori (minimo 5)</h5>
                             {players.map((player, index) => (
-                                <div key={index} className="flex space-x-2 items-center">
-                                    <input type="text" className="player-input w-full bg-gray-700 text-white p-2 rounded-lg"
-                                           placeholder={`Nome Giocatore ${index + 1}`} value={player}
-                                           onChange={(e)=>handlePlayerChange(index, e.target.value)} disabled={isSaving || !authReady} />
-                                    <button onClick={()=>removePlayer(index)} className="text-red-400 hover:text-red-300 disabled:opacity-30"
-                                            disabled={players.length <= 5 || isSaving || !authReady} title="Rimuovi Giocatore">
-                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                <div key={index} className="flex flex-wrap md:flex-nowrap gap-2 items-end bg-gray-800 p-3 rounded-lg border border-gray-700">
+                                    <div className="flex-grow">
+                                        <label className="text-xs text-gray-400 block mb-1">Nome</label>
+                                        <input type="text" className="w-full bg-gray-700 text-white p-2 rounded focus:ring-1 focus:ring-yellow-500 outline-none"
+                                            placeholder="Nome" value={player.name}
+                                            onChange={(e) => handlePlayerChange(index, 'name', e.target.value)} disabled={isSaving || !authReady} />
+                                    </div>
+                                    <div className="w-24">
+                                        <label className="text-xs text-gray-400 block mb-1">Numero</label>
+                                        <input type="number" className="w-full bg-gray-700 text-white p-2 rounded focus:ring-1 focus:ring-yellow-500 outline-none"
+                                            placeholder="#" value={player.number}
+                                            onChange={(e) => handlePlayerChange(index, 'number', e.target.value)} disabled={isSaving || !authReady} />
+                                    </div>
+                                    <div className="w-24">
+                                        <label className="text-xs text-gray-400 block mb-1">Età</label>
+                                        <input type="number" className="w-full bg-gray-700 text-white p-2 rounded focus:ring-1 focus:ring-yellow-500 outline-none"
+                                            placeholder="Età" value={player.age}
+                                            onChange={(e) => handlePlayerChange(index, 'age', e.target.value)} disabled={isSaving || !authReady} />
+                                    </div>
+                                    <div className="w-1/3 min-w-[120px]">
+                                        <label className="text-xs text-gray-400 block mb-1">Ruolo</label>
+                                        <select className="w-full bg-gray-700 text-white p-2 rounded focus:ring-1 focus:ring-yellow-500 outline-none"
+                                            value={player.role} onChange={(e) => handlePlayerChange(index, 'role', e.target.value)} disabled={isSaving || !authReady}>
+                                            <option value="Portiere">Portiere</option>
+                                            <option value="Difensore">Difensore</option>
+                                            <option value="Centrocampista">Centrocampista</option>
+                                            <option value="Attaccante">Attaccante</option>
+                                            <option value="Jolly">Jolly</option>
+                                            <option value="Giocatore">Giocatore</option>
+                                        </select>
+                                    </div>
+                                    <button onClick={() => removePlayer(index)} className="bg-red-900/50 hover:bg-red-900 text-red-200 p-2 rounded transition md:self-end self-center mb-[1px]"
+                                        disabled={players.length <= 5 || isSaving || !authReady} title="Rimuovi">
+                                        ✕
                                     </button>
                                 </div>
                             ))}
                         </div>
 
-                        <button onClick={addPlayer} className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-500 transition duration-300 mt-2 disabled:opacity-50" disabled={isSaving || !authReady}>Aggiungi Giocatore</button>
+                        <button onClick={addPlayer} className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-500 transition duration-300 mt-2 disabled:opacity-50" disabled={isSaving || !authReady}>+ Aggiungi Giocatore</button>
 
                         <div className="flex space-x-4 mt-6">
                             <button onClick={handleSaveTeam} className={`w-full font-bold py-3 rounded-lg shadow-md transition duration-300 disabled:opacity-50 ${isEditMode ? 'bg-orange-600 hover:bg-orange-500' : 'bg-green-600 hover:bg-green-500'}`} disabled={isSaving || !authReady}>
@@ -386,10 +904,10 @@
                                         <p className="text-sm text-gray-400">{(team.players || []).length} Giocatori</p>
                                     </div>
                                     <div className="flex space-x-2">
-                                        <button onClick={()=>startEdit(team)} className="text-indigo-400 hover:text-indigo-300 p-2 rounded-full hover:bg-gray-800 transition disabled:opacity-50" title="Modifica" disabled={!authReady}>
+                                        <button onClick={() => startEdit(team)} className="text-indigo-400 hover:text-indigo-300 p-2 rounded-full hover:bg-gray-800 transition disabled:opacity-50" title="Modifica" disabled={!authReady}>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7-7l4 4m-4-4l-4 4m8-4l-4 4m0 0l-4 4m4-4l-4 4M15 5l2 2m-2-2l-2 2"></path></svg>
                                         </button>
-                                        <button onClick={()=>showMessage('Elimina squadra', `Sei sicuro di voler eliminare definitivamente la squadra ${team.name}? Verranno eliminati anche tutti i risultati associati.`, 'confirm', () => handleDeleteTeam(team.id, team.name))} className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-800 transition disabled:opacity-50" title="Elimina" disabled={!authReady}>
+                                        <button onClick={() => showMessage('Elimina squadra', `Sei sicuro di voler eliminare definitivamente la squadra ${team.name}? Verranno eliminati anche tutti i risultati associati.`, 'confirm', () => handleDeleteTeam(team.id, team.name))} className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-800 transition disabled:opacity-50" title="Elimina" disabled={!authReady}>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
@@ -400,7 +918,6 @@
                 </div>
             );
         };
-
         // ResultsManager (full)
         const ResultsManager = ({ authReady, currentTeams, currentResults, showMessage, firebaseTools }) => {
             const [team1Name, setTeam1Name] = useState('');
@@ -409,33 +926,45 @@
             const [score2, setScore2] = useState(0);
             const [isAdding, setIsAdding] = useState(false);
 
+            // STATE STATISTICHE
+            const [matchEvents, setMatchEvents] = useState([]); // [{ type: 'goal'|'assist'|'cleanSheet'|'yellow'|'red', player: string, team: string, id: number }]
+
+            const addEvent = (type, player, team) => {
+                setMatchEvents(prev => [...prev, { type, player, team, id: Date.now() + Math.random() }]);
+            };
+
+            const removeEvent = (id) => {
+                setMatchEvents(prev => prev.filter(e => e.id !== id));
+            };
+
             useEffect(() => {
-                const availableNames = (currentTeams || []).map(t => t.name);
-                if (availableNames.length > 0) {
-                    if (!team1Name || !availableNames.includes(team1Name)) setTeam1Name(availableNames[0] || '');
-                    if (availableNames.length > 1) {
-                        const other = availableNames.find(n => n !== (availableNames[0] || ''));
-                        if (!team2Name || !availableNames.includes(team2Name) || team2Name === team1Name) setTeam2Name(other || '');
-                    } else {
-                        setTeam2Name('');
-                    }
-                } else {
-                    setTeam1Name(''); setTeam2Name('');
+                if (!team1Name || !currentTeams?.length) return;
+
+                // se team2 è uguale a team1 o non esiste più, lo resettiamo
+                if (team2Name === team1Name || !currentTeams.some(t => t.name === team2Name)) {
+                    const alternative = currentTeams.find(t => t.name !== team1Name);
+                    setTeam2Name(alternative ? alternative.name : '');
                 }
-            }, [currentTeams]);
+            }, [team1Name, currentTeams]);
 
             const handleAddResult = async () => {
-                if (!authReady) { showMessage('Autenticazione richiesta','Attendi l\'accesso','error'); return; }
-                if (!team1Name || !team2Name || team1Name === team2Name) { showMessage('Seleziona due squadre diverse.','error','result'); return; }
+                if (!authReady) { showMessage('Autenticazione richiesta', 'Attendi l\'accesso', 'error'); return; }
+                if (!team1Name || !team2Name || team1Name === team2Name) { showMessage('Seleziona due squadre diverse.', 'error', 'result'); return; }
+
                 setIsAdding(true);
                 const s1 = parseInt(score1);
                 const s2 = parseInt(score2);
-                if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) { showMessage('I punteggi devono essere numeri non negativi.','error','result'); setIsAdding(false); return; }
+                if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) { showMessage('I punteggi devono essere numeri non negativi.', 'error', 'result'); setIsAdding(false); return; }
+
                 try {
                     const resultData = { team1: team1Name, team2: team2Name, score1: s1, score2: s2, timestamp: new Date().toISOString() };
-                    await firebaseTools.addResult(resultData);
-                    showMessage(`Risultato ${team1Name} ${s1} - ${s2} ${team2Name} aggiunto.`, 'success', 'result');
+
+                    // USIAMO LA NUOVA FUNZIONE CON STATS
+                    await firebaseTools.addResultWithStats(resultData, matchEvents);
+
+                    showMessage(`Risultato ${team1Name} ${s1} - ${s2} ${team2Name} aggiunto con stats!`, 'success', 'result');
                     setScore1(0); setScore2(0);
+                    setMatchEvents([]);
                 } catch (error) {
                     console.error("Errore nell'aggiunta del risultato:", error);
                     showMessage("Errore nell'aggiunta del risultato: " + (error.message || String(error)), 'error', 'result');
@@ -447,8 +976,9 @@
             const handleDeleteResult = async (resultId) => {
                 if (!authReady) return;
                 try {
-                    await firebaseTools.deleteResult(resultId);
-                    showMessage('Risultato eliminato.', 'success', 'result');
+                    // USIAMO LA NUOVA FUNZIONE PER IL ROLLBACK
+                    await firebaseTools.deleteResultWithStats(resultId);
+                    showMessage('Risultato e statistiche eliminati.', 'success', 'result');
                 } catch (error) {
                     console.error("Errore nell'eliminazione del risultato:", error);
                     showMessage("Errore nell'eliminazione del risultato: " + (error.message || String(error)), 'error', 'result');
@@ -471,7 +1001,7 @@
             const sortedResults = (currentResults || []).slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             const standings = useMemo(() => {
-                const map = (currentTeams || []).reduce((acc, team) => ({ ...acc, [team.name]: { name: team.name, played:0, wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0, points:0 } }), {});
+                const map = (currentTeams || []).reduce((acc, team) => ({ ...acc, [team.name]: { name: team.name, played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, points: 0 } }), {});
                 (currentResults || []).forEach(result => {
                     const { team1, team2, score1, score2 } = result;
                     if (map[team1] && map[team2]) {
@@ -487,7 +1017,7 @@
                     }
                 });
 
-                return Object.values(map).filter(team => (currentTeams || []).some(t => t.name === team.name)).sort((a,b) => {
+                return Object.values(map).filter(team => (currentTeams || []).some(t => t.name === team.name)).sort((a, b) => {
                     if (b.points !== a.points) return b.points - a.points;
                     const diffA = a.goalsFor - a.goalsAgainst;
                     const diffB = b.goalsFor - b.goalsAgainst;
@@ -495,6 +1025,35 @@
                     return b.goalsFor - a.goalsFor;
                 });
             }, [currentTeams, currentResults]);
+
+            const team1Obj = currentTeams.find(t => t.name === team1Name);
+            const team2Obj = currentTeams.find(t => t.name === team2Name);
+
+            // Componente selezione giocatore per stats
+            const PlayerStatSelector = ({ team, teamName }) => {
+                const players = team?.players || [];
+                if (players.length === 0) return <p className="text-gray-500 text-sm">Nessun giocatore.</p>;
+                return (
+                    <div className="bg-gray-800 p-3 rounded-lg mb-2 border border-gray-700">
+                        <h5 className="font-bold text-gray-300 mb-2 border-b border-gray-700 pb-1">{teamName}</h5>
+                        {players.map((p, i) => {
+                            const pName = typeof p === 'object' ? p.name : p;
+                            return (
+                                <div key={i} className="flex justify-between items-center py-1 border-b border-gray-700 last:border-0 hover:bg-gray-750">
+                                    <span className="text-sm truncate w-24 mr-2 text-gray-200" title={pName}>{pName}</span>
+                                    <div className="flex space-x-1">
+                                        <button onClick={() => addEvent('goal', pName, teamName)} className="text-xs bg-yellow-600 hover:bg-yellow-500 text-white px-2 py-1 rounded" title="Gol">⚽</button>
+                                        <button onClick={() => addEvent('assist', pName, teamName)} className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded" title="Assist">🎯</button>
+                                        <button onClick={() => addEvent('cleanSheet', pName, teamName)} className="text-xs bg-green-600 hover:bg-green-500 text-white px-2 py-1 rounded" title="Clean Sheet">🧤</button>
+                                        <button onClick={() => addEvent('yellow', pName, teamName)} className="text-xs bg-yellow-400 hover:bg-yellow-300 text-black px-2 py-1 rounded" title="Giallo">🟨</button>
+                                        <button onClick={() => addEvent('red', pName, teamName)} className="text-xs bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded" title="Rosso">🟥</button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            };
 
             return (
                 <div id="results" className="admin-section border-l-8 border-blue-400">
@@ -526,7 +1085,7 @@
                                     ) : (
                                         standings.map((team, index) => (
                                             <tr key={team.name} className="hover:bg-gray-800">
-                                                <td className="p-2 font-bold text-yellow-400">{index+1}</td>
+                                                <td className="p-2 font-bold text-yellow-400">{index + 1}</td>
                                                 <td className="p-2 font-medium text-white">{team.name}</td>
                                                 <td className="p-2 text-center">{team.played}</td>
                                                 <td className="p-2 text-center">{team.wins}</td>
@@ -549,28 +1108,61 @@
                         {!authReady && <p className="text-red-400 text-sm mb-4">Attendere l'autenticazione per inserire risultati.</p>}
 
                         {(currentTeams || []).length < 2 ? (
-                             <p className="text-red-400">Servono almeno 2 squadre per inserire un risultato.</p>
+                            <p className="text-red-400">Servono almeno 2 squadre per inserire un risultato.</p>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
-                                <select id="team1-result" className={styles.input + ' col-span-2 p-3'} value={team1Name} onChange={(e)=>setTeam1Name(e.target.value)} disabled={!authReady}>
+                                <select id="team1-result" className={styles.input + ' col-span-2 p-3'} value={team1Name} onChange={(e) => setTeam1Name(e.target.value)} disabled={!authReady}>
                                     {teamOptions}
                                 </select>
                                 <div className="flex space-x-2 justify-center col-span-1">
-                                    <input type="number" id="score1" className="bg-gray-700 text-white p-3 rounded-lg w-16 text-center focus:ring-blue-500 focus:border-blue-500" min="0" value={score1} onChange={(e)=>setScore1(Math.max(0, parseInt(e.target.value) || 0))} disabled={!authReady} />
+                                    <input type="number" id="score1" className="bg-gray-700 text-white p-3 rounded-lg w-16 text-center focus:ring-blue-500 focus:border-blue-500" min="0" value={score1} onChange={(e) => setScore1(Math.max(0, parseInt(e.target.value) || 0))} disabled={!authReady} />
                                     <span className="text-2xl font-bold text-gray-300">-</span>
-                                    <input type="number" id="score2" className="bg-gray-700 text-white p-3 rounded-lg w-16 text-center focus:ring-blue-500 focus:border-blue-500" min="0" value={score2} onChange={(e)=>setScore2(Math.max(0, parseInt(e.target.value) || 0))} disabled={!authReady} />
+                                    <input type="number" id="score2" className="bg-gray-700 text-white p-3 rounded-lg w-16 text-center focus:ring-blue-500 focus:border-blue-500" min="0" value={score2} onChange={(e) => setScore2(Math.max(0, parseInt(e.target.value) || 0))} disabled={!authReady} />
                                 </div>
-                                <select id="team2-result" className={styles.input + ' col-span-2 p-3'} value={team2Name} onChange={(e)=>setTeam2Name(e.target.value)} disabled={!authReady}>
+                                <select id="team2-result" className={styles.input + ' col-span-2 p-3'} value={team2Name} onChange={(e) => setTeam2Name(e.target.value)} disabled={!authReady}>
                                     {sortedTeams.filter(team => team.name !== team1Name).map(team => (<option key={team.id} value={team.name}>{team.name}</option>))}
                                 </select>
                             </div>
                         )}
 
+                        {/* SEZIONE STATISTICHE */}
+                        {team1Name && team2Name && team1Name !== team2Name && (
+                            <div className="bg-gray-950 p-4 rounded-lg border border-gray-700 mb-6 mt-6">
+                                <h5 className="text-lg font-bold text-white mb-2">Dettagli Partita (Marcatori, Assist, Cartellini)</h5>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <PlayerStatSelector team={team1Obj} teamName={team1Name} />
+                                    <PlayerStatSelector team={team2Obj} teamName={team2Name} />
+                                </div>
+
+                                {/* Riepilogo Eventi */}
+                                <div className="mt-4">
+                                    <h6 className="text-sm font-semibold text-gray-400 mb-2">Riepilogo Eventi inseriti ({matchEvents.length}):</h6>
+                                    <div className="flex flex-wrap gap-2">
+                                        {matchEvents.length === 0 && <span className="text-xs text-gray-600">Nessun evento aggiunto.</span>}
+                                        {matchEvents.map(e => (
+                                            <span key={e.id} className="inline-flex items-center px-2 py-1 rounded bg-gray-800 border border-gray-600 text-xs">
+                                                <span className="mr-1">
+                                                    {e.type === 'goal' && '⚽'}
+                                                    {e.type === 'assist' && '🎯'}
+                                                    {e.type === 'cleanSheet' && '🧤'}
+                                                    {e.type === 'yellow' && '🟨'}
+                                                    {e.type === 'red' && '🟥'}
+                                                </span>
+                                                <span className="font-semibold mr-1">{e.player}</span>
+                                                <span className="text-gray-400">({e.team})</span>
+                                                <button onClick={() => removeEvent(e.id)} className="ml-2 text-red-500 hover:text-red-400 font-bold">×</button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="flex flex-col sm:flex-row justify-center mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
-                            <button id="add-result-button" onClick={handleAddResult} className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-500 transition duration-300 disabled:opacity-50" disabled={isAdding || !authReady || (currentTeams||[]).length < 2 || team1Name === team2Name || !team1Name || !team2Name}>
+                            <button id="add-result-button" onClick={handleAddResult} className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-500 transition duration-300 disabled:opacity-50" disabled={isAdding || !authReady || (currentTeams || []).length < 2 || team1Name === team2Name || !team1Name || !team2Name}>
                                 {isAdding ? 'Aggiunta...' : 'Aggiungi Risultato'}
                             </button>
-                            <button id="reset-button" onClick={()=>showCustomModal('Reset Classifica','Sei sicuro di voler eliminare TUTTI i risultati e resettare la classifica? Questa azione è irreversibile.','info')} className="bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-red-500 transition duration-300 disabled:opacity-50" disabled={!authReady}>
+                            <button id="reset-button" onClick={() => showMessage('Reset Classifica', 'Sei sicuro di voler eliminare TUTTI i risultati e resettare la classifica? Questa azione è irreversibile.', 'confirm', handleResetAll)} className="bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-red-500 transition duration-300 disabled:opacity-50" disabled={!authReady}>
                                 Reset Classifica
                             </button>
                         </div>
@@ -592,11 +1184,19 @@
                                 ) : (
                                     sortedResults.map(result => (
                                         <tr key={result.id} className="hover:bg-gray-800 transition">
-                                            <td className="p-3 text-gray-300 font-medium">{result.team1} vs {result.team2}</td>
+                                            <td className="p-3 text-gray-300 font-medium">
+                                                {result.team1} vs {result.team2}
+                                                {result.stats && result.stats.length > 0 && (
+                                                    <div className="text-xs text-gray-500 mt-1">
+                                                        {result.stats.filter(s => s.type === 'goal').length} Goal, {result.stats.filter(s => s.type === 'assist').length} Assist...
+                                                    </div>
+                                                )}
+                                            </td>
                                             <td className="p-3 text-center font-bold text-yellow-400">{result.score1} - {result.score2}</td>
                                             <td className="p-3 text-center">
-                                                <button onClick={()=>showCustomModal('Elimina Risultato', `Sei sicuro di voler eliminare il risultato ${result.team1} ${result.score1} - ${result.score2} ${result.team2}?`, 'confirm')} className="text-red-400 hover:text-red-300 p-1 rounded-full hover:bg-gray-700 transition disabled:opacity-50" title="Elimina Risultato" disabled={!authReady}>
+                                                <button onClick={() => showMessage('Elimina Risultato', `Sei sicuro di voler eliminare il risultato ${result.team1} ${result.score1} - ${result.score2} ${result.team2}?`, 'confirm', () => handleDeleteResult(result.id))}>
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+
                                                 </button>
                                             </td>
                                         </tr>
@@ -609,98 +1209,217 @@
             );
         };
 
+        // PollManager
+        const PollManager = ({ authReady, showMessage, firebaseTools }) => {
+            const [question, setQuestion] = useState('');
+            const [options, setOptions] = useState(['', '']); // Dynamic Options
+            const [polls, setPolls] = useState([]);
+            const [isAdding, setIsAdding] = useState(false);
+
+            useEffect(() => {
+                const unsubscribe = firebaseTools.onPollsSnapshot(setPolls);
+                return () => unsubscribe();
+            }, []);
+
+            const updateOption = (idx, val) => {
+                const newOpts = [...options];
+                newOpts[idx] = val;
+                setOptions(newOpts);
+            };
+
+            const addOptionField = () => setOptions([...options, '']);
+            const removeOptionField = (idx) => {
+                if (options.length <= 2) return;
+                setOptions(options.filter((_, i) => i !== idx));
+            };
+
+            const handleAddPoll = async () => {
+                if (!authReady) return showMessage('Autenticazione richiesta', 'error');
+                const validOptions = options.map(o => o.trim()).filter(o => o !== '');
+
+                if (!question.trim() || validOptions.length < 2) return showMessage('Domanda e almeno 2 opzioni valide richieste', 'error');
+
+                setIsAdding(true);
+                try {
+                    const pollData = {
+                        question: question.trim(),
+                        options: validOptions,
+                        votes: {},
+                        isActive: true,
+                        timestamp: new Date().getTime()
+                    };
+                    // Initialize 0 votes for each option to ensure field exists
+                    validOptions.forEach(op => pollData.votes[op] = 0);
+
+                    await firebaseTools.addPoll(pollData);
+                    showMessage('Sondaggio creato!', 'success');
+                    setQuestion('');
+                    setOptions(['', '']);
+                } catch (e) {
+                    showMessage('Errore creazione sondaggio', 'error');
+                    console.error(e);
+                }
+                setIsAdding(false);
+            };
+
+            const toggleStatus = async (poll) => {
+                try {
+                    await firebaseTools.updatePoll(poll.id, { isActive: !poll.isActive });
+                    showMessage(`Sondaggio ${!poll.isActive ? 'attivato' : 'chiuso'}`, 'success');
+                } catch (e) { showMessage('Errore aggiornamento', 'error'); }
+            };
+
+            const handleDelete = async (id) => {
+                if (!confirm('Eliminare sondaggio?')) return;
+                try { await firebaseTools.deletePoll(id); showMessage('Eliminato', 'success'); }
+                catch (e) { showMessage('Errore', 'error'); }
+            };
+
+            return (
+                <div className="admin-section border-l-8 border-pink-500 mt-10">
+                    <h3 className="text-4xl font-bold text-pink-400 mb-6">Gestione Sondaggi</h3>
+
+                    <div className="mb-8 p-6 bg-gray-900 rounded-lg border border-pink-500/50">
+                        <h4 className="text-xl font-semibold mb-4 text-white">Nuovo Sondaggio</h4>
+                        <div className="space-y-3">
+                            <input type="text" value={question} onChange={e => setQuestion(e.target.value)} placeholder="Domanda (es: Chi vince?)" className={styles.input} />
+
+                            <div className="space-y-2">
+                                {options.map((opt, idx) => (
+                                    <div key={idx} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={opt}
+                                            onChange={e => updateOption(idx, e.target.value)}
+                                            placeholder={`Opzione ${idx + 1}`}
+                                            className={styles.input}
+                                        />
+                                        {options.length > 2 && (
+                                            <button onClick={() => removeOptionField(idx)} className="bg-red-600 hover:bg-red-500 text-white px-3 rounded font-bold">X</button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button onClick={addOptionField} className="text-sm text-pink-400 hover:text-white underline">+ Aggiungi Opzione</button>
+
+                            <button onClick={handleAddPoll} disabled={isAdding} className="w-full bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 rounded transition mt-4">
+                                {isAdding ? 'Creazione...' : 'Crea Sondaggio'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        {polls.map(poll => (
+                            <div key={poll.id} className="bg-gray-800 p-4 rounded flex justify-between items-center">
+                                <div>
+                                    <p className="text-white font-bold text-lg">{poll.question}</p>
+                                    <p className="text-gray-400 text-sm">Status: <span className={poll.isActive ? 'text-green-400' : 'text-red-400'}>{poll.isActive ? 'ATTIVO' : 'CHIUSO'}</span></p>
+                                    <p className="text-gray-500 text-xs mt-1">Voti: {Object.entries(poll.votes || {}).map(([k, v]) => `${k}: ${v}`).join(', ')}</p>
+                                </div>
+                                <div className="flex space-x-2">
+                                    <button onClick={() => toggleStatus(poll)} className="bg-blue-600 px-3 py-1 rounded text-white text-sm">{poll.isActive ? 'Chiudi' : 'Apri'}</button>
+                                    <button onClick={() => handleDelete(poll.id)} className="bg-red-600 px-3 py-1 rounded text-white text-sm">Elimina</button>
+                                </div>
+                            </div>
+                        ))}
+                        {polls.length === 0 && <p className="text-gray-500">Nessun sondaggio.</p>}
+                    </div>
+                </div>
+            );
+        };
         // NEWSMANAGER
         const NewsManager = ({ authReady, currentNews, showMessage, firebaseTools }) => {
             const [title, setTitle] = useState('');
             const [content, setContent] = useState('');
             const [isAdding, setIsAdding] = useState(false);
 
-            const handleAddNews = async () => {
-                if (!authReady) { showMessage('Autenticazione richiesta','Attendi l\'accesso','error'); return; }
-                if (!title.trim() || !content.trim()) { showMessage('Titolo e contenuto sono obbligatori.','error','news'); return; }
+            const handleAddNews = async () => {
+                if (!authReady) { showMessage('Autenticazione richiesta', 'Attendi l\'accesso', 'error'); return; }
+                if (!title.trim() || !content.trim()) { showMessage('Titolo e contenuto sono obbligatori.', 'error', 'news'); return; }
 
-                setIsAdding(true);
-                try {
-                    const newsData = { 
-                        title: title.trim(), 
-                        content: content.trim(), 
-                        timestamp: firebaseTools.serverTimestamp() // Usa il timestamp del server per maggiore precisione
-                    };
-                    await firebaseTools.addNews(newsData);
-                    showMessage(`Notizia "${title}" aggiunta con successo!`, 'success', 'news');
-                    setTitle(''); 
-                    setContent('');
-                } catch (error) {
-                    console.error("Errore nell'aggiunta della notizia:", error);
-                    showMessage("Errore nell'aggiunta della notizia: " + (error.message || String(error)), 'error', 'news');
-                } finally {
-                    setIsAdding(false);
-                }
-            };
+                setIsAdding(true);
+                try {
+                    const newsData = {
+                        title: title.trim(),
+                        content: content.trim(),
+                        timestamp: firebaseTools.serverTimestamp() // Usa il timestamp del server per maggiore precisione
+                    };
+                    await firebaseTools.addNews(newsData);
+                    showMessage(`Notizia "${title}" aggiunta con successo!`, 'success', 'news');
+                    setTitle('');
+                    setContent('');
+                } catch (error) {
+                    console.error("Errore nell'aggiunta della notizia:", error);
+                    showMessage("Errore nell'aggiunta della notizia: " + (error.message || String(error)), 'error', 'news');
+                } finally {
+                    setIsAdding(false);
+                }
+            };
 
-            const handleDeleteNews = async (newsId, newsTitle) => {
-                if (!authReady) return;
-                try {
-                    await firebaseTools.deleteNews(newsId);
-                    showMessage(`Notizia "${newsTitle}" eliminata.`, 'success', 'news');
-                } catch (error) {
-                    console.error("Errore nell'eliminazione della notizia:", error);
-                    showMessage("Errore nell'eliminazione della notizia: " + (error.message || String(error)), 'error', 'news');
-                }
-            };
+            const handleDeleteNews = async (newsId, newsTitle) => {
+                if (!authReady) return;
+                try {
+                    await firebaseTools.deleteNews(newsId);
+                    showMessage(`Notizia "${newsTitle}" eliminata.`, 'success', 'news');
+                } catch (error) {
+                    console.error("Errore nell'eliminazione della notizia:", error);
+                    showMessage("Errore nell'eliminazione della notizia: " + (error.message || String(error)), 'error', 'news');
+                }
+            };
 
-            const sortedNews = (currentNews || []).slice().sort((a, b) => b.timestamp - a.timestamp);
+            const sortedNews = (currentNews || []).slice().sort((a, b) => b.timestamp - a.timestamp);
 
-            return (
-                <div id="news" className="admin-section border-l-8 border-purple-400 mt-10">
-                    <h3 className="text-4xl font-bold text-purple-400 mb-6">Gestione News</h3>
+            return (
+                <div id="news" className="admin-section border-l-8 border-purple-400 mt-10">
+                    <h3 className="text-4xl font-bold text-purple-400 mb-6">Gestione News</h3>
 
-                    {/* Form Aggiungi News */}
-                    <div className="p-6 bg-gray-900 rounded-lg border border-purple-500/50 mb-8">
-                        <h4 className="text-2xl font-semibold text-white mb-4">Aggiungi Nuova Notizia</h4>
-                        {!authReady && <p className="text-red-400 text-sm mb-4">Attendere l'autenticazione per aggiungere notizie.</p>}
-                        
-                        <div className="space-y-4">
-                            <div>
-                                <label htmlFor="news-title" className="block text-sm font-medium text-gray-300">Titolo</label>
-                                <input type="text" id="news-title" className={styles.input + ' mt-1 block w-full'} placeholder="Titolo della notizia" value={title} onChange={(e) => setTitle(e.target.value)} disabled={!authReady} />
-                            </div>
-                            <div>
-                                <label htmlFor="news-content" className="block text-sm font-medium text-gray-300">Contenuto (Breve)</label>
-                                <textarea id="news-content" rows="4" className={styles.input + ' mt-1 block w-full'} placeholder="Inserisci il contenuto o il riassunto della notizia..." value={content} onChange={(e) => setContent(e.target.value)} disabled={!authReady}></textarea>
-                            </div>
-                            <button onClick={handleAddNews} className="w-full bg-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-purple-500 transition duration-300 disabled:opacity-50" disabled={isAdding || !authReady || !title.trim() || !content.trim()}>
-                                {isAdding ? 'Aggiunta...' : 'Pubblica Notizia'}
-                            </button>
-                        </div>
-                    </div>
+                    {/* Form Aggiungi News */}
+                    <div className="p-6 bg-gray-900 rounded-lg border border-purple-500/50 mb-8">
+                        <h4 className="text-2xl font-semibold text-white mb-4">Aggiungi Nuova Notizia</h4>
+                        {!authReady && <p className="text-red-400 text-sm mb-4">Attendere l'autenticazione per aggiungere notizie.</p>}
 
-                    {/* Storico News */}
-                    <h4 className="text-2xl font-semibold mb-4 text-white">Notizie Pubblicate ({sortedNews.length})</h4>
-                    <div className="space-y-3">
-                        {sortedNews.length === 0 ? (
-                            <p className="text-gray-500 p-4 bg-gray-800 rounded-lg">Nessuna notizia pubblicata.</p>
-                        ) : (
-                            sortedNews.map(news => (
-                                <div key={news.id} className="p-4 bg-gray-800 rounded-lg flex justify-between items-center hover:bg-gray-700 transition">
-                                    <div>
-                                        <p className="text-lg font-semibold text-purple-300">{news.title}</p>
-                                        <p className="text-sm text-gray-400 truncate max-w-lg">{news.content}</p>
-                                    </div>
-                                    <button 
-                                        onClick={()=>showCustomModal('Elimina Notizia', `Sei sicuro di voler eliminare la notizia: "${news.title}"?`, 'confirm', ()=>handleDeleteNews(news.id, news.title))} 
-                                        className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-700 transition disabled:opacity-50" 
-                                        title="Elimina Notizia" 
-                                        disabled={!authReady}
-                                    >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="news-title" className="block text-sm font-medium text-gray-300">Titolo</label>
+                                <input type="text" id="news-title" className={styles.input + ' mt-1 block w-full'} placeholder="Titolo della notizia" value={title} onChange={(e) => setTitle(e.target.value)} disabled={!authReady} />
+                            </div>
+                            <div>
+                                <label htmlFor="news-content" className="block text-sm font-medium text-gray-300">Contenuto (Breve)</label>
+                                <textarea id="news-content" rows="4" className={styles.input + ' mt-1 block w-full'} placeholder="Inserisci il contenuto o il riassunto della notizia..." value={content} onChange={(e) => setContent(e.target.value)} disabled={!authReady}></textarea>
+                            </div>
+                            <button onClick={handleAddNews} className="w-full bg-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-purple-500 transition duration-300 disabled:opacity-50" disabled={isAdding || !authReady || !title.trim() || !content.trim()}>
+                                {isAdding ? 'Aggiunta...' : 'Pubblica Notizia'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Storico News */}
+                    <h4 className="text-2xl font-semibold mb-4 text-white">Notizie Pubblicate ({sortedNews.length})</h4>
+                    <div className="space-y-3">
+                        {sortedNews.length === 0 ? (
+                            <p className="text-gray-500 p-4 bg-gray-800 rounded-lg">Nessuna notizia pubblicata.</p>
+                        ) : (
+                            sortedNews.map(news => (
+                                <div key={news.id} className="p-4 bg-gray-800 rounded-lg flex justify-between items-center hover:bg-gray-700 transition">
+                                    <div>
+                                        <p className="text-lg font-semibold text-purple-300">{news.title}</p>
+                                        <p className="text-sm text-gray-400 truncate max-w-lg">{news.content}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => showMessage('Elimina Notizia', `Sei sicuro di voler eliminare la notizia: "${news.title}"?`, 'confirm', () => handleDeleteNews(news.id, news.title))}
+                                        className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-700 transition disabled:opacity-50"
+                                        title="Elimina Notizia"
+                                        disabled={!authReady}
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
-                                 </div>
-                             ))
+                                </div>
+                            ))
                         )}
                     </div>
-                 </div>
-             );
+                </div>
+            );
         };
 
         // MAIN APP
@@ -713,21 +1432,21 @@
             const [currentResults, setCurrentResults] = useState([]);
             const [currentNews, setCurrentNews] = useState([]);
 
-            const [systemMessage, setSystemMessage] = useState({ isVisible:false, title:'', message:'', type:'info' });
-            const [modal, setModal] = useState({ isVisible:false, title:'', message:'', onConfirm:()=>{} });
+            const [systemMessage, setSystemMessage] = useState({ isVisible: false, title: '', message: '', type: 'info' });
+            const [modal, setModal] = useState({ isVisible: false, title: '', message: '', onConfirm: () => { } });
 
-            const showMessage = useCallback((title, message, type='info', onConfirm=null) => {
+            const showMessage = useCallback((title, message, type = 'info', onConfirm = null) => {
                 if (type === 'confirm' && onConfirm) {
-                    setModal({ isVisible:true, title, message, onConfirm: () => { onConfirm(); setModal({ isVisible:false, title:'', message:'', onConfirm:()=>{} }); } });
+                    setModal({ isVisible: true, title, message, onConfirm: () => { onConfirm(); setModal({ isVisible: false, title: '', message: '', onConfirm: () => { } }); } });
                 } else {
-                    setSystemMessage({ isVisible:true, title, message, type });
-                    setTimeout(()=>setSystemMessage(prev=>({...prev,isVisible:false})), 5000);
+                    setSystemMessage({ isVisible: true, title, message, type });
+                    setTimeout(() => setSystemMessage(prev => ({ ...prev, isVisible: false })), 5000);
                 }
             }, []);
 
             const [firebaseTools, setFirebaseTools] = useState(null);
 
-            useEffect(()=> {
+            useEffect(() => {
                 if (window.firebaseTools) {
                     setFirebaseTools(window.firebaseTools);
                     setIsFirebaseInitialized(true);
@@ -741,14 +1460,14 @@
                 }
             }, []);
 
-            useEffect(()=> {
-              if (!authReady || !firebaseTools) return;
-                if (!user) { setCurrentTeams([]); setCurrentResults([]); setCurrentNews([]); setLoadingData(false); return; } 
+            useEffect(() => {
+                if (!authReady || !firebaseTools) return;
+                if (!user) { setCurrentTeams([]); setCurrentResults([]); setCurrentNews([]); setLoadingData(false); return; }
 
                 setLoadingData(true);
                 const teamsRef = firebaseTools.getTeamsCollectionRef();
                 const resultsRef = firebaseTools.getResultsCollectionRef();
-                const newsRef = firebaseTools.getNewsCollectionRef(); 
+                const newsRef = firebaseTools.getNewsCollectionRef();
 
                 const unsubscribeTeams = firebaseTools.onSnapshot(teamsRef, (snapshot) => {
                     const teamsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -772,7 +1491,7 @@
 
                 const unsubscribeNews = firebaseTools.onSnapshot(newsRef, (snapshot) => {
                     const newsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    setCurrentNews(newsData.map(n => ({...n, timestamp: n.timestamp?.toDate ? n.timestamp.toDate().getTime() : new Date(n.timestamp).getTime()}))); // Conversione del timestamp per l'ordinamento
+                    setCurrentNews(newsData.map(n => ({ ...n, timestamp: n.timestamp?.toDate ? n.timestamp.toDate().getTime() : new Date(n.timestamp).getTime() }))); // Conversione del timestamp per l'ordinamento
                     setLoadingData(false);
                 }, (error) => {
                     console.error("Errore onSnapshot Notizie:", error);
@@ -780,16 +1499,16 @@
                     setLoadingData(false);
                 });
                 return () => {
-                    try { unsubscribeTeams && unsubscribeTeams(); } catch(e) {}
-                    try { unsubscribeResults && unsubscribeResults(); } catch(e) {}
-                    try { unsubscribeNews && unsubscribeNews(); } catch(e) {}
+                    try { unsubscribeTeams && unsubscribeTeams(); } catch (e) { }
+                    try { unsubscribeResults && unsubscribeResults(); } catch (e) { }
+                    try { unsubscribeNews && unsubscribeNews(); } catch (e) { }
                 };
             }, [authReady, firebaseTools, user, showMessage]);
 
             const isLoading = !isFirebaseInitialized || !authReady || loadingData;
 
             // Authorization check against allowed emails
-            const isUserAuthorized = useMemo(()=> {
+            const isUserAuthorized = useMemo(() => {
                 const allowed = window.__admin_allowed_emails || [];
                 if (!user) return false;
                 if (!allowed || allowed.length === 0) return true;
@@ -800,7 +1519,7 @@
                 try {
                     await firebaseTools.auth.signOut();
                     setUser(null);
-                    showMessage('Logout eseguito','Sei stato disconnesso.','success');
+                    showMessage('Logout eseguito', 'Sei stato disconnesso.', 'success');
                 } catch (err) {
                     console.error('Errore logout', err);
                     showMessage('Errore logout: ' + (err.message || String(err)), 'error');
@@ -819,7 +1538,7 @@
             if (!user) {
                 return (
                     <div>
-                        <SystemAlert isVisible={systemMessage.isVisible} title={systemMessage.title} message={systemMessage.message} type={systemMessage.type} onClose={()=>setSystemMessage(prev=>({...prev,isVisible:false}))} />
+                        <SystemAlert isVisible={systemMessage.isVisible} title={systemMessage.title} message={systemMessage.message} type={systemMessage.type} onClose={() => setSystemMessage(prev => ({ ...prev, isVisible: false }))} />
                         <LoginPanel firebaseTools={firebaseTools} />
                     </div>
                 );
@@ -840,8 +1559,8 @@
 
             return (
                 <div className="w-full">
-                    <SystemAlert isVisible={systemMessage.isVisible} title={systemMessage.title} message={systemMessage.message} type={systemMessage.type} onClose={()=>setSystemMessage(prev=>({...prev,isVisible:false}))} />
-                    <ConfirmationModal isVisible={modal.isVisible} title={modal.title} message={modal.message} onConfirm={modal.onConfirm} onCancel={()=>setModal(prev=>({...prev,isVisible:false}))} />
+                    <SystemAlert isVisible={systemMessage.isVisible} title={systemMessage.title} message={systemMessage.message} type={systemMessage.type} onClose={() => setSystemMessage(prev => ({ ...prev, isVisible: false }))} />
+                    <ConfirmationModal isVisible={modal.isVisible} title={modal.title} message={modal.message} onConfirm={modal.onConfirm} onCancel={() => setModal(prev => ({ ...prev, isVisible: false }))} />
 
                     <h2 className="text-6xl font-extrabold text-center mb-6 nx-text-gradient pt-16">PANNELLO DI AMMINISTRAZIONE</h2>
                     <p className="text-center text-xl text-green-400 mb-8 font-semibold">Accesso Real-Time con Firebase</p>
@@ -854,16 +1573,16 @@
                     </div>
 
                     <TeamManager authReady={true} currentTeams={currentTeams} showMessage={showMessage} firebaseTools={firebaseTools} />
+                    <MatchScheduler authReady={true} teams={currentTeams} showMessage={showMessage} firebaseTools={firebaseTools} />
                     <ResultsManager authReady={true} currentTeams={currentTeams} currentResults={currentResults} showMessage={showMessage} firebaseTools={firebaseTools} />
+                    <PollManager authReady={true} showMessage={showMessage} firebaseTools={firebaseTools} />
                     <NewsManager authReady={true} currentNews={currentNews} showMessage={showMessage} firebaseTools={firebaseTools} />
                 </div>
             );
         };
 
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    
-    
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />); 
     </script>
-
 </body>
+
 </html>

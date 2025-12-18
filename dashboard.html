@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXT CUP - Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="Logo" class="w-12 h-12 rounded-full border border-gray-600">
+                <a href="index.html" class="text-2xl font-black text-white">NEXT CUP</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="user-name-display" class="hidden md:block text-gray-400 text-sm">...</span>
+                <button id="btn-logout"
+                    class="text-sm border border-red-500/50 text-red-400 hover:bg-red-900/30 px-3 py-1 rounded transition">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full p-6">
+        <h1 class="text-4xl font-black mb-2">Dashboard Utente</h1>
+        <p class="text-gray-400 mb-10">Gestisci il tuo profilo e la tua squadra.</p>
+
+        <!-- Loading -->
+        <div id="loading" class="text-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
+            <p class="mt-4 text-gray-500">Caricamento profilo...</p>
+        </div>
+
+        <!-- Content -->
+        <div id="dashboard-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- User Profile Card -->
+            <div class="lg:col-span-1">
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl sticky top-24">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-gray-900 text-2xl font-bold"
+                            id="avatar-placeholder">
+                            U
+                        </div>
+                        <div>
+                            <h2 id="profile-name" class="text-xl font-bold">Utente</h2>
+                            <p id="profile-email" class="text-sm text-gray-400">email@example.com</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-800 pt-4">
+                        <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">Ruolo</p>
+                        <span id="profile-role"
+                            class="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs font-bold">Utente</span>
+                    </div>
+
+                    <div id="admin-badge"
+                        class="hidden mt-4 bg-red-900/30 border border-red-500/50 p-3 rounded text-red-400 text-sm text-center">
+                        Sei un Amministratore <br>
+                        <a href="admin.html" class="underline font-bold hover:text-red-300">Vai al Pannello Admin</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Management Area (Captain) -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- No Team Assigned -->
+                <div id="no-team-msg" class="bg-gray-900 border border-gray-800 rounded-2xl p-10 text-center hidden">
+                    <p class="text-gray-400 mb-4">Non sei collegato a nessuna squadra come capitano.</p>
+                    <p class="text-sm text-gray-500">Se sei un capitano, contatta l'amministratore per farti assegnare
+                        la tua squadra.</p>
+                </div>
+
+                <!-- Captain Panel -->
+                <div id="captain-panel" class="hidden">
+
+                    <!-- Team Header -->
+                    <div
+                        class="bg-gray-900 border border-blue-900/30 rounded-2xl p-6 shadow-xl mb-8 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32 text-blue-400" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-7.536 5.879a1 1 0 001.415 0 3 3 0 014.242 0 1 1 0 001.415-1.415 5 5 0 00-7.072 0 1 1 0 000 1.415z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-blue-400 uppercase tracking-widest mb-1">La tua squadra</h3>
+                        <div class="flex items-center gap-4 relative z-10">
+                            <img id="team-logo" src="" class="w-16 h-16 object-contain bg-white rounded-lg p-1">
+                            <h2 id="team-name" class="text-3xl font-black">Nome Squadra</h2>
+                        </div>
+                    </div>
+
+                    <!-- Edit Actions -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Logo Edit -->
+                        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+                            <h4 class="font-bold mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400"
+                                    viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Modifica Logo
+                            </h4>
+                            <div class="space-y-3">
+                                <input type="text" id="edit-logo-url"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white"
+                                    placeholder="https://...">
+                                <button onclick="window.saveLogo()" id="btn-save-logo"
+                                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded transition">Salva
+                                    Logo</button>
+                            </div>
+                        </div>
+
+                        <!-- Player List Preview (Read Only for now or edit?) -->
+                        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+                            <h4 class="font-bold mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400"
+                                    viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                </svg>
+                                Rosa Giocatori
+                            </h4>
+                            <p class="text-sm text-gray-400 mb-4">Per modificare i giocatori, contatta l'amministratore
+                                (funzione in arrivo).</p>
+                            <ul id="player-list" class="space-y-2 text-sm">
+                                <!-- Dynamic -->
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FIREBASE -->
+    <script>
+        window.__firebase_config = JSON.stringify({
+            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+            authDomain: "torneo-585ac.firebaseapp.com",
+            projectId: "torneo-585ac",
+            storageBucket: "torneo-585ac.firebasestorage.app",
+            messagingSenderId: "79275251686",
+            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+            measurementId: "G-S2NZJJXKWW"
+        });
+        window.__app_id = "nextcup-app";
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const app = initializeApp(JSON.parse(window.__firebase_config));
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = window.__app_id;
+
+        // UI Refs
+        const loadingEl = document.getElementById('loading');
+        const contentEl = document.getElementById('dashboard-content');
+        const userNameDisplay = document.getElementById('user-name-display');
+
+        // Profile Refs
+        const pName = document.getElementById('profile-name');
+        const pEmail = document.getElementById('profile-email');
+        const pRole = document.getElementById('profile-role');
+        const pInitial = document.getElementById('avatar-placeholder');
+        const adminBadge = document.getElementById('admin-badge');
+
+        // Captain Refs
+        const noTeamMsg = document.getElementById('no-team-msg');
+        const captainPanel = document.getElementById('captain-panel');
+        const teamNameEl = document.getElementById('team-name');
+        const teamLogoEl = document.getElementById('team-logo');
+        const editLogoInput = document.getElementById('edit-logo-url');
+        const playerListEl = document.getElementById('player-list');
+
+        let currentUser = null;
+        let userData = null;
+        let currentTeamId = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user || user.isAnonymous) {
+                window.location.href = "login.html";
+                return;
+            }
+            currentUser = user;
+            await loadUserProfile(user.uid);
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+
+        async function loadUserProfile(uid) {
+            try {
+                // Fetch User Doc
+                const userRef = doc(db, `artifacts/${appId}/users`, uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    userData = userSnap.data();
+                } else {
+                    // Fail safe if doc missing (should be created on login)
+                    userData = { displayName: currentUser.displayName, email: currentUser.email, role: 'user' };
+                }
+
+                // Render Profile
+                renderProfile(userData);
+
+                // If captain, load team
+                if (userData.teamId) {
+                    currentTeamId = userData.teamId;
+                    await loadTeam(userData.teamId);
+                } else {
+                    noTeamMsg.classList.remove('hidden');
+                }
+
+                // Show content
+                loadingEl.classList.add('hidden');
+                contentEl.classList.remove('hidden');
+
+            } catch (e) {
+                console.error("Profile load err", e);
+                alert("Errore caricamento profilo");
+            }
+        }
+
+        function renderProfile(data) {
+            userNameDisplay.textContent = data.displayName;
+            pName.textContent = data.displayName || "Utente";
+            pEmail.textContent = data.email;
+            pRole.textContent = data.role === 'admin' ? 'Amministratore' : (data.teamId ? 'Capitano' : 'Utente Standard');
+            pInitial.textContent = (data.displayName || "?")[0].toUpperCase();
+
+            // Check admin role from data first
+            if (data.role === 'admin') {
+                adminBadge.classList.remove('hidden');
+            } else {
+                // Async check for claims if needed, but for rendering UI just trust data.role for now to avoid sync issues.
+                // Real security is on the backend rules.
+                currentUser.getIdTokenResult().then(token => {
+                    if (token.claims.admin) {
+                        adminBadge.classList.remove('hidden');
+                    }
+                }).catch(e => console.log(e));
+            }
+        }
+
+        async function loadTeam(teamId) {
+            const teamRef = doc(db, `artifacts/${appId}/public/data/teams`, teamId);
+            const teamSnap = await getDoc(teamRef);
+
+            if (teamSnap.exists()) {
+                const team = teamSnap.data();
+                captainPanel.classList.remove('hidden');
+                noTeamMsg.classList.add('hidden');
+
+                teamNameEl.textContent = team.name;
+                teamLogoEl.src = team.logoUrl || 'https://placehold.co/100?text=Logo';
+                editLogoInput.value = team.logoUrl || '';
+
+                // Render players
+                if (team.players && team.players.length > 0) {
+                    playerListEl.innerHTML = team.players.map(p => `
+                        <li class="flex justify-between border-b border-gray-800 pb-1 last:border-0">
+                            <span>${p.name} <span class="text-xs text-gray-500">(${p.number})</span></span>
+                            <span class="text-gray-400 text-xs">${p.role}</span>
+                        </li>
+                     `).join('');
+                } else {
+                    playerListEl.innerHTML = '<li class="text-gray-500 italic">Nessun giocatore in rosa</li>';
+                }
+            }
+        }
+
+        // Exposed Function
+        window.saveLogo = async () => {
+            const newUrl = editLogoInput.value.trim();
+            if (!newUrl) return alert("Inserisci un URL valido");
+            if (!currentTeamId) return;
+
+            const btn = document.getElementById('btn-save-logo');
+            const originalText = btn.textContent;
+            btn.textContent = "Salvataggio...";
+            btn.disabled = true;
+
+            try {
+                const teamRef = doc(db, `artifacts/${appId}/public/data/teams`, currentTeamId);
+                await updateDoc(teamRef, { logoUrl: newUrl });
+                teamLogoEl.src = newUrl;
+                alert("Logo aggiornato con successo!");
+            } catch (e) {
+                console.error(e);
+                alert("Errore salvataggio: " + e.message);
+            }
+            btn.textContent = originalText;
+            btn.disabled = false;
+        };
+    </script>
+</body>
+
+</html>

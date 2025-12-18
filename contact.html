@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NEXT CUP - Contatti & Iscrizione</title>
 
     <!-- Favicon -->
@@ -13,288 +14,359 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color:#0d1a2f; color:#fff; }
-        .nx-gradient-bg { background: linear-gradient(90deg,#1e3a8a,#3b82f6); }
-        .nx-text-gradient { background:-webkit-linear-gradient(45deg,#FFD700,#FBBF24,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;}
-        .nx-button-hover:hover { background: linear-gradient(90deg,#facc15,#f59e0b); transform: scale(1.05); }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #e5e7eb;
+        }
+
+        .nx-gradient-bg {
+            background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+        }
+
+        .nx-text-gradient {
+            background: -webkit-linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nx-button-hover:hover {
+            background: linear-gradient(90deg, #facc15, #f59e0b);
+            transform: scale(1.05);
+        }
 
         .hidden a {
             font-size: 18px;
         }
     </style>
 </head>
+
 <body class="antialiased">
 
-<!-- FIREBASE CONFIG (assicurati sia IDENTICA alle altre pagine) -->
-<script>
-  window.__firebase_config = JSON.stringify({
-    apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
-    authDomain: "torneo-585ac.firebaseapp.com",
-    projectId: "torneo-585ac",
-    storageBucket: "torneo-585ac.firebasestorage.app",
-    messagingSenderId: "79275251686",
-    appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
-    measurementId: "G-S2NZJJXKWW"
-  });
-  window.__app_id = "nextcup-app";
-  window.__initial_auth_token = null;
-</script>
+    <!-- FIREBASE CONFIG (assicurati sia IDENTICA alle altre pagine) -->
+    <script>
+        window.__firebase_config = JSON.stringify({
+            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+            authDomain: "torneo-585ac.firebaseapp.com",
+            projectId: "torneo-585ac",
+            storageBucket: "torneo-585ac.firebasestorage.app",
+            messagingSenderId: "79275251686",
+            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+            measurementId: "G-S2NZJJXKWW"
+        });
+        window.__app_id = "nextcup-app";
+        window.__initial_auth_token = null;
+    </script>
 
-<!-- Navbar (Consistent) -->
-<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-xl">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <img class="w-24 h-24 rounded-full border-4 border-gray-600 mb-3" src="logo.png" alt="Logo torneo">
-            <a href="index.html" class="text-3xl font-black nx-text-gradient" style="padding-left: 15px">NEXT CUP</a>
-        </div>
-
-        <div class="hidden md:flex space-x-8 font-semibold">
-            <a href="index.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Home</a>
-            <a href="teams.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Squadre</a>
-            <a href="news.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Notizie</a>
-            <a href="match_preview.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Anteprima Match AI</a>
-            <a href="results.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Risultati & Classifica</a>
-            <a href="contact.html" class="text-yellow-400">Contatti & Iscrizione</a>
-        </div>
-
-        <button class="md:hidden text-gray-300 hover:text-yellow-400 focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-    </nav>
-</header>
-
-<!-- Main -->
-<section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800 min-h-screen">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
-        <!-- Left column -->
-        <div class="space-y-10">
-            <h2 class="text-5xl font-extrabold mb-4 nx-text-gradient">Vuoi Iscrivere la Tua Squadra?</h2>
-            <p class="text-xl text-gray-300">La Next Cup è un torneo aperto a tutti, iscriviti ora!</p>
-
-            <div class="bg-gray-700 p-6 rounded-xl shadow-2xl border-l-4 border-yellow-400">
-                <h3 class="text-2xl font-bold mb-3 text-white flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Procedura di Iscrizione
-                </h3>
-                <ul class="list-disc list-inside text-gray-300 space-y-2 ml-4">
-                    <li>Clicca il link in basso.</li>
-                    <li>Compila il modulo di iscrizione.</li>
-                    <li>Invia la richiesta entro il 30 Aprile 2026.</li>
-                </ul>
+    <!-- Navbar (Consistent) -->
+    <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
+                <a href="index.html" class="text-2xl font-black nx-text-gradient">
+                    NEXT CUP
+                </a>
             </div>
 
-            <a href="https://forms.gle/y3iGvR5zVusa7cT57" target="_blank" class="bg-yellow-400 text-gray-900 nx-button-hover font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out text-lg inline-flex items-center space-x-2">
-                <span>MODULO DI ISCRIZIONE</span>
-            </a>
-        </div>
+            <!-- DESKTOP MENU -->
+            <div class="hidden md:flex space-x-6 font-semibold text-sm">
+                <a href="index.html" class="hover:text-yellow-400 transition">Home</a>
+                <a href="teams.html" class="hover:text-yellow-400 transition">Squadre</a>
+                <a href="news.html" class="hover:text-yellow-400 transition">Notizie</a>
+                <a href="match_preview.html" class="hover:text-yellow-400 transition">Anteprima AI</a>
+                <a href="torneo.html" class="hover:text-yellow-400 transition">Torneo</a>
+                <a href="statistics.html" class="hover:text-yellow-400 transition">Statistiche</a>
+                <a href="sondaggi.html" class="hover:text-yellow-400 transition">Sondaggi</a>
+                <a href="regolamento.html" class="hover:text-yellow-400 transition">Regolamento</a>
+                <a href="contact.html" class="text-yellow-400 transition">Contatti</a>
+            </div>
 
-        <!-- Right column: Contact form -->
-        <div class="bg-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-700">
-            <h3 class="text-3xl font-bold text-white mb-6">Contatta l'Organizzazione</h3>
-
-            <form id="contact-form" class="space-y-4" novalidate>
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-300">Nome e Cognome / Club</label>
-                    <input type="text" id="name" name="name" required class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500" />
-                </div>
-
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
-                    <input type="email" id="email" name="email" required class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500" />
-                </div>
-
-                <div>
-                    <label for="subject" class="block text-sm font-medium text-gray-300">Oggetto</label>
-                    <input type="text" id="subject" name="subject" required class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500" />
-                </div>
-
-                <div>
-                    <label for="message" class="block text-sm font-medium text-gray-300">Messaggio</label>
-                    <textarea id="message" name="message" rows="4" required class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500"></textarea>
-                </div>
-
-                <!-- Honeypot campo invisibile per bot -->
-                <div style="display:none;">
-                    <label>Se sei umano, lascia vuoto</label>
-                    <input type="text" id="hp_field" name="hp_field" />
-                </div>
-
-                <div id="form-feedback" class="text-sm mt-2"></div>
-
-                <button id="submit-btn" type="submit" class="w-full nx-gradient-bg nx-button-hover font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out text-lg mt-4">
-                    INVIA MESSAGGIO
+            <!-- MOBILE MENU BUTTON -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="text-white hover:text-yellow-400 focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
                 </button>
-            </form>
+            </div>
+        </nav>
 
-            <p class="text-center text-sm text-gray-400 mt-6">Oppure chiama:</p>
-            <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
-            <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
+        <!-- MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-gray-900 border-t border-gray-800 absolute w-full left-0 top-full shadow-2xl z-50">
+            <div class="flex flex-col px-6 py-4 space-y-4 font-semibold text-lg">
+                <a href="index.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Home</a>
+                <a href="teams.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Squadre</a>
+                <a href="news.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Notizie</a>
+                <a href="match_preview.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Anteprima
+                    AI</a>
+                <a href="torneo.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Torneo</a>
+                <a href="statistics.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Statistiche</a>
+                <a href="sondaggi.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
+                <a href="regolamento.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Regolamento</a>
+                <a href="contact.html" class="text-yellow-400 block">Contatti</a>
+            </div>
         </div>
-    </div>
-</section>
+
+        <script>
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        </script>
+    </header>
+    <!-- Main -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800 min-h-screen">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <!-- Left column -->
+            <div class="space-y-10">
+                <h2 class="text-5xl font-extrabold mb-4 nx-text-gradient">Vuoi Iscrivere la Tua Squadra?</h2>
+                <p class="text-xl text-gray-300">La Next Cup è un torneo aperto a tutti, iscriviti ora!</p>
+
+                <div class="bg-gray-700 p-6 rounded-xl shadow-2xl border-l-4 border-yellow-400">
+                    <h3 class="text-2xl font-bold mb-3 text-white flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Procedura di Iscrizione
+                    </h3>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2 ml-4">
+                        <li>Clicca il link in basso.</li>
+                        <li>Compila il modulo di iscrizione.</li>
+                        <li>Invia la richiesta entro il 30 Aprile 2026.</li>
+                    </ul>
+                </div>
+
+                <a href="https://forms.gle/y3iGvR5zVusa7cT57" target="_blank"
+                    class="bg-yellow-400 text-gray-900 nx-button-hover font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out text-lg inline-flex items-center space-x-2">
+                    <span>MODULO DI ISCRIZIONE</span>
+                </a>
+            </div>
+
+            <!-- Right column: Contact form -->
+            <div class="bg-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-700">
+                <h3 class="text-3xl font-bold text-white mb-6">Contatta l'Organizzazione</h3>
+
+                <form id="contact-form" class="space-y-4" novalidate>
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-300">Nome e Cognome / Club</label>
+                        <input type="text" id="name" name="name" required
+                            class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500" />
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+                        <input type="email" id="email" name="email" required
+                            class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500" />
+                    </div>
+
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-gray-300">Oggetto</label>
+                        <input type="text" id="subject" name="subject" required
+                            class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500" />
+                    </div>
+
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-300">Messaggio</label>
+                        <textarea id="message" name="message" rows="4" required
+                            class="mt-1 w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+
+                    <!-- Honeypot campo invisibile per bot -->
+                    <div style="display:none;">
+                        <label>Se sei umano, lascia vuoto</label>
+                        <input type="text" id="hp_field" name="hp_field" />
+                    </div>
+
+                    <div id="form-feedback" class="text-sm mt-2"></div>
+
+                    <button id="submit-btn" type="submit"
+                        class="w-full nx-gradient-bg nx-button-hover font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out text-lg mt-4">
+                        INVIA MESSAGGIO
+                    </button>
+                </form>
+
+                <p class="text-center text-sm text-gray-400 mt-6">Oppure chiama:</p>
+                <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
+                <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer / Contatti (Consistent) -->
-    <footer class="bg-gray-950 py-10 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+    <footer class="bg-black py-10">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
             <div class="text-gray-400">
-                <p class="text-xl font-bold nx-text-gradient mb-2">NEXT CUP</p>
+                <p class="text-lg font-bold nx-text-gradient mb-2">NEXT CUP</p>
                 <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
             </div>
             <div class="space-y-2">
                 <p class="text-white font-semibold">Contattaci</p>
-                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com" class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
+                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com"
+                        class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
                 <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
                 <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
-            </div>
-            <div class="flex space-x-4 text-gray-400">
-                <a href="#" class="hover:text-yellow-400 transition duration-300">[Image of Logo di Instagram]</a>
-                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
-                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
             </div>
         </div>
     </footer>
 
-<!-- FIREBASE + FORM LOGIC -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- FIREBASE + FORM LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-/*
-  Logica:
-  - Effettua anonymous sign-in (se necessario)
-  - Invia il messaggio a Firestore nella collection:
-      artifacts/<appId>/public/data/contacts
-  - Salva: name, email, subject, message, timestamp, userId (se presente), ip? (no)
-  - Feedback utente inline (success / error)
-  - Honeypot anti-bot
-*/
+        /*
+          Logica:
+          - Effettua anonymous sign-in (se necessario)
+          - Invia il messaggio a Firestore nella collection:
+              artifacts/<appId>/public/data/contacts
+          - Salva: name, email, subject, message, timestamp, userId (se presente), ip? (no)
+          - Feedback utente inline (success / error)
+          - Honeypot anti-bot
+        */
 
-// Legge config dalla pagina (assicurati corrisponda alle altre pagine)
-const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
-const appId = window.__app_id || null;
+        // Legge config dalla pagina (assicurati corrisponda alle altre pagine)
+        const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
+        const appId = window.__app_id || null;
 
-if (!firebaseConfig || !appId) {
-    const fb = document.getElementById('form-feedback');
-    fb.innerHTML = '<span class="text-yellow-400">Errore: configurazione Firebase mancante. Contatta l\'amministratore.</span>';
-    throw new Error('Firebase config o appId mancanti.');
-}
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const CONTACTS_PATH = `artifacts/${appId}/public/data/contacts`;
-
-// UI refs
-const form = document.getElementById('contact-form');
-const btn = document.getElementById('submit-btn');
-const feedback = document.getElementById('form-feedback');
-const hpField = document.getElementById('hp_field');
-
-// util XSS-safe
-function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-}
-
-// show feedback
-function showFeedback(message, type = 'info') {
-    const color = type === 'success' ? 'text-green-400' : (type === 'error' ? 'text-red-400' : 'text-yellow-400');
-    feedback.innerHTML = `<span class="${color}">${escapeHtml(message)}</span>`;
-}
-
-// stato auth display (opzionale)
-onAuthStateChanged(auth, (user) => {
-    // you can show user.uid somewhere if you want
-    // console.log('auth change', user);
-});
-
-// ensure anon sign-in (best-effort)
-(async function ensureAuth() {
-    try {
-        if (!auth.currentUser) {
-            await signInAnonymously(auth);
+        if (!firebaseConfig || !appId) {
+            const fb = document.getElementById('form-feedback');
+            fb.innerHTML = '<span class="text-yellow-400">Errore: configurazione Firebase mancante. Contatta l\'amministratore.</span>';
+            throw new Error('Firebase config o appId mancanti.');
         }
-    } catch (e) {
-        // Non blocchiamo l'invio se l'anon sign fallisce (lettura scrittura dipende dalle regole)
-        console.warn('signInAnonymously failed', e);
-    }
-})();
 
-// disable/enable util
-function setDisabled(disabled = true) {
-    btn.disabled = disabled;
-    btn.classList.toggle('opacity-60', disabled);
-    if (disabled) {
-        btn.textContent = 'INVIO...';
-    } else {
-        btn.textContent = 'INVIA MESSAGGIO';
-    }
-}
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-// Validate email simple
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+        const CONTACTS_PATH = `artifacts/${appId}/public/data/contacts`;
 
-// Form submit handler
-form.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    feedback.innerHTML = '';
+        // UI refs
+        const form = document.getElementById('contact-form');
+        const btn = document.getElementById('submit-btn');
+        const feedback = document.getElementById('form-feedback');
+        const hpField = document.getElementById('hp_field');
 
-    // Honeypot check: if filled, bail out quietly
-    if (hpField && hpField.value && hpField.value.trim() !== '') {
-        // treat as bot, silently ignore
-        showFeedback('Messaggio inviato (OK).', 'success'); // fake success so bots don't retry
-        form.reset();
-        return;
-    }
+        // util XSS-safe
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
 
-    const name = (document.getElementById('name').value || '').trim();
-    const email = (document.getElementById('email').value || '').trim();
-    const subject = (document.getElementById('subject').value || '').trim();
-    const message = (document.getElementById('message').value || '').trim();
+        // show feedback
+        function showFeedback(message, type = 'info') {
+            const color = type === 'success' ? 'text-green-400' : (type === 'error' ? 'text-red-400' : 'text-yellow-400');
+            feedback.innerHTML = `<span class="${color}">${escapeHtml(message)}</span>`;
+        }
 
-    // Basic validation
-    if (!name || !email || !subject || !message) {
-        showFeedback('Compila tutti i campi obbligatori.', 'error');
-        return;
-    }
-    if (!isValidEmail(email)) {
-        showFeedback('Inserisci un indirizzo email valido.', 'error');
-        return;
-    }
+        // stato auth display (opzionale)
+        onAuthStateChanged(auth, (user) => {
+            // you can show user.uid somewhere if you want
+            // console.log('auth change', user);
+        });
 
-    // Prepare payload
-    const payload = {
-        name,
-        email,
-        subject,
-        message,
-        timestamp: new Date().toISOString(),
-        userId: auth.currentUser ? auth.currentUser.uid : null,
-        status: 'new' // utile per backend / admin
-    };
+        // ensure anon sign-in (best-effort)
+        (async function ensureAuth() {
+            try {
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) {
+                // Non blocchiamo l'invio se l'anon sign fallisce (lettura scrittura dipende dalle regole)
+                console.warn('signInAnonymously failed', e);
+            }
+        })();
 
-    try {
-        setDisabled(true);
-        // write to Firestore
-        const ref = await addDoc(collection(db, CONTACTS_PATH), payload);
-        console.log('Contact saved:', ref.id);
-        showFeedback('Messaggio inviato! Ti risponderemo al più presto.', 'success');
-        form.reset();
-    } catch (err) {
-        console.error('Errore invio messaggio:', err);
-        showFeedback('Errore durante l\'invio. Riprova più tardi.', 'error');
-    } finally {
-        setDisabled(false);
-        // hide feedback after some seconds optionally
-        setTimeout(() => {
+        // disable/enable util
+        function setDisabled(disabled = true) {
+            btn.disabled = disabled;
+            btn.classList.toggle('opacity-60', disabled);
+            if (disabled) {
+                btn.textContent = 'INVIO...';
+            } else {
+                btn.textContent = 'INVIA MESSAGGIO';
+            }
+        }
+
+        // Validate email simple
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Form submit handler
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
             feedback.innerHTML = '';
-        }, 8000);
-    }
-});
-</script>
+
+            // Honeypot check: if filled, bail out quietly
+            if (hpField && hpField.value && hpField.value.trim() !== '') {
+                // treat as bot, silently ignore
+                showFeedback('Messaggio inviato (OK).', 'success'); // fake success so bots don't retry
+                form.reset();
+                return;
+            }
+
+            const name = (document.getElementById('name').value || '').trim();
+            const email = (document.getElementById('email').value || '').trim();
+            const subject = (document.getElementById('subject').value || '').trim();
+            const message = (document.getElementById('message').value || '').trim();
+
+            // Basic validation
+            if (!name || !email || !subject || !message) {
+                showFeedback('Compila tutti i campi obbligatori.', 'error');
+                return;
+            }
+            if (!isValidEmail(email)) {
+                showFeedback('Inserisci un indirizzo email valido.', 'error');
+                return;
+            }
+
+            // Prepare payload
+            const payload = {
+                name,
+                email,
+                subject,
+                message,
+                timestamp: new Date().toISOString(),
+                userId: auth.currentUser ? auth.currentUser.uid : null,
+                status: 'new' // utile per backend / admin
+            };
+
+            try {
+                setDisabled(true);
+                // write to Firestore
+                const ref = await addDoc(collection(db, CONTACTS_PATH), payload);
+                console.log('Contact saved:', ref.id);
+                showFeedback('Messaggio inviato! Ti risponderemo al più presto.', 'success');
+                form.reset();
+            } catch (err) {
+                console.error('Errore invio messaggio:', err);
+                showFeedback('Errore durante l\'invio. Riprova più tardi.', 'error');
+            } finally {
+                setDisabled(false);
+                // hide feedback after some seconds optionally
+                setTimeout(() => {
+                    feedback.innerHTML = '';
+                }, 8000);
+            }
+        });
+    </script>
 
 </body>
+
 </html>

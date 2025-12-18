@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,6 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
-
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,16 +18,33 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d1a2f;
-            color: #ffffff;
+            background-color: #020617;
+            color: #e5e7eb;
         }
+
         .nx-text-gradient {
-            background: -webkit-linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+            background: linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .team-card {
-            background-color: #1f2937;
+            background-color: #020617;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .team-card h3 {
+            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .team-card ul li:hover {
+            color: #FFD700;
+            transition: color 0.2s;
         }
 
         .hidden a {
@@ -35,146 +52,272 @@
         }
     </style>
 </head>
+
 <body class="antialiased">
 
-<!-- FIREBASE CONFIG -->
-<script>
-    window.__firebase_config = JSON.stringify({
-        apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
-        authDomain: "torneo-585ac.firebaseapp.com",
-        projectId: "torneo-585ac",
-        storageBucket: "torneo-585ac.firebasestorage.app",
-        messagingSenderId: "79275251686",
-        appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
-        measurementId: "G-S2NZJJXKWW"
-    });
+    <!-- FIREBASE CONFIG -->
+    <script>
+        window.__firebase_config = JSON.stringify({
+            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+            authDomain: "torneo-585ac.firebaseapp.com",
+            projectId: "torneo-585ac",
+            storageBucket: "torneo-585ac.firebasestorage.app",
+            messagingSenderId: "79275251686",
+            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+            measurementId: "G-S2NZJJXKWW"
+        });
 
-    window.__app_id = "nextcup-app";  
-</script>
+        window.__app_id = "nextcup-app";  
+    </script>
 
-<!-- Navbar (Consistent) -->
-<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-xl">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <img class="w-24 h-24 rounded-full border-4 border-gray-600 mb-3" src="logo.png" alt="Logo torneo">
-            <a href="index.html" class="text-3xl font-black nx-text-gradient" style="padding-left: 15px">NEXT CUP</a>
-        </div>
-        <div class="hidden md:flex space-x-8 font-semibold">
-            <a href="index.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Home</a>
-            <a href="teams.html" class="text-yellow-400">Squadre</a>
-            <a href="news.html" class="text-gray-300 hover:text-yellow-400">Notizie</a>
-            <a href="match_preview.html" class="text-gray-300 hover:text-yellow-400">Anteprima Match AI</a>
-            <a href="results.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Risultati & Classifica</a>
-            <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition duration-300">Contatti & Iscrizione</a>
-        </div>
-        <button class="md:hidden text-gray-300 hover:text-yellow-400 focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-    </nav>
-</header>
+    <!-- Navbar (Consistent) -->
+    <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
+                <a href="index.html" class="text-2xl font-black nx-text-gradient">
+                    NEXT CUP
+                </a>
+            </div>
 
-<!-- SEZIONE SQUADRE -->
-<section class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-800 min-h-screen">
-    <div class="max-w-6xl mx-auto">
-        
-        <h2 class="text-6xl font-extrabold text-center mb-6 nx-text-gradient">SQUADRE PARTECIPANTI</h2>
-        <p class="text-center text-xl text-gray-300 mb-12">
-            Scopri le formazioni che parteciperanno alla Next Cup.
-        </p>
+            <!-- DESKTOP MENU -->
+            <div class="hidden md:flex space-x-6 font-semibold text-sm">
+                <a href="index.html" class="hover:text-yellow-400 transition">Home</a>
+                <a href="teams.html" class="text-yellow-400 transition">Squadre</a>
+                <a href="news.html" class="hover:text-yellow-400 transition">Notizie</a>
+                <a href="match_preview.html" class="hover:text-yellow-400 transition">Anteprima AI</a>
+                <a href="torneo.html" class="hover:text-yellow-400 transition">Torneo</a>
+                <a href="statistics.html" class="hover:text-yellow-400 transition">Statistiche</a>
+                <a href="sondaggi.html" class="hover:text-yellow-400 transition">Sondaggi</a>
+                <a href="regolamento.html" class="hover:text-yellow-400 transition">Regolamento</a>
+                <a href="contact.html" class="hover:text-yellow-400 transition">Contatti</a>
+            </div>
 
-        <div class="text-center mb-8">
-            <!-- 🔐 LINK ADMIN BEN VISIBILE -->
-            <a href="admin.html"
-               class="text-red-400 font-bold text-sm underline hover:text-red-300 transition">
-               🔒 Accedi al Pannello Admin
-            </a>
-        </div>
+            <!-- MOBILE MENU BUTTON -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="text-white hover:text-yellow-400 focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
 
-        <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="team-card p-6 rounded-xl shadow-2xl text-center">
-                <p class="text-gray-400">Caricamento squadre...</p>
+        <!-- MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-gray-900 border-t border-gray-800 absolute w-full left-0 top-full shadow-2xl z-50">
+            <div class="flex flex-col px-6 py-4 space-y-4 font-semibold text-lg">
+                <a href="index.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Home</a>
+                <a href="teams.html" class="text-yellow-400 block border-b border-gray-800 pb-2">Squadre</a>
+                <a href="news.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Notizie</a>
+                <a href="match_preview.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Anteprima
+                    AI</a>
+                <a href="torneo.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Torneo</a>
+                <a href="statistics.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Statistiche</a>
+                <a href="sondaggi.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
+                <a href="regolamento.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Regolamento</a>
+                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti</a>
             </div>
         </div>
 
-    </div>
-</section>
+        <script>
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+            }
+        </script>
+    </header>
 
-    <!-- Footer / Contatti (Consistent) -->
-    <footer class="bg-gray-950 py-10 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+    <!-- SEZIONE SQUADRE -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-800 min-h-screen">
+        <div class="max-w-6xl mx-auto">
+
+            <h2 class="text-5xl sm:text-6xl font-extrabold text-center mb-4 nx-text-gradient">Squadre Partecipanti</h2>
+            <p class="text-center text-lg sm:text-xl text-gray-400 mb-12">
+                Scopri le formazioni che parteciperanno alla Next Cup.
+            </p>
+
+            <div class="text-center mb-10">
+                <a href="admin.html" class="text-red-400 font-bold text-sm underline hover:text-red-300 transition">
+                    🔒 Accedi al Pannello Admin
+                </a>
+            </div>
+
+            <div id="teams-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="team-card p-6 rounded-2xl shadow-2xl text-center">
+                    <p class="text-gray-400 text-lg font-semibold">Caricamento squadre...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contatti -->
+    <footer class="bg-black py-10">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
             <div class="text-gray-400">
-                <p class="text-xl font-bold nx-text-gradient mb-2">NEXT CUP</p>
+                <p class="text-lg font-bold nx-text-gradient mb-2">NEXT CUP</p>
                 <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
             </div>
             <div class="space-y-2">
                 <p class="text-white font-semibold">Contattaci</p>
-                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com" class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
+                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com"
+                        class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
                 <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
                 <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
-            </div>
-            <div class="flex space-x-4 text-gray-400">
-                <a href="#" class="hover:text-yellow-400 transition duration-300">[Image of Logo di Instagram]</a>
-                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
-                <a href="#" class="hover:text-yellow-400 transition duration-300"></a>
             </div>
         </div>
     </footer>
 
-<!-- FIREBASE -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const firebaseConfig = JSON.parse(window.__firebase_config);
-    const appId = window.__app_id;
+        const firebaseConfig = JSON.parse(window.__firebase_config);
+        const appId = window.__app_id;
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    const TEAMS_PATH = `artifacts/${appId}/public/data/teams`;
+        const TEAMS_PATH = `artifacts/${appId}/public/data/teams`;
 
-    // Accesso pubblico
-    onAuthStateChanged(auth, (user) => {
-        if (!user) signInAnonymously(auth);
-    });
+        // Stats Refs
+        const STATS_BASE = `artifacts/${appId}/public/data`;
 
-    // Renderizza
-    function renderTeams(list) {
-        const grid = document.getElementById("teams-grid");
+        // Data Store
+        let teamsData = [];
+        let statsData = { scorers: [], assists: [], cleanSheets: [], cards: [] };
 
-        if (list.length === 0) {
-            grid.innerHTML = `
-                <div class="team-card p-6 rounded-xl shadow-2xl col-span-full text-center">
-                    <p class="text-xl text-gray-300 font-semibold">Nessuna squadra iscritta.</p>
-                </div>`;
-            return;
+        // Accesso pubblico
+        onAuthStateChanged(auth, (user) => {
+            if (!user) signInAnonymously(auth);
+        });
+
+        // Helper: Normalize String/Object player to Object
+        const normalizePlayer = (p) => {
+            if (typeof p === 'string') return { name: p, role: '', number: '', age: '' };
+            return p;
+        };
+
+        // Helper: Get Player Stats
+        const getPlayerStats = (teamName, playerName) => {
+            const id =
+                `${teamName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${playerName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`;
+            const goals = statsData.scorers.find(d => d.id === id)?.goals || 0;
+            const assists = statsData.assists.find(d => d.id === id)?.assists || 0;
+            const cleanSheets = statsData.cleanSheets.find(d => d.id === id)?.cleanSheets || 0;
+            const cardsDoc = statsData.cards.find(d => d.id === id);
+            const yellow = cardsDoc?.yellow || 0;
+            const red = cardsDoc?.red || 0;
+            return { goals, assists, cleanSheets, yellow, red };
+        };
+
+        function renderTeams() {
+            const grid = document.getElementById("teams-grid");
+            const list = teamsData;
+
+            if (list.length === 0) {
+                grid.innerHTML = `
+    <div class="team-card p-6 rounded-xl shadow-2xl col-span-full text-center">
+        <p class="text-xl text-gray-300 font-semibold">Nessuna squadra iscritta.</p>
+    </div>`;
+                return;
+            }
+
+            grid.innerHTML = list
+                .map(team => {
+                    const players = (team.players || []).map(normalizePlayer);
+                    return `
+    <div class="team-card p-6 rounded-xl shadow-2xl bg-gray-900 border border-gray-800">
+        <div class="flex items-center justify-center mb-4">
+            ${team.logoUrl
+                            ? `<img src="${team.logoUrl}" alt="${team.name} Logo" class="w-20 h-20 object-contain rounded-full border-2 border-yellow-400 bg-gray-800">`
+                            : `<div class="w-20 h-20 flex items-center justify-center bg-gray-800 rounded-full border-2 border-gray-700">
+                        <span class="text-3xl">🛡️</span>
+                   </div>`
+                        }
+        </div>
+        <h3 class="text-3xl font-bold text-yellow-400 mb-4 text-center border-b border-gray-700 pb-2">${team.name}</h3>
+        <div class="space-y-3">
+            ${players.length
+                            ? players.map(p => {
+                                const stats = getPlayerStats(team.name, p.name);
+                                return `
+            <div class="bg-gray-800/50 p-3 rounded-lg flex flex-col hover:bg-gray-800 transition">
+                <div class="flex justify-between items-start mb-1">
+                    <div>
+                        <span class="font-bold text-white text-lg">${p.name}</span>
+                        ${p.number ? `<span class="text-yellow-500 font-mono ml-2 text-sm">#${p.number}</span>` : ''}
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-xs text-blue-300 font-semibold uppercase tracking-wider">${p.role ||
+                                    'Giocatore'}</span>
+                        ${p.age ? `<span class="text-xs text-gray-500">${p.age} anni</span>` : ''}
+                    </div>
+                </div>
+
+                <!-- Stats Badges -->
+                <div class="flex flex-wrap gap-2 mt-2 pt-2 border-t border-gray-700/50">
+                    ${stats.goals > 0 ? `<span
+                        class="text-xs bg-yellow-900/40 text-yellow-200 px-2 py-0.5 rounded border border-yellow-700/50"
+                        title="Gol">⚽ ${stats.goals}</span>` : ''}
+                    ${stats.assists > 0 ? `<span
+                        class="text-xs bg-blue-900/40 text-blue-200 px-2 py-0.5 rounded border border-blue-700/50"
+                        title="Assist">🎯 ${stats.assists}</span>` : ''}
+                    ${stats.cleanSheets > 0 ? `<span
+                        class="text-xs bg-green-900/40 text-green-200 px-2 py-0.5 rounded border border-green-700/50"
+                        title="Clean Sheet">🧤 ${stats.cleanSheets}</span>` : ''}
+                    ${stats.yellow > 0 ? `<span
+                        class="text-xs bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded border border-yellow-600/50"
+                        title="Ammonizioni">🟨 ${stats.yellow}</span>` : ''}
+                    ${stats.red > 0 ? `<span
+                        class="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded border border-red-700/50"
+                        title="Espulsioni">🟥 ${stats.red}</span>` : ''}
+                    ${stats.goals === 0 && stats.assists === 0 && stats.cleanSheets === 0 && stats.yellow === 0 && stats.red === 0
+                                        ? `<span class="text-xs text-gray-600 italic">Nessuna statistica</span>` : ''}
+                </div>
+            </div>
+            `;
+                            }).join("")
+                            : `<div class="text-gray-500 text-center italic">Nessun giocatore disponibile</div>`
+                        }
+        </div>
+    </div>
+    `})
+                .join("");
         }
 
-        grid.innerHTML = list
-            .map(team => `
-                <div class="team-card p-6 rounded-xl shadow-2xl">
-                    <h3 class="text-3xl font-bold text-yellow-400 mb-3">${team.name}</h3>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        ${
-                            team.players && team.players.length
-                                ? team.players.map(p => `<li>${p}</li>`).join("")
-                                : `<li class="text-gray-500">Nessun giocatore disponibile</li>`
-                        }
-                    </ul>
-                </div>
-            `)
-            .join("");
-    }
+        // Listeners
+        // 1. Teams
+        onSnapshot(collection(db, TEAMS_PATH), (snapshot) => {
+            teamsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderTeams();
+        });
 
-    // Listener Firestore LIVE
-    onSnapshot(collection(db, TEAMS_PATH), (snapshot) => {
-        const teams = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderTeams(teams);
-    });
-</script>
+        // 2. Stats Listeners
+        const setupStatListener = (colName) => {
+            onSnapshot(collection(db, `${STATS_BASE}/${colName}`), (snap) => {
+                statsData[colName] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderTeams();
+            });
+        };
 
+        ['scorers', 'assists', 'cleanSheets', 'cards'].forEach(setupStatListener);
+    </script>
 </body>
-</html>
 
+</html>

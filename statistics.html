@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXT CUP - Statistiche</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1a2f;
+            color: #fff;
+        }
+
+        .nx-text-gradient {
+            background: linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card {
+            background: #111827;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all .3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, .6);
+        }
+
+        .badge {
+            padding: .25rem .6rem;
+            border-radius: .5rem;
+            font-size: .75rem;
+            font-weight: 700;
+        }
+
+        .hidden a {
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
+                <a href="index.html" class="text-2xl font-black nx-text-gradient">
+                    NEXT CUP
+                </a>
+            </div>
+
+            <!-- DESKTOP MENU -->
+            <div class="hidden md:flex space-x-6 font-semibold text-sm">
+                <a href="index.html" class="hover:text-yellow-400 transition">Home</a>
+                <a href="teams.html" class="hover:text-yellow-400 transition">Squadre</a>
+                <a href="news.html" class="hover:text-yellow-400 transition">Notizie</a>
+                <a href="match_preview.html" class="hover:text-yellow-400 transition">Anteprima AI</a>
+                <a href="torneo.html" class="hover:text-yellow-400 transition">Torneo</a>
+                <a href="statistics.html" class="text-yellow-400 transition">Statistiche</a>
+                <a href="sondaggi.html" class="hover:text-yellow-400 transition">Sondaggi</a>
+                <a href="regolamento.html" class="hover:text-yellow-400 transition">Regolamento</a>
+                <a href="contact.html" class="hover:text-yellow-400 transition">Contatti</a>
+            </div>
+
+            <!-- MOBILE MENU BUTTON -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="text-white hover:text-yellow-400 focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-gray-900 border-t border-gray-800 absolute w-full left-0 top-full shadow-2xl z-50">
+            <div class="flex flex-col px-6 py-4 space-y-4 font-semibold text-lg">
+                <a href="index.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Home</a>
+                <a href="teams.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Squadre</a>
+                <a href="news.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Notizie</a>
+                <a href="match_preview.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Anteprima
+                    AI</a>
+                <a href="torneo.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Torneo</a>
+                <a href="statistics.html" class="text-yellow-400 block border-b border-gray-800 pb-2">Statistiche</a>
+                <a href="sondaggi.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
+                <a href="regolamento.html"
+                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Regolamento</a>
+                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti</a>
+            </div>
+        </div>
+
+        <script>
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+            }
+        </script>
+    </header>
+
+    <section class="py-16 px-4 max-w-7xl mx-auto">
+        <h1 class="text-5xl sm:text-6xl font-black text-center nx-text-gradient mb-4">
+            STATISTICHE TORNEO
+        </h1>
+        <p class="text-center text-gray-400 mb-12">
+            Aggiornate in tempo reale
+        </p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- MARCATORI -->
+            <div class="stat-card">
+                <h2 class="text-2xl font-bold text-yellow-400 mb-4">⚽ Marcatori</h2>
+                <div id="scorers" class="space-y-2 text-sm"></div>
+            </div>
+
+            <!-- ASSIST -->
+            <div class="stat-card">
+                <h2 class="text-2xl font-bold text-blue-400 mb-4">🎯 Assistman</h2>
+                <div id="assists" class="space-y-2 text-sm"></div>
+            </div>
+
+            <!-- CLEAN SHEET -->
+            <div class="stat-card">
+                <h2 class="text-2xl font-bold text-green-400 mb-4">🧤 Porta Inviolata</h2>
+                <div id="cleanSheets" class="space-y-2 text-sm"></div>
+            </div>
+
+            <!-- CARTELLINI -->
+            <div class="stat-card">
+                <h2 class="text-2xl font-bold text-red-400 mb-4">🟨🟥 Disciplina</h2>
+                <div id="cards" class="space-y-2 text-sm"></div>
+            </div>
+
+        </div>
+    </section>
+    <!-- FOOTER -->
+    <footer class="bg-black py-10">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+            <div class="text-gray-400">
+                <p class="text-lg font-bold nx-text-gradient mb-2">NEXT CUP</p>
+                <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
+            </div>
+            <div class="space-y-2">
+                <p class="text-white font-semibold">Contattaci</p>
+                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com"
+                        class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
+                <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
+                <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        window.__firebase_config = JSON.stringify({
+            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+            authDomain: "torneo-585ac.firebaseapp.com",
+            projectId: "torneo-585ac",
+            storageBucket: "torneo-585ac.firebasestorage.app",
+            messagingSenderId: "79275251686",
+            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+            measurementId: "G-S2NZJJXKWW"
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = JSON.parse(window.__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const base = "artifacts/nextcup-app/public/data";
+
+        function render(list, el, template) {
+            const key = Object.keys(template)[0];
+            onSnapshot(query(collection(db, base + "/" + list), orderBy(key, "desc")), snap => {
+                el.innerHTML = snap.docs
+                    .map(d => d.data())
+                    .filter(x => {
+                        if (list === 'cards') return ((x.yellow || 0) > 0 || (x.red || 0) > 0);
+                        return (x[key] || 0) > 0;
+                    })
+                    .map(x => template.render(x))
+                    .join("");
+            });
+        }
+
+        render("scorers", document.getElementById("scorers"), {
+            goals: true,
+            render: x => `<div class="flex justify-between">
+        <span>${x.name} <span class="text-gray-400">(${x.team})</span></span>
+        <span class="font-bold text-yellow-400">${x.goals}</span>
+    </div>`
+        });
+
+        render("assists", document.getElementById("assists"), {
+            assists: true,
+            render: x => `<div class="flex justify-between">
+        <span>${x.name} <span class="text-gray-400">(${x.team})</span></span>
+        <span class="font-bold text-blue-400">${x.assists}</span>
+    </div>`
+        });
+
+        render("cleanSheets", document.getElementById("cleanSheets"), {
+            cleanSheets: true,
+            render: x => `<div class="flex justify-between">
+        <span>${x.name} <span class="text-gray-400">(${x.team})</span></span>
+        <span class="font-bold text-green-400">${x.cleanSheets}</span>
+    </div>`
+        });
+
+        render("cards", document.getElementById("cards"), {
+            yellow: true,
+            render: x => `<div class="flex justify-between items-center">
+        <span>${x.name} <span class="text-gray-400">(${x.team})</span></span>
+        <span>
+            <span class="badge bg-yellow-400 text-black">${x.yellow}</span>
+            <span class="badge bg-red-600 text-white ml-1">${x.red}</span>
+        </span>
+    </div>`
+        });
+    </script>
+
+</body>
+
+</html>
