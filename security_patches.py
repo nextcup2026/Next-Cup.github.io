@@ -85,3 +85,4 @@ for file_path in html_files:
         print(f"Error {file_path}: {e}")
 
 print(f"Done. CSP updated in {count_csp} files. Cookie Banner in {count_cookie} files.")
+
