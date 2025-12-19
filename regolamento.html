@@ -2,6 +2,7 @@
 <html lang="it">
 
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Regolamento - Next Cup 2026</title>
@@ -9,58 +10,76 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #f3f4f6;
-        }
-
-        .nx-text-gradient {
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .rule-card {
-            background-color: #1f2937;
-            border-left: 4px solid #fbbf24;
-            transition: transform 0.2s;
-        }
-
-        .rule-card:hover {
-            transform: translateX(5px);
-        }
-
         .hidden a {
             font-size: 18px;
         }
     </style>
 </head>
 
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen relative">
+    <div class="bg-grid"></div>
 
     <!-- Navbar -->
     <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
         <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
             <div class="flex items-center space-x-3">
                 <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
-                <a href="index.html" class="text-2xl font-black nx-text-gradient">
+                <a href="index.html" class="text-2xl font-black header-brand-text">
                     NEXT CUP
                 </a>
             </div>
 
             <!-- DESKTOP MENU -->
-            <div class="hidden md:flex space-x-6 font-semibold text-sm">
+            <div class="hidden md:flex space-x-8 font-semibold text-sm items-center">
                 <a href="index.html" class="hover:text-yellow-400 transition">Home</a>
-                <a href="teams.html" class="hover:text-yellow-400 transition">Squadre</a>
-                <a href="news.html" class="hover:text-yellow-400 transition">Notizie</a>
-                <a href="match_preview.html" class="hover:text-yellow-400 transition">Anteprima AI</a>
-                <a href="torneo.html" class="hover:text-yellow-400 transition">Torneo</a>
-                <a href="statistics.html" class="hover:text-yellow-400 transition">Statistiche</a>
-                <a href="sondaggi.html" class="hover:text-yellow-400 transition">Sondaggi</a>
+
+                <!-- DROPDOWN -->
+                <div class="relative group">
+                    <button
+                        class="flex items-center space-x-1 hover:text-yellow-400 focus:outline-none py-4 text-white">
+                        <span>Altro</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div
+                        class="absolute left-0 top-full w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top translate-y-2 group-hover:translate-y-0 z-50">
+                        <div class="flex flex-col py-2">
+                            <a href="teams.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Squadre
+                            </a>
+                            <a href="news.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Notizie
+                            </a>
+                            <a href="match_preview.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Anteprima AI
+                            </a>
+                            <a href="torneo.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Torneo
+                            </a>
+                            <a href="statistics.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Statistiche
+                            </a>
+                            <a href="sondaggi.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Sondaggi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <a href="regolamento.html" class="text-yellow-400 transition">Regolamento</a>
-                <a href="contact.html" class="hover:text-yellow-400 transition">Contatti</a>
+                <a href="contact.html" class="hover:text-yellow-400 transition">Contatti & Iscrizione</a>
             </div>
 
             <!-- MOBILE MENU BUTTON -->
@@ -94,7 +113,7 @@
                 <a href="sondaggi.html"
                     class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
                 <a href="regolamento.html" class="text-yellow-400 block border-b border-gray-800 pb-2">Regolamento</a>
-                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti</a>
+                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti & Iscrizione</a>
             </div>
         </div>
 
@@ -112,7 +131,7 @@
     <!-- Header -->
     <header class="py-12 bg-gray-900 border-b border-gray-800">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">Regolamento Ufficiale</h1>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tech-font">Regolamento Ufficiale</h1>
             <p class="text-xl text-gray-400">Le linee guida per partecipare alla Next Cup 2026.</p>
         </div>
     </header>
@@ -123,14 +142,16 @@
 
             <!-- Sezione 1 -->
             <section>
-                <h2 class="text-3xl font-bold text-yellow-400 mb-6">1. Iscrizione e Partecipazione</h2>
+                <h2 class="text-3xl font-bold text-yellow-400 mb-6 tech-font">1. Iscrizione e Partecipazione</h2>
                 <div class="space-y-4">
-                    <div class="rule-card p-6 rounded-lg">
+                    <div
+                        class="glass-panel p-6 rounded-lg transition-all hover:translate-x-1 border-l-4 border-l-yellow-400">
                         <h3 class="text-xl font-semibold text-white mb-2">1.1 Composizione Squadre</h3>
                         <p class="text-gray-300">Ogni squadra deve essere composta da un minimo di 5 giocatori a un
                             massimo di 10. La lista giocatori deve essere consegnata prima dell'inizio del torneo.</p>
                     </div>
-                    <div class="rule-card p-6 rounded-lg">
+                    <div
+                        class="glass-panel p-6 rounded-lg transition-all hover:translate-x-1 border-l-4 border-l-yellow-400">
                         <h3 class="text-xl font-semibold text-white mb-2">1.2 Quota di Iscrizione</h3>
                         <p class="text-gray-300">La quota di partecipazione va versata interamente entro la data
                             stabilita dal comitato organizzativo. Il mancato pagamento comporta l'esclusione.</p>
@@ -140,14 +161,16 @@
 
             <!-- Sezione 2 -->
             <section>
-                <h2 class="text-3xl font-bold text-yellow-400 mb-6">2. Svolgimento delle Partite</h2>
+                <h2 class="text-3xl font-bold text-yellow-400 mb-6 tech-font">2. Svolgimento delle Partite</h2>
                 <div class="space-y-4">
-                    <div class="rule-card p-6 rounded-lg">
+                    <div
+                        class="glass-panel p-6 rounded-lg transition-all hover:translate-x-1 border-l-4 border-l-yellow-400">
                         <h3 class="text-xl font-semibold text-white mb-2">2.1 Durata</h3>
                         <p class="text-gray-300">Le partite si svolgono in due tempi da 20 minuti ciascuno, con un
                             intervallo di 5 minuti.</p>
                     </div>
-                    <div class="rule-card p-6 rounded-lg">
+                    <div
+                        class="glass-panel p-6 rounded-lg transition-all hover:translate-x-1 border-l-4 border-l-yellow-400">
                         <h3 class="text-xl font-semibold text-white mb-2">2.2 Ritardi</h3>
                         <p class="text-gray-300">Un ritardo superiore ai 15 minuti dall'orario di inizio prefissato
                             comporterà la sconfitta a tavolino per 3-0.</p>
@@ -157,9 +180,10 @@
 
             <!-- Sezione 3 -->
             <section>
-                <h2 class="text-3xl font-bold text-yellow-400 mb-6">3. Disciplina</h2>
+                <h2 class="text-3xl font-bold text-yellow-400 mb-6 tech-font">3. Disciplina</h2>
                 <div class="space-y-4">
-                    <div class="rule-card p-6 rounded-lg">
+                    <div
+                        class="glass-panel p-6 rounded-lg transition-all hover:translate-x-1 border-l-4 border-l-yellow-400">
                         <h3 class="text-xl font-semibold text-white mb-2">3.1 Cartellini</h3>
                         <ul class="list-disc list-inside text-gray-300 space-y-1">
                             <li><span class="text-yellow-400 font-bold">Giallo</span>: Ammonizione. Due gialli nella
@@ -168,7 +192,8 @@
                                 partita successiva (salvo decisioni diverse del giudice sportivo).</li>
                         </ul>
                     </div>
-                    <div class="rule-card p-6 rounded-lg">
+                    <div
+                        class="glass-panel p-6 rounded-lg transition-all hover:translate-x-1 border-l-4 border-l-yellow-400">
                         <h3 class="text-xl font-semibold text-white mb-2">3.2 Fair Play</h3>
                         <p class="text-gray-300">Ogni comportamento antisportivo, violento o offensivo sarà sanzionato
                             severamente, fino all'esclusione dal torneo.</p>
@@ -180,21 +205,58 @@
     </main>
 
     <!-- Footer -->
+    <!-- Footer -->
     <footer class="bg-black py-10 border-t border-gray-800">
         <div
             class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0 px-4">
             <div class="text-gray-400">
                 <p class="text-lg font-bold nx-text-gradient mb-2">NEXT CUP</p>
-                <p>&copy; 2026. Tutti i diritti riservati.</p>
+                <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
             </div>
             <div class="space-y-2">
-                <p class="text-white font-semibold">Link Utili</p>
-                <a href="index.html" class="block text-sm text-gray-400 hover:text-yellow-400">Home</a>
-                <a href="teams.html" class="block text-sm text-gray-400 hover:text-yellow-400">Squadre</a>
-                <a href="statistics.html" class="block text-sm text-gray-400 hover:text-yellow-400">Statistiche</a>
+                <p class="text-white font-semibold">Contattaci</p>
+                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com"
+                        class="hover:text-yellow-400">info@next-cup.it</a></p>
+                <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
+                <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
             </div>
         </div>
     </footer>
+
+
+    <!-- COOKIE CONSENT BANNER -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full" style="display: none;">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-gray-300 text-sm">
+                <p class="font-bold text-white mb-1">🍪 Informativa Privacy</p>
+                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il funzionamento. 
+                Continuando a navigare, accetti l'utilizzo dei cookie.
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="acceptCookies()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function checkCookies() {
+            if (!localStorage.getItem('cookieConsent')) {
+                const banner = document.getElementById('cookie-banner');
+                if(banner) {
+                    banner.style.display = 'block';
+                    setTimeout(() => banner.classList.remove('translate-y-full'), 100);
+                }
+            }
+        }
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'true');
+            const banner = document.getElementById('cookie-banner');
+            if(banner) {
+                banner.classList.add('translate-y-full');
+                setTimeout(() => banner.style.display = 'none', 500);
+            }
+        }
+        window.addEventListener('load', checkCookies);
+    </script>
 
 </body>
 

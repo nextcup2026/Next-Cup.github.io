@@ -2,6 +2,7 @@
 <html lang="it">
 
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXT CUP - Squadre Iscritte</title>
@@ -15,45 +16,17 @@
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020617;
-            color: #e5e7eb;
-        }
-
-        .nx-text-gradient {
-            background: linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .team-card {
-            background-color: #020617;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .team-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
-        }
-
-        .team-card h3 {
-            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
-        }
-
-        .team-card ul li:hover {
-            color: #FFD700;
-            transition: color 0.2s;
-        }
-
         .hidden a {
             font-size: 18px;
         }
     </style>
 </head>
 
-<body class="antialiased">
+<body class="antialiased relative">
+    <div class="bg-grid"></div>
 
     <!-- FIREBASE CONFIG -->
     <script>
@@ -75,22 +48,58 @@
         <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
             <div class="flex items-center space-x-3">
                 <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
-                <a href="index.html" class="text-2xl font-black nx-text-gradient">
+                <a href="index.html" class="text-2xl font-black header-brand-text">
                     NEXT CUP
                 </a>
             </div>
 
             <!-- DESKTOP MENU -->
-            <div class="hidden md:flex space-x-6 font-semibold text-sm">
+            <div class="hidden md:flex space-x-8 font-semibold text-sm items-center">
                 <a href="index.html" class="hover:text-yellow-400 transition">Home</a>
-                <a href="teams.html" class="text-yellow-400 transition">Squadre</a>
-                <a href="news.html" class="hover:text-yellow-400 transition">Notizie</a>
-                <a href="match_preview.html" class="hover:text-yellow-400 transition">Anteprima AI</a>
-                <a href="torneo.html" class="hover:text-yellow-400 transition">Torneo</a>
-                <a href="statistics.html" class="hover:text-yellow-400 transition">Statistiche</a>
-                <a href="sondaggi.html" class="hover:text-yellow-400 transition">Sondaggi</a>
+
+                <!-- DROPDOWN -->
+                <div class="relative group">
+                    <button class="flex items-center space-x-1 text-yellow-400 focus:outline-none py-4">
+                        <span>Altro</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div
+                        class="absolute left-0 top-full w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top translate-y-2 group-hover:translate-y-0 z-50">
+                        <div class="flex flex-col py-2">
+                            <a href="teams.html"
+                                class="px-4 py-3 text-yellow-400 font-bold hover:bg-gray-800 transition border-b border-gray-800 last:border-0 relative">
+                                Squadre
+                            </a>
+                            <a href="news.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Notizie
+                            </a>
+                            <a href="match_preview.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Anteprima AI
+                            </a>
+                            <a href="torneo.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Torneo
+                            </a>
+                            <a href="statistics.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Statistiche
+                            </a>
+                            <a href="sondaggi.html"
+                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
+                                Sondaggi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <a href="regolamento.html" class="hover:text-yellow-400 transition">Regolamento</a>
-                <a href="contact.html" class="hover:text-yellow-400 transition">Contatti</a>
+                <a href="contact.html" class="hover:text-yellow-400 transition">Contatti & Iscrizione</a>
             </div>
 
             <!-- MOBILE MENU BUTTON -->
@@ -124,7 +133,7 @@
                     class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
                 <a href="regolamento.html"
                     class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Regolamento</a>
-                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti</a>
+                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti & Iscrizione</a>
             </div>
         </div>
 
@@ -143,7 +152,8 @@
     <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-800 min-h-screen">
         <div class="max-w-6xl mx-auto">
 
-            <h2 class="text-5xl sm:text-6xl font-extrabold text-center mb-4 nx-text-gradient">Squadre Partecipanti</h2>
+            <h2 class="text-5xl sm:text-6xl font-extrabold text-center mb-4 nx-text-gradient tech-font neon-text">
+                Squadre Partecipanti</h2>
             <p class="text-center text-lg sm:text-xl text-gray-400 mb-12">
                 Scopri le formazioni che parteciperanno alla Next Cup.
             </p>
@@ -163,6 +173,7 @@
     </section>
 
     <!-- Footer / Contatti -->
+    <!-- Footer / Contatti -->
     <footer class="bg-black py-10">
         <div
             class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
@@ -173,7 +184,7 @@
             <div class="space-y-2">
                 <p class="text-white font-semibold">Contattaci</p>
                 <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com"
-                        class="hover:text-yellow-400">nextcup2026@gmail.com</a></p>
+                        class="hover:text-yellow-400">info@next-cup.it</a></p>
                 <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
                 <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
             </div>
@@ -242,7 +253,7 @@
                 .map(team => {
                     const players = (team.players || []).map(normalizePlayer);
                     return `
-    <div class="team-card p-6 rounded-xl shadow-2xl bg-gray-900 border border-gray-800">
+    <div class="glass-panel p-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
         <div class="flex items-center justify-center mb-4">
             ${team.logoUrl
                             ? `<img src="${team.logoUrl}" alt="${team.name} Logo" class="w-20 h-20 object-contain rounded-full border-2 border-yellow-400 bg-gray-800">`
@@ -251,7 +262,7 @@
                    </div>`
                         }
         </div>
-        <h3 class="text-3xl font-bold text-yellow-400 mb-4 text-center border-b border-gray-700 pb-2">${team.name}</h3>
+        <h3 class="text-3xl font-bold text-yellow-400 mb-4 text-center border-b border-gray-700 pb-2 tech-font">${team.name}</h3>
         <div class="space-y-3">
             ${players.length
                             ? players.map(p => {
@@ -318,6 +329,41 @@
 
         ['scorers', 'assists', 'cleanSheets', 'cards'].forEach(setupStatListener);
     </script>
+
+    <!-- COOKIE CONSENT BANNER -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full" style="display: none;">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-gray-300 text-sm">
+                <p class="font-bold text-white mb-1">🍪 Informativa Privacy</p>
+                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il funzionamento. 
+                Continuando a navigare, accetti l'utilizzo dei cookie.
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="acceptCookies()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function checkCookies() {
+            if (!localStorage.getItem('cookieConsent')) {
+                const banner = document.getElementById('cookie-banner');
+                if(banner) {
+                    banner.style.display = 'block';
+                    setTimeout(() => banner.classList.remove('translate-y-full'), 100);
+                }
+            }
+        }
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'true');
+            const banner = document.getElementById('cookie-banner');
+            if(banner) {
+                banner.classList.add('translate-y-full');
+                setTimeout(() => banner.style.display = 'none', 500);
+            }
+        }
+        window.addEventListener('load', checkCookies);
+    </script>
+
 </body>
 
 </html>

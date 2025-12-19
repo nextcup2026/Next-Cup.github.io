@@ -2,6 +2,7 @@
 <html lang="it">
 
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXT CUP - Accesso</title>
@@ -202,6 +203,41 @@
         });
 
     </script>
+
+    <!-- COOKIE CONSENT BANNER -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full" style="display: none;">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-gray-300 text-sm">
+                <p class="font-bold text-white mb-1">🍪 Informativa Privacy</p>
+                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il funzionamento. 
+                Continuando a navigare, accetti l'utilizzo dei cookie.
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="acceptCookies()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function checkCookies() {
+            if (!localStorage.getItem('cookieConsent')) {
+                const banner = document.getElementById('cookie-banner');
+                if(banner) {
+                    banner.style.display = 'block';
+                    setTimeout(() => banner.classList.remove('translate-y-full'), 100);
+                }
+            }
+        }
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'true');
+            const banner = document.getElementById('cookie-banner');
+            if(banner) {
+                banner.classList.add('translate-y-full');
+                setTimeout(() => banner.style.display = 'none', 500);
+            }
+        }
+        window.addEventListener('load', checkCookies);
+    </script>
+
 </body>
 
 </html>

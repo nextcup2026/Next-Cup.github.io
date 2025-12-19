@@ -1,0 +1,173 @@
+/* GLOBAL THEME - CYBERPUNK LITE */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #030712;
+    /* Gray-950 */
+    color: #e5e7eb;
+    overflow-x: hidden;
+}
+
+/* Background Grid Animation */
+.bg-grid {
+    background-size: 50px 50px;
+    background-image:
+        linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+    mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -10;
+    pointer-events: none;
+}
+
+/* Tech Font for Headings */
+.tech-font {
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.15), inset 0 0 20px rgba(59, 130, 246, 0.05);
+}
+
+/* Neon Text */
+.neon-text {
+    color: #fff;
+    text-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #2563eb;
+}
+
+.neon-text-gold {
+    color: #fbbf24;
+    text-shadow: 0 0 5px #fbbf24, 0 0 10px #d97706;
+}
+
+/* Button Glow */
+.btn-cyber {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    border: 1px solid #60a5fa;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-cyber:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+    border-color: #93c5fd;
+}
+
+.btn-cyber::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+}
+
+.btn-cyber:hover::before {
+    left: 100%;
+}
+
+/* Select Tech Style */
+.select-tech {
+    background-color: rgba(17, 24, 39, 0.8);
+    color: white;
+    border: 1px solid #3b82f6;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.select-tech:focus {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    border-color: #60a5fa;
+}
+
+/* Card Hover Effect (Lite) */
+.card-hover-tech {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-hover-tech:hover {
+    transform: translateY(-5px);
+    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+}
+
+/* Gradient Text Shared */
+.nx-text-gradient {
+    background: linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    /* Fallback */
+}
+
+/* Header Brand Style - Matches match_preview.html */
+.header-brand-text {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.05em;
+    background: linear-gradient(to right, #60a5fa, #facc15, #60a5fa);
+    /* blue-400 to yellow-400 loop */
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-flow 3s linear infinite;
+}
+
+@keyframes gradient-flow {
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* Neon Input Style */
+.input-neon {
+    background-color: #030712;
+    /* Darker bg */
+    border: 1px solid #3b82f6;
+    color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+@keyframes neon-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), 0 0 30px rgba(59, 130, 246, 0.2);
+        border-color: #60a5fa;
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(59, 130, 246, 0.8), 0 0 50px rgba(59, 130, 246, 0.4);
+        border-color: #93c5fd;
+    }
+}
+
+.input-neon:focus {
+    outline: none;
+    animation: neon-pulse 2s infinite ease-in-out;
+    transform: scale(1.01);
+}
+
+.input-neon::placeholder {
+    color: #9ca3af;
+}
