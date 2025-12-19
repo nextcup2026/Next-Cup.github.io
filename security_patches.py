@@ -1,14 +1,14 @@
 
 import os
 import glob
+import re
 
 work_dir = r"c:\Users\a5155676tt\OneDrive\Sito web torneo 2"
 html_files = glob.glob(os.path.join(work_dir, "*.html"))
 
 # 1. CONTENT SECURITY POLICY
-# Allow: Tailwind CDN, Google Fonts, Firebase/Google APIs, Local resources.
-# Unsafe-inline/eval is needed for some frameworks/babel in browser, we try to be strict but functional.
-csp_content = """    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:;">"""
+# Updated to include connect-src for Source Maps and Firebase/Google APIs
+csp_content = """    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">"""
 
 # 2. COOKIE BANNER HTML/JS
 cookie_banner_html = """
@@ -54,17 +54,24 @@ for file_path in html_files:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+            
         new_content = content
         
-        # Inject CSP if not present
-        if "Content-Security-Policy" not in new_content:
-            # Inject after <head>
+        # CSP Update Logic
+        # Regex to find existing CSP meta tag
+        csp_regex = re.compile(r'<meta\s+http-equiv=["\']Content-Security-Policy["\'].*?>', re.IGNORECASE | re.DOTALL)
+        
+        if csp_regex.search(new_content):
+            # Replace existing CSP
+            new_content = csp_regex.sub(csp_content.strip(), new_content)
+            count_csp += 1
+        else:
+            # Inject new CSP if not found
             if "<head>" in new_content:
                 new_content = new_content.replace("<head>", "<head>\n" + csp_content)
                 count_csp += 1
-        
-        # Inject Cookie Banner if not present, and if it's a main page (has </body>)
+
+        # Cookie Banner Injection (Only if not present)
         if "cookie-banner" not in new_content and "</body>" in new_content:
             new_content = new_content.replace("</body>", cookie_banner_html + "\n</body>")
             count_cookie += 1
@@ -77,4 +84,4 @@ for file_path in html_files:
     except Exception as e:
         print(f"Error {file_path}: {e}")
 
-print(f"Done. CSP injected in {count_csp} files. Cookie Banner in {count_cookie} files.")
+print(f"Done. CSP updated in {count_csp} files. Cookie Banner in {count_cookie} files.")
