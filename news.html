@@ -2,7 +2,8 @@
 <html lang="it">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>NEXT CUP - Notizie e Aggiornamenti</title>
@@ -136,7 +137,8 @@
                     class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
                 <a href="regolamento.html"
                     class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Regolamento</a>
-                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti & Iscrizione</a>
+                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti &
+                    Iscrizione</a>
             </div>
         </div>
 
@@ -439,8 +441,8 @@
 
         searchInput.oninput = applyFilters;
         categoryFilter.onchange = applyFilters;
-        // In un listener real-time, il bottone 'Aggiorna' può essere usato per forzare il re-render dei filtri.
-        refreshBtn.onclick = applyFilters;
+        // Opzione 2: Ricarica pagina completa come richiesto
+        refreshBtn.onclick = () => window.location.reload();
 
         document
             .getElementById("articleModal")
@@ -453,15 +455,19 @@
 
 
     <!-- COOKIE CONSENT BANNER -->
-    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full" style="display: none;">
+    <div id="cookie-banner"
+        class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full"
+        style="display: none;">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="text-gray-300 text-sm">
                 <p class="font-bold text-white mb-1">🍪 Informativa Privacy</p>
-                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il funzionamento. 
+                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il
+                funzionamento.
                 Continuando a navigare, accetti l'utilizzo dei cookie.
             </div>
             <div class="flex space-x-4">
-                <button onclick="acceptCookies()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
+                <button onclick="acceptCookies()"
+                    class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
             </div>
         </div>
     </div>
@@ -469,7 +475,7 @@
         function checkCookies() {
             if (!localStorage.getItem('cookieConsent')) {
                 const banner = document.getElementById('cookie-banner');
-                if(banner) {
+                if (banner) {
                     banner.style.display = 'block';
                     setTimeout(() => banner.classList.remove('translate-y-full'), 100);
                 }
@@ -478,7 +484,7 @@
         function acceptCookies() {
             localStorage.setItem('cookieConsent', 'true');
             const banner = document.getElementById('cookie-banner');
-            if(banner) {
+            if (banner) {
                 banner.classList.add('translate-y-full');
                 setTimeout(() => banner.style.display = 'none', 500);
             }

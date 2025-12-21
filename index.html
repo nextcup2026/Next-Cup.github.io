@@ -2,7 +2,8 @@
 <html lang="it">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NEXT CUP – Home Page Ufficiale</title>
@@ -21,10 +22,10 @@
     <style>
         .hero-section {
             background-image:
-                linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95)),
-                url('sfondo.jpeg');
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(2, 6, 23, 1) 100%),
+                url('hero_banner.png');
             background-size: cover;
-            background-position: center;
+            background-position: center top;
         }
 
         .hidden a {
@@ -128,7 +129,8 @@
                     class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
                 <a href="regolamento.html"
                     class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Regolamento</a>
-                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti & Iscrizione</a>
+                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti &
+                    Iscrizione</a>
             </div>
         </div>
 
@@ -144,8 +146,9 @@
     </header>
 
     <!-- HERO -->
-    <section class="hero-section min-h-[70vh] flex items-center">
+    <section class="hero-section min-h-[85vh] flex items-end justify-center pb-80">
         <div class="max-w-4xl mx-auto px-6 text-center">
+            <!-- 
             <h1 class="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tight mb-6 tech-font">
                 <span class="nx-text-gradient">NEXT CUP</span>
             </h1>
@@ -154,10 +157,11 @@
                 Il torneo che mette alla prova le migliori squadre giovanili.
                 Una competizione. Un vincitore.
             </p>
+            -->
 
             <!-- COUNTDOWN -->
-            <div id="countdown" class="inline-block bg-gray-900/60 backdrop-blur-md border border-white/10
-                    rounded-2xl px-6 py-4 shadow-xl mb-10">
+            <div id="countdown" class="inline-block bg-gray-950/80 backdrop-blur-md border border-white/20
+                    rounded-2xl px-6 py-4 shadow-2xl mb-10 transform sm:scale-110">
                 <div class="flex items-center space-x-6 text-center">
                     <div>
                         <div id="days" class="text-4xl font-extrabold nx-text-gradient">00</div>
@@ -180,9 +184,9 @@
 
             <!-- CTA -->
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="match_preview.html" class="btn-cyber text-white font-bold py-3 px-8 rounded-xl
+                <a href="regolamento.html" class="btn-cyber text-white font-bold py-3 px-8 rounded-xl
                       shadow-lg flex items-center justify-center">
-                    Anteprima Match AI
+                    Regolamento
                 </a>
                 <a href="results.html" class="bg-gray-800 border border-gray-600 text-white font-bold py-3 px-8 rounded-xl
                       hover:bg-gray-700 transition shadow-lg">
@@ -201,7 +205,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="glass-panel p-8 rounded-2xl transition-all hover:-translate-y-2">
-                    <p class="text-5xl font-extrabold nx-text-gradient mb-2 tech-font">12/16</p>
+                    <p id="teams-count" class="text-5xl font-extrabold nx-text-gradient mb-2 tech-font">--/16</p>
                     <p class="font-semibold text-lg text-white">Squadre partecipanti</p>
                     <p class="text-sm text-gray-400 mt-2">
                         Solo i migliori team.
@@ -209,18 +213,20 @@
                 </div>
 
                 <div class="glass-panel p-8 rounded-2xl transition-all hover:-translate-y-2">
-                    <p class="text-3xl font-bold nx-text-gradient mb-2 tech-font">Giocatore Top</p>
-                    <p class="font-semibold text-lg text-white">Il torneo deve ancora iniziare!</p>
+                    <p id="top-scorer-name" class="text-3xl font-bold nx-text-gradient mb-2 tech-font">Caricamento...
+                    </p>
+                    <p id="top-scorer-goals" class="font-semibold text-lg text-white">Attendo dati...</p>
                     <p class="text-sm text-gray-400 mt-2">
-                        Scopri la classifica completa.
+                        Top Player del torneo
                     </p>
                 </div>
 
                 <div class="glass-panel p-8 rounded-2xl transition-all hover:-translate-y-2">
-                    <p class="text-3xl font-bold nx-text-gradient mb-2 tech-font">Assist Man</p>
-                    <p class="font-semibold text-lg text-white">Il torneo deve ancora iniziare!</p>
+                    <p id="assist-man-name" class="text-3xl font-bold nx-text-gradient mb-2 tech-font">Caricamento...
+                    </p>
+                    <p id="assist-man-value" class="font-semibold text-lg text-white">Attendo dati...</p>
                     <p class="text-sm text-gray-400 mt-2">
-                        Chi fa la differenza.
+                        Assist Man
                     </p>
                 </div>
             </div>
@@ -308,23 +314,107 @@
     </script>
 
     <!-- COOKIE CONSENT BANNER -->
-    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full" style="display: none;">
+    <div id="cookie-banner"
+        class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full"
+        style="display: none;">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="text-gray-300 text-sm">
                 <p class="font-bold text-white mb-1">🍪 Informativa Privacy</p>
-                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il funzionamento. 
+                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il
+                funzionamento.
                 Continuando a navigare, accetti l'utilizzo dei cookie.
             </div>
             <div class="flex space-x-4">
-                <button onclick="acceptCookies()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
+                <button onclick="acceptCookies()"
+                    class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
             </div>
         </div>
     </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configurazione Firebase (la stessa di admin.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+            authDomain: "torneo-585ac.firebaseapp.com",
+            projectId: "torneo-585ac",
+            storageBucket: "torneo-585ac.firebasestorage.app",
+            messagingSenderId: "79275251686",
+            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+            measurementId: "G-S2NZJJXKWW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const APP_ID = "nextcup-app";
+
+        async function fetchStats() {
+            try {
+                // 1. Teams Count
+                const teamsSnapshot = await getDocs(collection(db, `artifacts/${APP_ID}/public/data/teams`));
+                const count = teamsSnapshot.size;
+                const teamsEl = document.getElementById('teams-count');
+                if (teamsEl) teamsEl.textContent = `${count}/16`;
+
+                // 2. Top Scorer
+                const scorersQuery = query(
+                    collection(db, `artifacts/${APP_ID}/public/data/scorers`),
+                    where("goals", ">", 0),
+                    orderBy("goals", "desc"),
+                    limit(1)
+                );
+                const scorersSnapshot = await getDocs(scorersQuery);
+                const scorerNameEl = document.getElementById('top-scorer-name');
+                const scorerGoalsEl = document.getElementById('top-scorer-goals');
+
+                if (!scorersSnapshot.empty) {
+                    const data = scorersSnapshot.docs[0].data();
+                    if (scorerNameEl) scorerNameEl.textContent = data.name;
+                    if (scorerGoalsEl) scorerGoalsEl.textContent = `${data.goals} Goal`;
+                } else {
+                    if (scorerNameEl) scorerNameEl.textContent = "Giocatore Top";
+                    if (scorerGoalsEl) scorerGoalsEl.textContent = "Il torneo deve ancora iniziare!";
+                }
+
+                // 3. Assist Man
+                const assistsQuery = query(
+                    collection(db, `artifacts/${APP_ID}/public/data/assists`),
+                    where("assists", ">", 0),
+                    orderBy("assists", "desc"),
+                    limit(1)
+                );
+                const assistsSnapshot = await getDocs(assistsQuery);
+                const assistNameEl = document.getElementById('assist-man-name');
+                const assistValueEl = document.getElementById('assist-man-value');
+
+                if (!assistsSnapshot.empty) {
+                    const data = assistsSnapshot.docs[0].data();
+                    console.log("Assist Leader Data:", data);
+                    if (assistNameEl) assistNameEl.textContent = data.name;
+                    if (assistValueEl) assistValueEl.textContent = `${data.assists} Assist`;
+                } else {
+                    console.log("No assist data found.");
+                    if (assistNameEl) assistNameEl.textContent = "Assist Man";
+                    if (assistValueEl) assistValueEl.textContent = "Il torneo deve ancora iniziare!";
+                }
+
+            } catch (error) {
+                console.error("Errore recupero statistiche:", error);
+                document.getElementById('teams-count').textContent = "Err";
+                document.getElementById('top-scorer-name').textContent = "Offline";
+                document.getElementById('assist-man-name').textContent = "Offline";
+            }
+        }
+
+        // Avvia il recupero dati
+        fetchStats();
+    </script>
     <script>
         function checkCookies() {
             if (!localStorage.getItem('cookieConsent')) {
                 const banner = document.getElementById('cookie-banner');
-                if(banner) {
+                if (banner) {
                     banner.style.display = 'block';
                     setTimeout(() => banner.classList.remove('translate-y-full'), 100);
                 }
@@ -333,7 +423,7 @@
         function acceptCookies() {
             localStorage.setItem('cookieConsent', 'true');
             const banner = document.getElementById('cookie-banner');
-            if(banner) {
+            if (banner) {
                 banner.classList.add('translate-y-full');
                 setTimeout(() => banner.style.display = 'none', 500);
             }

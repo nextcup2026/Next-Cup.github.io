@@ -15,8 +15,7 @@ service cloud.firestore {
     // This is a basic check for allowed emails if Custom Claims are not set up.
     function isAdmin() {
       return isAuth() && 
-        (request.auth.token.email.matches('.*@admin.it') || // Example pattern
-         request.auth.token.email in ['admin@torneo.it', 'gestore@torneo.it']); // REPLACE WITH YOUR ADMIN EMAILS
+         request.auth.token.email == 'nextcup2026@gmail.com';
     }
 
     // --- Collections ---

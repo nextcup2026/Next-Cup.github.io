@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXT CUP - Dettagli Partita</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tech-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Timeline Styles */
+        .timeline-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        /* Central Line */
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: rgba(75, 85, 99, 0.4);
+            /* gray-600 with opacity */
+            transform: translateX(-50%);
+        }
+
+        .timeline-event {
+            position: relative;
+            margin-bottom: 2rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .event-minute {
+            background: #1f2937;
+            /* gray-800 */
+            color: #fbbf24;
+            /* yellow-400 */
+            border: 2px solid #4b5563;
+            /* gray-600 */
+            border-radius: 50%;
+            width: 44px;
+            /* Slightly larger */
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            /* Extra bold */
+            font-family: 'Inter', sans-serif;
+            /* Clean font */
+            font-size: 1.1rem;
+            /* Larger text */
+            z-index: 10;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+        }
+
+        .event-content {
+            width: 45%;
+            padding: 1rem;
+            background: rgba(31, 41, 55, 0.6);
+            /* gray-800/60 */
+            backdrop-filter: blur(4px);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(75, 85, 99, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .event-content:hover {
+            background: rgba(31, 41, 55, 0.9);
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Left Side (Team 1) */
+        .event-left {
+            justify-content: flex-start;
+            padding-right: 50%;
+        }
+
+        .event-left .event-content {
+            margin-right: 40px;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        /* Right Side (Team 2) */
+        .event-right {
+            justify-content: flex-end;
+            padding-left: 50%;
+        }
+
+        .event-right .event-content {
+            margin-left: 40px;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .icon-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col relative bg-gray-950 text-white">
+    <div class="bg-grid"></div>
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
+                <a href="index.html" class="text-2xl font-black header-brand-text">NEXT CUP</a>
+            </div>
+            <div class="hidden md:flex space-x-8 font-semibold text-sm items-center">
+                <a href="index.html" class="hover:text-yellow-400 transition">Home</a>
+                <a href="torneo.html" class="text-yellow-400 font-bold transition">Torneo</a>
+                <a href="statistics.html" class="hover:text-yellow-400 transition">Statistiche</a>
+            </div>
+            <!-- Menu Mobile Button (Simplified) -->
+            <div class="md:hidden">
+                <a href="torneo.html" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow py-12 px-4 max-w-5xl mx-auto w-full">
+
+        <!-- Back Button -->
+        <a href="torneo.html" class="inline-flex items-center text-gray-400 hover:text-white mb-8 transition">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Torna al Torneo
+        </a>
+
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-20">
+            <svg class="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+            <p class="text-gray-400">Caricamento dettagli...</p>
+        </div>
+
+        <!-- ERROR STATE -->
+        <div id="error-msg" class="hidden text-center py-20">
+            <p class="text-red-500 text-xl font-bold">Partita non trovata o Errore.</p>
+        </div>
+
+        <!-- MATCH CONTENT -->
+        <div id="match-content" class="hidden animate-fade-in-up">
+
+            <!-- HEADER SCOREBOARD -->
+            <div
+                class="glass-panel rounded-2xl p-8 mb-12 relative overflow-hidden border border-gray-700/50 shadow-2xl">
+                <div
+                    class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-50">
+                </div>
+
+                <div class="text-center mb-4">
+                    <span id="match-stage" class="text-blue-400 font-bold tracking-widest uppercase text-sm">--</span>
+                    <p id="match-date" class="text-gray-500 text-xs mt-1">--</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <!-- Team 1 -->
+                    <div class="flex-1 text-center md:text-right flex flex-col items-center md:items-end">
+                        <h2 id="team1-name" class="text-2xl md:text-4xl font-black text-white tech-font leading-tight">
+                            --</h2>
+                    </div>
+
+                    <!-- Score -->
+                    <div
+                        class="bg-gray-900/80 rounded-xl px-8 py-4 border border-gray-700 shadow-inner min-w-[140px] text-center">
+                        <span id="match-score"
+                            class="text-4xl md:text-5xl font-mono font-bold text-yellow-400 tracking-wider">0 - 0</span>
+                        <div id="match-status" class="mt-2 text-xs font-bold text-gray-400 uppercase">--</div>
+                    </div>
+
+                    <!-- Team 2 -->
+                    <div class="flex-1 text-center md:text-left flex flex-col items-center md:items-start">
+                        <h2 id="team2-name" class="text-2xl md:text-4xl font-black text-white tech-font leading-tight">
+                            --</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIMELINE SECTION -->
+            <div class="max-w-3xl mx-auto">
+                <h3
+                    class="text-center text-gray-400 mb-8 uppercase tracking-widest text-sm border-b border-gray-800 pb-2">
+                    Cronologia Eventi</h3>
+
+                <div id="timeline" class="timeline-container">
+                    <!-- Events will be injected here -->
+                </div>
+
+                <div id="no-events" class="hidden text-center py-8 text-gray-500 italic">
+                    Nessun evento registrato in questa partita.
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black py-10 mt-auto border-t border-gray-900">
+        <div class="max-w-7xl mx-auto text-center text-gray-500 text-sm">
+            <p>&copy; 2026 NEXT CUP. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <!-- FIREBASE -->
+    <script>
+        window.__firebase_config = JSON.stringify({
+            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
+            authDomain: "torneo-585ac.firebaseapp.com",
+            projectId: "torneo-585ac",
+            storageBucket: "torneo-585ac.firebasestorage.app",
+            messagingSenderId: "79275251686",
+            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
+            measurementId: "G-S2NZJJXKWW"
+        });
+        window.__app_id = "nextcup-app";
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const app = initializeApp(JSON.parse(window.__firebase_config));
+        const db = getFirestore(app);
+        const appId = window.__app_id;
+
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const matchId = params.get('id');
+
+            if (!matchId) {
+                showError("ID Partita mancante");
+                return;
+            }
+
+            try {
+                const matchRef = doc(db, `artifacts/${appId}/public/data/matches`, matchId);
+                const snap = await getDoc(matchRef);
+
+                if (!snap.exists()) {
+                    showError("Partita non trovata nel database");
+                    return;
+                }
+
+                renderMatch(snap.data());
+            } catch (error) {
+                console.error(error);
+                showError("Errore nel caricamento della partita");
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error-msg').classList.remove('hidden');
+            document.querySelector('#error-msg p').textContent = msg;
+        }
+
+        function renderMatch(data) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('match-content').classList.remove('hidden');
+
+            // Header Data
+            document.getElementById('match-stage').textContent = data.stage || 'Partita';
+            document.getElementById('match-date').textContent = `${data.date} - ${data.time}`;
+            document.getElementById('team1-name').textContent = data.team1;
+            document.getElementById('team2-name').textContent = data.team2;
+            document.getElementById('match-score').textContent = `${data.score1 || 0} - ${data.score2 || 0}`;
+
+            // Status Badge
+            const statusEl = document.getElementById('match-status');
+            if (data.status === 'LIVE') {
+                statusEl.textContent = "● LIVE";
+                statusEl.classList.add('text-green-500', 'animate-pulse');
+            } else if (data.status === 'FINISHED') {
+                statusEl.textContent = "TERMINATA";
+            } else {
+                statusEl.textContent = "IN PROGRAMMA";
+            }
+
+            // Timeline
+            const timelineContainer = document.getElementById('timeline');
+            let events = data.events || [];
+
+            if (events.length === 0) {
+                document.getElementById('no-events').classList.remove('hidden');
+                return;
+            }
+
+            // Sort events by minute (ascending)
+            events.sort((a, b) => (parseInt(a.minute) || 0) - (parseInt(b.minute) || 0));
+
+            events.forEach(event => {
+                const isTeam1 = event.team === data.team1;
+                const sideClass = isTeam1 ? 'event-left' : 'event-right';
+
+                // Icon & Color Logic
+                let icon = '';
+                let colorClass = 'text-white';
+
+                if (event.type === 'goal') {
+                    icon = '⚽';
+                    colorClass = 'text-yellow-400 font-bold';
+                } else if (event.type === 'assist') {
+                    // Usually we don't show assists as separate timeline events unless requested, 
+                    // or we attach them to the goal. 
+                    // For now let's skip standalone assists in timeline to avoid clutter or show with specific icon
+                    // User photo showed just goals and cards. Let's stick to that.
+                    // If the event IS just an assist without a goal linkage, we might skip it or show it.
+                    // Let's show it but visually different.
+                    icon = '👟';
+                    colorClass = 'text-blue-400';
+                } else if (event.type === 'yellow') {
+                    icon = '🟨';
+                } else if (event.type === 'red') {
+                    icon = '🟥';
+                } else if (event.type === 'cleanSheet') {
+                    return; // Don't show clean sheet in timeline
+                }
+
+                // If existing visuals like the user photo:
+                // Goal:  (Ball Icon) 1-0  Player Name
+                // Card:  (Card Icon) Player Name
+
+                const html = `
+                    <div class="timeline-event ${sideClass}">
+                        <div class="event-minute">${event.minute}'</div>
+                        <div class="event-content">
+                            <div class="flex items-center ${isTeam1 ? 'justify-end' : 'justify-start'}">
+                                ${isTeam1 ? `<span class="${colorClass} text-lg mr-2">${event.player}</span> <span class="text-2xl">${icon}</span>` : ''}
+                                ${!isTeam1 ? `<span class="text-2xl mr-2">${icon}</span> <span class="${colorClass} text-lg">${event.player}</span>` : ''}
+                            </div>
+                            ${event.type === 'goal' ? '<p class="text-xs text-gray-500 mt-1 uppercase tracking-wider">GOAL</p>' : ''}
+                        </div>
+                    </div>
+                `;
+                timelineContainer.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

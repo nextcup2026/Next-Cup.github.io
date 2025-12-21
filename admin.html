@@ -2,7 +2,8 @@
 <html lang="it">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NEXT CUP - Pannello Admin (Firebase)</title>
@@ -176,12 +177,57 @@
 
             // --- CRUD NEWS ---
             addNews: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/news`), data),
+            updateNews: (id, data) => setDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/news`), id), data, { merge: true }),
             deleteNews: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/news`), id)),
 
             // --- CRUD CALENDAR ---
             addScheduledMatch: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/matches`), data),
             updateScheduledMatch: (id, data) => setDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/matches`), id), data, { merge: true }),
             deleteScheduledMatch: (id) => deleteDoc(doc(collection(db, `artifacts/${window.__app_id}/public/data/matches`), id)),
+
+            // --- NEW: Delete Match AND Rollback Stats ---
+            deleteMatchAndRollbackStats: async (matchId) => {
+                const batch = writeBatch(db);
+                const appId = window.__app_id;
+                const matchRef = doc(db, `artifacts/${appId}/public/data/matches`, matchId);
+                const matchSnap = await getDoc(matchRef);
+
+                if (!matchSnap.exists()) throw new Error("Partita non trovata");
+
+                const matchData = matchSnap.data();
+
+                // If stats were counted, rollback them
+                if (matchData.statsCounted === true && matchData.events && matchData.events.length > 0) {
+                    const statsBase = `artifacts/${appId}/public/data`;
+                    const getStatDoc = (collectionName, player, team) => {
+                        const id = `${team.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${player.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`;
+                        return doc(db, `${statsBase}/${collectionName}`, id);
+                    };
+
+                    matchData.events.forEach(event => {
+                        const { type, player, team } = event;
+                        if (!player || !team) return;
+
+                        if (type === 'goal') {
+                            batch.set(getStatDoc('scorers', player, team), { goals: increment(-1) }, { merge: true });
+                        } else if (type === 'assist') {
+                            batch.set(getStatDoc('assists', player, team), { assists: increment(-1) }, { merge: true });
+                        } else if (type === 'cleanSheet') {
+                            batch.set(getStatDoc('cleanSheets', player, team), { cleanSheets: increment(-1) }, { merge: true });
+                        } else if (type === 'yellow') {
+                            batch.set(getStatDoc('cards', player, team), { yellow: increment(-1) }, { merge: true });
+                        } else if (type === 'red') {
+                            batch.set(getStatDoc('cards', player, team), { red: increment(-1) }, { merge: true });
+                        }
+                    });
+                }
+
+                // Delete the match document
+                batch.delete(matchRef);
+
+                await batch.commit();
+            },
+
             onScheduledMatchesSnapshot: (cb) => onSnapshot(query(collection(db, `artifacts/${window.__app_id}/public/data/matches`)), (snap) => {
                 // Sort by date/time (timestamp)
                 const sorted = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.timestamp || '').localeCompare(b.timestamp || ''));
@@ -368,6 +414,10 @@
                     const id = `${team.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${player.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`;
                     return doc(db, `${statsBase}/${collectionName}`, id);
                 };
+
+                console.log("FINALIZING MATCH:", matchId);
+                console.log("EVENTS TO PROCESS:", matchEvents);
+                console.log("Is increment function defined?", typeof increment);
 
                 // ROLLBACK LOGIC: If stats were already counted, reverse them first.
                 if (matchSnap.exists() && matchSnap.data().statsCounted === true) {
@@ -623,10 +673,10 @@
             };
 
             const handleDelete = async (id) => {
-                if (!confirm('Eliminare partita programmata?')) return;
+                if (!confirm('Eliminare partita programmata? Se la partita era conclusa, le statistiche verranno rimosse dalle classifiche.')) return;
                 try {
-                    await firebaseTools.deleteScheduledMatch(id);
-                    showMessage('Partita eliminata', 'success');
+                    await firebaseTools.deleteMatchAndRollbackStats(id);
+                    showMessage('Partita eliminata e statistiche aggiornate', 'success');
                 } catch (e) {
                     showMessage('Errore eliminazione', 'error');
                 }
@@ -1275,9 +1325,12 @@
         const NewsManager = ({ authReady, currentNews, showMessage, firebaseTools }) => {
             const [title, setTitle] = useState('');
             const [content, setContent] = useState('');
+            const [imageUrl, setImageUrl] = useState('');
+            const [category, setCategory] = useState('Generale');
             const [isAdding, setIsAdding] = useState(false);
+            const [editingId, setEditingId] = useState(null); // Track ID for editing
 
-            const handleAddNews = async () => {
+            const handleSaveNews = async () => {
                 if (!authReady) { showMessage('Autenticazione richiesta', 'Attendi l\'accesso', 'error'); return; }
                 if (!title.trim() || !content.trim()) { showMessage('Titolo e contenuto sono obbligatori.', 'error', 'news'); return; }
 
@@ -1286,18 +1339,49 @@
                     const newsData = {
                         title: title.trim(),
                         content: content.trim(),
-                        timestamp: firebaseTools.serverTimestamp() // Usa il timestamp del server per maggiore precisione
+                        image: imageUrl.trim() || null,
+                        category: category,
+                        // Timestamp: update only if new, or keep original? Usually keep original for news order, or update 'lastUpdated'.
+                        // Let's keep original timestamp if editing to preserve order, or update if desired.
+                        // For simplicity, let's NOT update timestamp on edit to keep it in same place in list, or maybe add 'updatedAt'.
+                        // If it's new, set timestamp.
                     };
-                    await firebaseTools.addNews(newsData);
-                    showMessage(`Notizia "${title}" aggiunta con successo!`, 'success', 'news');
-                    setTitle('');
-                    setContent('');
+
+                    if (!editingId) {
+                        newsData.timestamp = firebaseTools.serverTimestamp();
+                        await firebaseTools.addNews(newsData);
+                        showMessage(`Notizia "${title}" aggiunta con successo!`, 'success', 'news');
+                    } else {
+                        newsData.lastUpdate = firebaseTools.serverTimestamp();
+                        await firebaseTools.updateNews(editingId, newsData);
+                        showMessage(`Notizia "${title}" aggiornata con successo!`, 'success', 'news');
+                    }
+
+                    resetForm();
                 } catch (error) {
-                    console.error("Errore nell'aggiunta della notizia:", error);
-                    showMessage("Errore nell'aggiunta della notizia: " + (error.message || String(error)), 'error', 'news');
+                    console.error("Errore nel salvataggio della notizia:", error);
+                    showMessage("Errore: " + (error.message || String(error)), 'error', 'news');
                 } finally {
                     setIsAdding(false);
                 }
+            };
+
+            const startEdit = (news) => {
+                setTitle(news.title);
+                setContent(news.content);
+                setImageUrl(news.image || '');
+                setCategory(news.category || 'Generale');
+                setEditingId(news.id);
+                // Scroll to form
+                document.getElementById('news-manager-form')?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const resetForm = () => {
+                setTitle('');
+                setContent('');
+                setImageUrl('');
+                setCategory('Generale');
+                setEditingId(null);
             };
 
             const handleDeleteNews = async (newsId, newsTitle) => {
@@ -1318,8 +1402,8 @@
                     <h3 className="text-4xl font-bold text-purple-400 mb-6">Gestione News</h3>
 
                     {/* Form Aggiungi News */}
-                    <div className="p-6 bg-gray-900 rounded-lg border border-purple-500/50 mb-8">
-                        <h4 className="text-2xl font-semibold text-white mb-4">Aggiungi Nuova Notizia</h4>
+                    <div id="news-manager-form" className="p-6 bg-gray-900 rounded-lg border border-purple-500/50 mb-8">
+                        <h4 className="text-2xl font-semibold text-white mb-4">{editingId ? 'Modifica Notizia' : 'Aggiungi Nuova Notizia'}</h4>
                         {!authReady && <p className="text-red-400 text-sm mb-4">Attendere l'autenticazione per aggiungere notizie.</p>}
 
                         <div className="space-y-4">
@@ -1327,13 +1411,36 @@
                                 <label htmlFor="news-title" className="block text-sm font-medium text-gray-300">Titolo</label>
                                 <input type="text" id="news-title" className={styles.input + ' mt-1 block w-full'} placeholder="Titolo della notizia" value={title} onChange={(e) => setTitle(e.target.value)} disabled={!authReady} />
                             </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="news-category" className="block text-sm font-medium text-gray-300">Categoria</label>
+                                    <input type="text" list="category-options" id="news-category" className={styles.input + ' mt-1 block w-full'} value={category} onChange={(e) => setCategory(e.target.value)} disabled={!authReady} placeholder="Seleziona o scrivi..." />
+                                    <datalist id="category-options">
+                                        <option value="Generale" />
+                                        <option value="Partita" />
+                                        <option value="Mercato" />
+                                        <option value="Intervista" />
+                                        <option value="Evento" />
+                                        <option value="Comunicato" />
+                                    </datalist>
+                                </div>
+                                <div>
+                                    <label htmlFor="news-image" className="block text-sm font-medium text-gray-300">URL Immagine (Opzionale)</label>
+                                    <input type="text" id="news-image" className={styles.input + ' mt-1 block w-full'} placeholder="https://..." value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} disabled={!authReady} />
+                                </div>
+                            </div>
                             <div>
                                 <label htmlFor="news-content" className="block text-sm font-medium text-gray-300">Contenuto (Breve)</label>
                                 <textarea id="news-content" rows="4" className={styles.input + ' mt-1 block w-full'} placeholder="Inserisci il contenuto o il riassunto della notizia..." value={content} onChange={(e) => setContent(e.target.value)} disabled={!authReady}></textarea>
                             </div>
-                            <button onClick={handleAddNews} className="w-full bg-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-purple-500 transition duration-300 disabled:opacity-50" disabled={isAdding || !authReady || !title.trim() || !content.trim()}>
-                                {isAdding ? 'Aggiunta...' : 'Pubblica Notizia'}
-                            </button>
+                            <div className="flex space-x-4">
+                                <button onClick={handleSaveNews} className={`w-full font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 disabled:opacity-50 ${editingId ? 'bg-orange-600 hover:bg-orange-500' : 'bg-purple-600 hover:bg-purple-500'} text-white`} disabled={isAdding || !authReady || !title.trim() || !content.trim()}>
+                                    {isAdding ? 'Salvataggio...' : (editingId ? 'Aggiorna Notizia' : 'Pubblica Notizia')}
+                                </button>
+                                {editingId && (
+                                    <button onClick={resetForm} className="bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-500 transition duration-300">Annulla</button>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -1349,14 +1456,19 @@
                                         <p className="text-lg font-semibold text-purple-300">{news.title}</p>
                                         <p className="text-sm text-gray-400 truncate max-w-lg">{news.content}</p>
                                     </div>
-                                    <button
-                                        onClick={() => showMessage('Elimina Notizia', `Sei sicuro di voler eliminare la notizia: "${news.title}"?`, 'confirm', () => handleDeleteNews(news.id, news.title))}
-                                        className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-700 transition disabled:opacity-50"
-                                        title="Elimina Notizia"
-                                        disabled={!authReady}
-                                    >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
+                                    <div className="flex space-x-2">
+                                        <button onClick={() => startEdit(news)} className="text-indigo-400 hover:text-indigo-300 p-2 rounded-full hover:bg-gray-700 transition" title="Modifica">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7-7l4 4m-4-4l-4 4m8-4l-4 4m0 0l-4 4m4-4l-4 4M15 5l2 2m-2-2l-2 2"></path></svg>
+                                        </button>
+                                        <button
+                                            onClick={() => showMessage('Elimina Notizia', `Sei sicuro di voler eliminare la notizia: "${news.title}"?`, 'confirm', () => handleDeleteNews(news.id, news.title))}
+                                            className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-gray-700 transition disabled:opacity-50"
+                                            title="Elimina Notizia"
+                                            disabled={!authReady}
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
                                 </div>
                             ))
                         )}
