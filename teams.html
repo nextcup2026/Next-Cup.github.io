@@ -29,121 +29,8 @@
 <body class="antialiased relative">
     <div class="bg-grid"></div>
 
-    <!-- FIREBASE CONFIG -->
-    <script>
-        window.__firebase_config = JSON.stringify({
-            apiKey: "AIzaSyDKkaydSHxKT20XzWKfS16H1d6TMNq4p5Q",
-            authDomain: "torneo-585ac.firebaseapp.com",
-            projectId: "torneo-585ac",
-            storageBucket: "torneo-585ac.firebasestorage.app",
-            messagingSenderId: "79275251686",
-            appId: "1:79275251686:web:15ca08ce46b6ce5e4fa827",
-            measurementId: "G-S2NZJJXKWW"
-        });
-
-        window.__app_id = "nextcup-app";  
-    </script>
-
-    <!-- Navbar (Consistent) -->
-    <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
-        <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
-            <div class="flex items-center space-x-3">
-                <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
-                <a href="index.html" class="text-2xl font-black header-brand-text">
-                    NEXT CUP
-                </a>
-            </div>
-
-            <!-- DESKTOP MENU -->
-            <div class="hidden md:flex space-x-8 font-semibold text-sm items-center">
-                <a href="index.html" class="hover:text-yellow-400 transition">Home</a>
-
-                <!-- DROPDOWN -->
-                <div class="relative group">
-                    <button class="flex items-center space-x-1 text-yellow-400 focus:outline-none py-4">
-                        <span>Altro</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div
-                        class="absolute left-0 top-full w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top translate-y-2 group-hover:translate-y-0 z-50">
-                        <div class="flex flex-col py-2">
-                            <a href="teams.html"
-                                class="px-4 py-3 text-yellow-400 font-bold hover:bg-gray-800 transition border-b border-gray-800 last:border-0 relative">
-                                Squadre
-                            </a>
-                            <a href="news.html"
-                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
-                                Notizie
-                            </a>
-
-                            <a href="torneo.html"
-                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
-                                Torneo
-                            </a>
-                            <a href="statistics.html"
-                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
-                                Statistiche
-                            </a>
-                            <a href="sondaggi.html"
-                                class="px-4 py-3 text-white hover:bg-gray-800 hover:text-yellow-400 transition border-b border-gray-800 last:border-0">
-                                Sondaggi
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="regolamento.html" class="hover:text-yellow-400 transition">Regolamento</a>
-                <a href="contact.html" class="hover:text-yellow-400 transition">Contatti & Iscrizione</a>
-            </div>
-
-            <!-- MOBILE MENU BUTTON -->
-            <div class="md:hidden flex items-center">
-                <button id="mobile-menu-btn" class="text-white hover:text-yellow-400 focus:outline-none">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-        </nav>
-
-        <!-- MOBILE MENU DROPDOWN -->
-        <div id="mobile-menu"
-            class="hidden md:hidden bg-gray-900 border-t border-gray-800 absolute w-full left-0 top-full shadow-2xl z-50">
-            <div class="flex flex-col px-6 py-4 space-y-4 font-semibold text-lg">
-                <a href="index.html"
-                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Home</a>
-                <a href="teams.html" class="text-yellow-400 block border-b border-gray-800 pb-2">Squadre</a>
-                <a href="news.html"
-                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Notizie</a>
-
-                <a href="torneo.html"
-                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Torneo</a>
-                <a href="statistics.html"
-                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Statistiche</a>
-                <a href="sondaggi.html"
-                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Sondaggi</a>
-                <a href="regolamento.html"
-                    class="text-gray-300 hover:text-yellow-400 transition block border-b border-gray-800 pb-2">Regolamento</a>
-                <a href="contact.html" class="text-gray-300 hover:text-yellow-400 transition block">Contatti &
-                    Iscrizione</a>
-            </div>
-        </div>
-
-        <script>
-            const btn = document.getElementById('mobile-menu-btn');
-            const menu = document.getElementById('mobile-menu');
-            if (btn && menu) {
-                btn.addEventListener('click', () => {
-                    menu.classList.toggle('hidden');
-                });
-            }
-        </script>
-    </header>
+    <!-- NAVBAR PLACEHOLDER -->
+    <div id="navbar-placeholder"></div>
 
     <!-- SEZIONE SQUADRE -->
     <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-800 min-h-screen">
@@ -162,31 +49,40 @@
             </div>
 
             <div id="teams-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="team-card p-6 rounded-2xl shadow-2xl text-center">
-                    <p class="text-gray-400 text-lg font-semibold">Caricamento squadre...</p>
+                <!-- SKELETON LOADERS -->
+                <div class="glass-panel p-6 rounded-xl flex flex-col items-center h-[400px]">
+                    <div class="skeleton skeleton-circle w-32 h-32 mb-4"></div>
+                    <div class="skeleton skeleton-text w-3/4 h-8 mb-2"></div>
+                    <div class="skeleton skeleton-text w-1/2 h-6 mb-6"></div>
+                    <div class="skeleton skeleton-text w-full h-12 mt-auto"></div>
+                </div>
+                <div class="glass-panel p-6 rounded-xl flex flex-col items-center h-[400px] hidden sm:flex">
+                    <div class="skeleton skeleton-circle w-32 h-32 mb-4"></div>
+                    <div class="skeleton skeleton-text w-3/4 h-8 mb-2"></div>
+                    <div class="skeleton skeleton-text w-1/2 h-6 mb-6"></div>
+                    <div class="skeleton skeleton-text w-full h-12 mt-auto"></div>
+                </div>
+                <div class="glass-panel p-6 rounded-xl flex flex-col items-center h-[400px] hidden lg:flex">
+                    <div class="skeleton skeleton-circle w-32 h-32 mb-4"></div>
+                    <div class="skeleton skeleton-text w-3/4 h-8 mb-2"></div>
+                    <div class="skeleton skeleton-text w-1/2 h-6 mb-6"></div>
+                    <div class="skeleton skeleton-text w-full h-12 mt-auto"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer / Contatti -->
-    <!-- Footer / Contatti -->
-    <footer class="bg-black py-10">
-        <div
-            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
-            <div class="text-gray-400">
-                <p class="text-lg font-bold nx-text-gradient mb-2">NEXT CUP</p>
-                <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
-            </div>
-            <div class="space-y-2">
-                <p class="text-white font-semibold">Contattaci</p>
-                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com"
-                        class="hover:text-yellow-400">info@next-cup.it</a></p>
-                <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
-                <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
-            </div>
-        </div>
-    </footer>
+    <!-- FOOTER PLACEHOLDER -->
+    <div id="footer-placeholder"></div>
+
+    <!-- SCRIPTS -->
+    <script src="config.js"></script>
+    <script src="components.js"></script>
+    <script>
+        // Init Components
+        renderNavbar();
+        renderFooter();
+    </script>
 
     <!-- FIREBASE -->
     <script type="module">
@@ -360,105 +256,7 @@
         ['scorers', 'assists', 'cleanSheets', 'cards'].forEach(setupStatListener);
     </script>
 
-    <!-- COOKIE CONSENT BANNER -->
-    <div id="cookie-banner"
-        class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-6 z-[200] transform transition-transform duration-500 translate-y-full"
-        style="display: none;">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="text-gray-300 text-sm">
-                <p class="font-bold text-white mb-1">🍪 Informativa Privacy</p>
-                Questo sito utilizza cookie tecnici essenziali e strumenti di terze parti (Firebase) per il
-                funzionamento.
-                Continuando a navigare, accetti l'utilizzo dei cookie.
-            </div>
-            <div class="flex space-x-4">
-                <button onclick="acceptCookies()"
-                    class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition">Accetta</button>
-            </div>
-        </div>
-    </div>
-    <script>
-        function checkCookies() {
-            if (!localStorage.getItem('cookieConsent')) {
-                const banner = document.getElementById('cookie-banner');
-                if (banner) {
-                    banner.style.display = 'block';
-                    setTimeout(() => banner.classList.remove('translate-y-full'), 100);
-                }
-            }
-        }
-        function acceptCookies() {
-            localStorage.setItem('cookieConsent', 'true');
-            const banner = document.getElementById('cookie-banner');
-            if (banner) {
-                banner.classList.add('translate-y-full');
-                setTimeout(() => banner.style.display = 'none', 500);
-            }
-        }
-    </script>
 
-    <!-- TEAM MODAL -->
-    <div id="team-modal"
-        class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
-        <div
-            class="bg-gray-900 border border-gray-600 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col relative animate-scale-up">
-            <!-- Header Fixed -->
-            <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-950/50">
-                <span class="text-gray-400 text-sm font-bold uppercase tracking-widest">Dettagli Squadra</span>
-                <button onclick="closeTeamModal()"
-                    class="text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center transition">✕</button>
-            </div>
-
-            <!-- Scrollable Content -->
-            <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-                <div id="modal-team-info"></div>
-                <h3
-                    class="text-2xl font-bold text-yellow-400 mb-6 border-b border-gray-800 pb-2 flex items-center gap-2">
-                    <span>👥 Rosa e Statistiche</span>
-                </h3>
-                <div id="modal-team-roster"></div>
-            </div>
-        </div>
-    </div>
-    <style>
-        .animate-scale-up {
-            animation: scaleUp 0.2s ease-out;
-        }
-
-        @keyframes scaleUp {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Scrollbar custom */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #111827;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
-        }
-    </style>
-
-    <script>
-        window.addEventListener('load', checkCookies);
-    </script>
 </body>
 
 </html>
