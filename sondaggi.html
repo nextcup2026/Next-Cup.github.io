@@ -145,7 +145,6 @@
             }).join('');
         }
 
-        // Event Delegation for Voting
         container.addEventListener('click', async (e) => {
             const btn = e.target.closest('.vote-btn');
             if (!btn) return;
@@ -155,7 +154,19 @@
 
             if (!pollId || !option) return;
 
-            // Optimistic UI disabled, wait for write
+            // Prevent double clicks instantly
+            if (localStorage.getItem(`poll_${pollId}_voted`)) return;
+
+            // Disable buttons immediately
+            const pollButtons = document.querySelectorAll(`[data-poll-id="${pollId}"]`);
+            pollButtons.forEach(b => {
+                b.disabled = true;
+                b.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+
+            // Optimistic lock
+            localStorage.setItem(`poll_${pollId}_voted`, 'true');
+
             try {
                 // Check auth
                 if (!auth.currentUser) {
@@ -172,10 +183,14 @@
                     }
                 }, { merge: true });
 
-                localStorage.setItem(`poll_${pollId}_voted`, 'true');
                 // State update happens via onSnapshot automatically
             } catch (error) {
                 console.error("Errore voto:", error);
+                localStorage.removeItem(`poll_${pollId}_voted`); // Rollback on fail
+                pollButtons.forEach(b => {
+                    b.disabled = false;
+                    b.classList.remove('opacity-50', 'cursor-not-allowed');
+                });
                 alert("Impossibile votare: " + error.code + " - " + error.message);
             }
         });
