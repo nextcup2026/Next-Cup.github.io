@@ -6,8 +6,8 @@
         content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="Ultime notizie, approfondimenti e aggiornamenti sul torneo NEXT CUP.">
-    <title>NEXT CUP - Notizie e Aggiornamenti</title>
+    <meta name="description" content="Ultime notizie, approfondimenti e aggiornamenti sul torneo S.O.S CUP.">
+    <title>S.O.S CUP - Notizie e Aggiornamenti</title>
 
     <link rel="icon" type="image/png" href="favicon.png">
 
@@ -41,8 +41,8 @@
 
     <section class="relative py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-5xl md:text-6xl font-extrabold nx-text-gradient leading-tight tech-font">Ultime Notizie NEXT
-                CUP</h1>
+            <h1 class="text-5xl md:text-6xl font-extrabold nx-text-gradient leading-tight tech-font">Ultime Notizie
+                S.O.S CUP</h1>
             <p class="mt-4 text-gray-300 max-w-2xl mx-auto">Rassegna stampa, risultati, anteprime e aggiornamenti
                 organizzativi in tempo reale.</p>
 
@@ -218,7 +218,7 @@
                 // Usa 'content' per l'estratto e il corpo, dato che è il campo salvato
                 excerpt: raw.content ? raw.content.substring(0, 150) + (raw.content.length > 150 ? '...' : '') : "Nessun estratto disponibile.",
                 body: raw.content || raw.body || "Contenuto non disponibile",
-                image: raw.image || "https://placehold.co/900x500/111827/9CA3AF?text=NEXT+CUP",
+                image: raw.image || "https://placehold.co/900x500/111827/9CA3AF?text=S.O.S+CUP",
                 category: raw.category || "Generale",
                 timestamp: newsTimestamp, // Usa il timestamp convertito (oggetto Date)
                 tags: raw.tags || []

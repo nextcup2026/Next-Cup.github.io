@@ -7,8 +7,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description"
-        content="Torneo NEXT CUP - Il torneo giovanile più atteso. Risultati, classifiche e news in tempo reale.">
-    <title>NEXT CUP – Home Page Ufficiale</title>
+        content="Torneo S.O.S CUP - Il torneo giovanile più atteso. Risultati, classifiche e news in tempo reale.">
+    <title>S.O.S CUP – Home Page Ufficiale</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -47,7 +47,7 @@
         <div class="max-w-4xl mx-auto px-6 text-center">
 
             <h1 class="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tight mb-6 tech-font hidden">
-                NEXT CUP
+                S.O.S CUP
             </h1>
 
             <!-- COUNTDOWN -->
@@ -177,7 +177,7 @@
         renderFooter();
 
         // Countdown Logic
-        const matchDate = new Date("2026-06-15T19:00:00").getTime();
+        const matchDate = new Date("2026-06-26T19:00:00").getTime();
         setInterval(() => {
             const now = new Date().getTime();
             const diff = matchDate - now;
@@ -213,7 +213,7 @@
                 const teamsSnapshot = await getDocs(collection(db, `artifacts/${APP_ID}/public/data/teams`));
                 const count = teamsSnapshot.size;
                 const teamsEl = document.getElementById('teams-count');
-                if (teamsEl) teamsEl.innerHTML = `${count}/16`;
+                if (teamsEl) teamsEl.innerHTML = `${count}/8`;
 
                 // 2. Top Scorer
                 const scorersQuery = query(

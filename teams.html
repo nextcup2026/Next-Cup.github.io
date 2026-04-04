@@ -6,7 +6,7 @@
         content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXT CUP - Squadre Iscritte</title>
+    <title>S.O.S CUP - Squadre Iscritte</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -39,7 +39,7 @@
             <h2 class="text-5xl sm:text-6xl font-extrabold text-center mb-4 nx-text-gradient tech-font neon-text">
                 Squadre Partecipanti</h2>
             <p class="text-center text-lg sm:text-xl text-gray-400 mb-12">
-                Scopri le formazioni che parteciperanno alla Next Cup.
+                Scopri le formazioni che parteciperanno alla S.O.S Cup.
             </p>
 
             <div class="text-center mb-10 hidden">
@@ -71,6 +71,30 @@
             </div>
         </div>
     </section>
+
+    <!-- MODALE ROSA SQUADRA -->
+    <div id="team-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 pb-20 pt-20">
+        <div class="absolute inset-0 bg-black bg-opacity-80 backdrop-blur-sm transition-opacity"
+            onclick="closeTeamModal()"></div>
+        <div
+            class="relative bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl max-w-4xl w-full max-h-full overflow-y-auto z-10 transform transition-all">
+            <!-- Close Button -->
+            <button onclick="closeTeamModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-900 hover:bg-red-600 rounded-full p-2 transition-colors z-20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <div class="p-6 sm:p-10">
+                <div id="modal-team-info"></div>
+                <h3 class="text-2xl font-bold text-yellow-400 border-b border-gray-700 pb-2 mb-6 mt-8 tech-font">ROSA
+                    GIOCATORI</h3>
+                <div id="modal-team-roster" class="max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- FOOTER PLACEHOLDER -->
     <div id="footer-placeholder"></div>

@@ -9,4 +9,4 @@ window.__firebase_config = JSON.stringify({
 });
 
 window.__app_id = "nextcup-app";
-window.__admin_allowed_emails = ["nextcup2026@gmail.com"];
+window.__admin_allowed_emails = ["soscup2025@gmail.com"];

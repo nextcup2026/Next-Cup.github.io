@@ -1,4 +1,4 @@
-/* GLOBAL THEME - CYBERPUNK LITE */
+/* GLOBAL THEME - EMERGENCY SOS LITE */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap');
 
 body {
@@ -13,8 +13,8 @@ body {
 .bg-grid {
     background-size: 50px 50px;
     background-image:
-        linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+        linear-gradient(to right, rgba(239, 68, 68, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(239, 68, 68, 0.05) 1px, transparent 1px);
     mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
     position: fixed;
     top: 0;
@@ -34,14 +34,14 @@ body {
 .glass-panel {
     background: rgba(17, 24, 39, 0.7);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    box-shadow: 0 0 40px rgba(59, 130, 246, 0.15), inset 0 0 20px rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.15), inset 0 0 20px rgba(239, 68, 68, 0.05);
 }
 
 /* Neon Text */
 .neon-text {
     color: #fff;
-    text-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #2563eb;
+    text-shadow: 0 0 5px #ef4444, 0 0 10px #ef4444, 0 0 20px #dc2626;
 }
 
 .neon-text-gold {
@@ -51,8 +51,8 @@ body {
 
 /* Button Glow */
 .btn-cyber {
-    background: linear-gradient(90deg, #2563eb, #3b82f6);
-    border: 1px solid #60a5fa;
+    background: linear-gradient(90deg, #dc2626, #ef4444);
+    border: 1px solid #f87171;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -60,8 +60,8 @@ body {
 
 .btn-cyber:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
-    border-color: #93c5fd;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+    border-color: #fca5a5;
 }
 
 .btn-cyber::before {
@@ -83,14 +83,14 @@ body {
 .select-tech {
     background-color: rgba(17, 24, 39, 0.8);
     color: white;
-    border: 1px solid #3b82f6;
+    border: 1px solid #ef4444;
     outline: none;
     transition: all 0.3s;
 }
 
 .select-tech:focus {
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-    border-color: #60a5fa;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+    border-color: #f87171;
 }
 
 /* Card Hover Effect (Lite) */
@@ -101,13 +101,13 @@ body {
 
 .card-hover-tech:hover {
     transform: translateY(-5px);
-    border-color: rgba(59, 130, 246, 0.5);
-    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.3);
 }
 
 /* Gradient Text Shared */
 .nx-text-gradient {
-    background: linear-gradient(45deg, #FFD700, #FBBF24, #3b82f6);
+    background: linear-gradient(45deg, #FFD700, #FBBF24, #ef4444);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -115,12 +115,11 @@ body {
     /* Fallback */
 }
 
-
 .header-brand-text {
     font-family: 'Orbitron', sans-serif;
     letter-spacing: 0.05em;
-    background: linear-gradient(to right, #60a5fa, #facc15, #60a5fa);
-    /* blue-400 to yellow-400 loop */
+    background: linear-gradient(to right, #f87171, #facc15, #f87171);
+    /* red to yellow loop */
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -143,7 +142,7 @@ body {
 .input-neon {
     background-color: #030712;
     /* Darker bg */
-    border: 1px solid #3b82f6;
+    border: 1px solid #ef4444;
     color: white;
     transition: all 0.3s ease-in-out;
 }
@@ -152,13 +151,13 @@ body {
 
     0%,
     100% {
-        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), 0 0 30px rgba(59, 130, 246, 0.2);
-        border-color: #60a5fa;
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.5), 0 0 30px rgba(239, 68, 68, 0.2);
+        border-color: #f87171;
     }
 
     50% {
-        box-shadow: 0 0 25px rgba(59, 130, 246, 0.8), 0 0 50px rgba(59, 130, 246, 0.4);
-        border-color: #93c5fd;
+        box-shadow: 0 0 25px rgba(239, 68, 68, 0.8), 0 0 50px rgba(239, 68, 68, 0.4);
+        border-color: #fca5a5;
     }
 }
 

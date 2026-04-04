@@ -6,9 +6,9 @@ const Components = {
     <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-white/10">
         <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
             <div class="flex items-center space-x-3">
-                <img src="logo.png" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
+                <img src="logo soscup.jpeg" alt="Logo torneo" class="w-12 h-12 rounded-full border border-gray-600">
                 <a href="index.html" class="text-2xl font-black header-brand-text">
-                    NEXT CUP
+                    S.O.S CUP
                 </a>
             </div>
 
@@ -70,12 +70,12 @@ const Components = {
     <footer class="bg-black py-10">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
             <div class="text-gray-400">
-                <p class="text-lg font-bold nx-text-gradient mb-2">NEXT CUP</p>
-                <p>&copy; 2026. Tutti i diritti riservati. Organizzato da Next Cup</p>
+                <p class="text-lg font-bold nx-text-gradient mb-2">S.O.S CUP</p>
+                <p>&copy; 2026. Tutti i diritti riservati. Organizzato da S.O.S Cup</p>
             </div>
             <div class="space-y-2">
                 <p class="text-white font-semibold">Contattaci</p>
-                <p class="text-sm text-gray-400">Email: <a href="mailto:nextcup2026@gmail.com" class="hover:text-yellow-400">info@next-cup.it</a></p>
+                <p class="text-sm text-gray-400">Email: <a href="mailto:soscup2025@gmail.com" class="hover:text-yellow-400">soscup2025@gmail.com</a></p>
                 <p class="text-sm text-gray-400">Luca: +39 351 508 6288</p>
                 <p class="text-sm text-gray-400">Paolo: +39 320 216 5611</p>
             </div>
