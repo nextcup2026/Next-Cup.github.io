@@ -135,13 +135,20 @@
         let matches = [];
 
         function calculateStandings() {
+            // Se ci sono match ma le squadre non sono censite, estrapoliamole dai match
+            const activeTeams = [...teams];
+            matches.forEach(m => {
+                if (m.team1 && !activeTeams.find(t => t.name === m.team1)) activeTeams.push({ name: m.team1, group: 'Unico' });
+                if (m.team2 && !activeTeams.find(t => t.name === m.team2)) activeTeams.push({ name: m.team2, group: 'Unico' });
+            });
+
             // Group teams by 'group' field
-            const groups = {}; // { 'A': [team1, team2], 'B': ... }
+            const groups = {}; // { 'Unico': [team1, team2], 'B': ... }
 
             // Initialize stats for all teams
             const teamStats = {};
-            teams.forEach(t => {
-                const g = t.group || 'A'; // Default group A
+            activeTeams.forEach(t => {
+                const g = t.group || 'Unico'; // Default group Unico
                 if (!groups[g]) groups[g] = [];
 
                 // Initialize object if not exists

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Sorteggio Live S.O.S CUP">
+    <title>S.O.S CUP – Live Draw</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="logo%20soscup.jpeg">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .hero-section {
+            background-image: linear-gradient(to bottom, rgba(220, 38, 38, 0.1) 0%, rgba(2, 6, 23, 1) 100%);
+        }
+
+        .team-input-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-input-container span {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: #ef4444;
+        }
+
+        .team-input {
+            background: transparent;
+            border: none;
+            color: white;
+            flex-grow: 1;
+            padding: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        /* Card Styles */
+        .team-card {
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card.completed {
+            border-color: #ef4444; /* red-500 */
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .team-card.completed::before {
+            content: "COMPLETA";
+            position: absolute;
+            top: 5px;
+            right: -25px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 25px;
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+
+        .team-card.highlight {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.5); /* yellow-400 */
+            border-color: #facc15;
+            z-index: 20;
+        }
+
+        .opponent-slot {
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .opponent-slot.filled {
+            opacity: 1;
+            transform: translateY(0);
+            background: rgba(31, 41, 55, 0.8);
+            border-color: #4b5563;
+            color: white;
+        }
+
+        /* Spinner Animation */
+        .spinner-window {
+            height: 60px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .spinner-track {
+            display: flex;
+            flex-direction: column;
+            transition: transform 3s cubic-bezier(0.15, 0.85, 0.35, 1);
+        }
+
+        .spinner-item {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+    </style>
+</head>
+
+<body class="antialiased relative bg-gray-950 text-white min-h-screen">
+    <div class="bg-grid"></div>
+
+    <!-- INVISIBILE FINO A CHECK AUTH -->
+    <script>document.body.style.display = 'none';</script>
+
+    <!-- MAIN CONTENT -->
+    <section class="min-h-[80vh] py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            
+            <!-- SETUP PHASE -->
+            <div id="setup-view" class="max-w-2xl mx-auto glass-panel p-8 rounded-2xl">
+                <h1 class="text-4xl font-black text-center mb-2 tech-font neon-text">SORTEGGIO E SQUADRE</h1>
+                <p class="text-gray-400 text-center mb-8">Inserisci i nomi delle 10 squadre che parteciperanno. Ciascuna affronterà 3 avversari.</p>
+                
+                <div id="teams-list" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                    <!-- Inputs -->
+                </div>
+                
+                <button id="init-draw-btn" class="w-full btn-cyber text-white font-bold py-4 rounded-xl shadow-lg text-lg tracking-wider transition hover:scale-105">
+                    INIALIZZA SORTEGGIO
+                </button>
+                <button id="load-db-btn" class="w-full mt-4 bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white font-semibold py-3 rounded-xl transition text-sm">
+                    Carica Nomi dal Database
+                </button>
+            </div>
+
+
+            <!-- DRAW PHASE -->
+            <div id="draw-view" class="hidden flex-col items-center">
+                
+                <!-- JUMBOTRON -->
+                <div class="w-full max-w-4xl glass-panel relative p-8 rounded-2xl mb-12 min-h-[300px] flex flex-col justify-center items-center shadow-2xl border border-red-500/30 bg-gradient-to-br from-gray-900 to-black overflow-hidden">
+                    
+                    <!-- Idle State -->
+                    <div id="jumbo-idle" class="flex flex-col items-center text-center">
+                        <h2 class="text-5xl font-black tech-font text-white mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">LIVE DRAW</h2>
+                        <p class="text-gray-400 text-lg mb-8">Il calcolo matrice è completato. <br>Le combinazioni sono pronte per essere rivelate.</p>
+                        <button id="next-draw-btn" class="btn-cyber text-white font-bold py-4 px-12 rounded-xl shadow-[0_0_20px_rgba(220,38,38,0.6)] text-2xl tracking-widest transition hover:scale-110">
+                            ESTRAI SQUADRA
+                        </button>
+                    </div>
+
+                    <!-- Action State -->
+                    <div id="jumbo-action" class="hidden flex-col items-center w-full max-w-lg z-10 text-center">
+                        <p class="text-gray-400 font-bold mb-1 tracking-widest uppercase text-sm">Squadra Protagonista</p>
+                        <h2 id="draw-subject-name" class="text-4xl font-black text-yellow-400 mb-6 drop-shadow-md">NOME SQUADRA</h2>
+                        
+                        <div id="opponents-reveal-area" class="w-full">
+                            <p id="extraction-status" class="text-white mb-3 font-semibold text-lg animate-pulse">Estrazione in corso...</p>
+                            
+                            <!-- Spinner Container -->
+                            <div class="spinner-window bg-gray-950 border-2 border-red-500 rounded-xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mx-auto">
+                                <div id="spinner-track" class="spinner-track">
+                                    <!-- Items verranno generati dal JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Success End Draw -->
+                        <div id="draw-finished" class="hidden mt-4 text-green-400 font-bold text-xl drop-shadow-md">
+                            Estrazione Completata!
+                        </div>
+                    </div>
+
+                    <!-- Overlay decorative red glow behind -->
+                    <div class="absolute inset-0 bg-red-600/10 rounded-2xl mix-blend-screen pointer-events-none filter blur-3xl"></div>
+                </div>
+
+
+                <!-- TEAMS GRID -->
+                <h3 class="text-2xl font-bold mb-6 text-white text-center w-full uppercase tracking-widest text-gray-500">TABELLONE GLOBALE</h3>
+                <div id="teams-grid" class="grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-6 w-full">
+                    <!-- Cards Generate via JS -->
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- /MAIN CONTENT -->
+
+    <!-- SCRIPTS -->
+    <script src="config.js"></script>
+    <script src="components.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // DOM Elements setup
+        const numTeams = 10;
+        const teamsListEl = document.getElementById('teams-list');
+        for (let i = 0; i < numTeams; i++) {
+            teamsListEl.innerHTML += `
+                <div class="team-input-container">
+                    <span>${i+1}</span>
+                    <input type="text" class="team-input team-name-input" id="team-${i}" value="Squadra ${i+1}">
+                </div>
+            `;
+        }
+
+        // Interazioni Setup
+        const initDrawBtn = document.getElementById('init-draw-btn');
+        const setupView = document.getElementById('setup-view');
+        const drawView = document.getElementById('draw-view');
+        const loadDbBtn = document.getElementById('load-db-btn');
+
+        // Interazioni Draw
+        const teamsGrid = document.getElementById('teams-grid');
+        const jumboIdle = document.getElementById('jumbo-idle');
+        const jumboAction = document.getElementById('jumbo-action');
+        const nextDrawBtn = document.getElementById('next-draw-btn');
+        
+        // Nuovi Bottoni di Fine Sorteggio
+        const actionButtonsRow = document.createElement('div');
+        actionButtonsRow.className = "hidden w-full flex-col sm:flex-row justify-center gap-4 mt-6 z-20";
+        actionButtonsRow.innerHTML = `
+            <button id="cancel-draw-btn" class="bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition text-lg tracking-widest">
+                ANNULLA E RIPROVA
+            </button>
+            <button id="confirm-draw-btn" class="bg-green-600 border border-green-500 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition text-lg tracking-widest">
+                CONFERMA IN FIREBASE
+            </button>
+        `;
+        jumboIdle.appendChild(actionButtonsRow);
+
+        const cancelDrawBtn = actionButtonsRow.querySelector('#cancel-draw-btn');
+        const confirmDrawBtn = actionButtonsRow.querySelector('#confirm-draw-btn');
+
+        const drawSubjectName = document.getElementById('draw-subject-name');
+        const spinnerTrack = document.getElementById('spinner-track');
+        const extractionStatus = document.getElementById('extraction-status');
+        const drawFinished = document.getElementById('draw-finished');
+        const spinnerWindow = document.querySelector('.spinner-window');
+
+        // State variables
+        let teams = [];       // array of { id: 0..9, name: 'String' }
+        let graph = [];       // adjacency list graph[i] = [id_avv1, id_avv2, id_avv3]
+        let generatedMatchesDb = []; // array of { team1, team2, day } used to push to Database
+        let revealedSet = new Set(); // store "min(i,j)-max(i,j)" to avoid duplicate reveals
+        let revealedCounts = new Array(10).fill(0); // count of revealed opponents per team
+        let isDrawing = false;
+
+        // Firebase Init
+        const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
+        let db = null;
+        let auth = null;
+        if (firebaseConfig.apiKey) {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app); // Assicura che la sessione admin venga letta
+            
+            // SECURITY CHECK: Solo admin
+            onAuthStateChanged(auth, (user) => {
+                const allowed = window.__admin_allowed_emails || [];
+                if (!user || (allowed.length > 0 && !allowed.includes(user.email))) {
+                    alert("ACCESSO NEGATO: Solo gli amministratori possono accedere alla Sala Sorteggi.");
+                    window.location.href = "index.html";
+                } else {
+                    document.body.style.display = 'block'; // Rivela la UI
+                }
+            });
+        }
+
+        loadDbBtn.addEventListener('click', async () => {
+            if (!db) return alert("Firebase non configurato.");
+            try {
+                loadDbBtn.textContent = 'Caricamento...';
+                const snap = await getDocs(collection(db, `artifacts/${window.__app_id}/public/data/teams`));
+                if (snap.empty) return alert("Zero squadre nel DB.");
+                
+                const dbTeams = [];
+                snap.forEach(doc => { if (doc.data().name) dbTeams.push(doc.data().name); });
+                
+                document.querySelectorAll('.team-name-input').forEach((input, i) => {
+                    if (dbTeams[i]) input.value = dbTeams[i];
+                });
+            } catch (err) { console.error(err); alert("Errore connessione."); } 
+            finally { loadDbBtn.textContent = 'Carica Nomi dal Database'; }
+        });
+
+
+        // Fisher-Yates
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Algoritmo 1-Factorization per K10
+        // Scegliamo le prime 3 giornate indipendenti in modo che formino 3 matching perfetti.
+        function generateMathDraw(teamIds) {
+            let shuffled = shuffle([...teamIds]); // Mescola prima di mappare
+            let adj = Array.from({length: 10}, () => []);
+            let dbMatchesInfo = [];
+
+            // Il team 9 è "infinito", 0..8 formano l'anello
+            const infLocal = 9;
+            const infRealId = shuffled[infLocal];
+
+            // 3 matching (Giornata 1, Giornata 2, Giornata 3)
+            for(let day = 0; day < 3; day++) {
+                // i corrisponde all'inizio della star function (da 0 a 8)
+                const i = day;
+                const matchesOfDay = [];
+
+                // 1. Edge tra Inf e i
+                const real_i = shuffled[i];
+                adj[infRealId].push(real_i);
+                adj[real_i].push(infRealId);
+                matchesOfDay.push({ team1: infRealId, team2: real_i, day: day + 1 });
+
+                // 2. Altri 4 edge simmetrici
+                for(let j = 1; j <= 4; j++) {
+                    const localU = (i - j + 9) % 9;
+                    const localV = (i + j) % 9;
+                    
+                    const realU = shuffled[localU];
+                    const realV = shuffled[localV];
+                    
+                    adj[realU].push(realV);
+                    adj[realV].push(realU);
+                    matchesOfDay.push({ team1: realU, team2: realV, day: day + 1 });
+                }
+
+                // Randomizza casa trasferta e salva
+                matchesOfDay.forEach(m => {
+                    if(Math.random() > 0.5) [m.team1, m.team2] = [m.team2, m.team1];
+                    dbMatchesInfo.push(m);
+                });
+            }
+
+            return { graph: adj, dbMatchesInfo };
+        }
+
+
+        // INITIALIZATION
+        initDrawBtn.addEventListener('click', () => {
+            const inputs = document.querySelectorAll('.team-name-input');
+            teams = Array.from(inputs).map((input, idx) => ({ id: idx, name: input.value.trim() || `Team ${idx+1}` }));
+            
+            const names = teams.map(t => t.name);
+            if(new Set(names).size !== 10) {
+                if(!confirm("Ci sono nomi duplicati. Vuoi procedere?")) return;
+            }
+
+            // Calc Perfect Math Matches
+            const result = generateMathDraw(teams.map(t => t.id));
+            graph = result.graph;
+            generatedMatchesDb = result.dbMatchesInfo;
+            
+            // Reset reset-able UI elements
+            revealedSet.clear();
+            revealedCounts.fill(0);
+            
+            jumboIdle.innerHTML = `
+                <h2 class="text-5xl font-black tech-font text-white mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">LIVE DRAW</h2>
+                <p class="text-gray-400 text-lg mb-8">Il calcolo matrice strutturata è pronto. <br>Generato calendario equo (1 Partita a Squadra al Giorno).</p>
+            `;
+            jumboIdle.appendChild(nextDrawBtn);
+            jumboIdle.appendChild(actionButtonsRow);
+
+            nextDrawBtn.classList.remove('hidden');
+            actionButtonsRow.classList.add('hidden'); // Nascondi bottoni conferma/annulla fino alla fine
+
+            renderTeamsGrid();
+            setupView.classList.add('hidden');
+            drawView.classList.remove('hidden');
+            drawView.classList.add('flex');
+        });
+
+        // Cancel Draw Button
+        cancelDrawBtn.addEventListener('click', () => {
+            if(!confirm("Vuoi davvero annullare e rifare l'estrazione?")) return;
+            setupView.classList.remove('hidden');
+            drawView.classList.add('hidden');
+            drawView.classList.remove('flex');
+        });
+
+        // Confirm & Push to Firebase
+        confirmDrawBtn.addEventListener('click', async () => {
+            if(!db) return alert("Firebase non rilevato. Ricarica la pagina.");
+            if(!confirm("Stai per inserire le 15 partite di girone nel Calendario Torneo (sincronizzazione Database!). Vuoi procedere?")) return;
+
+            confirmDrawBtn.textContent = "INSERIMENTO IN CORSO...";
+            confirmDrawBtn.classList.add("opacity-50", "cursor-wait");
+
+            try {
+                // Per ogni match, inviamo ad `artifacts/<app_id>/public/data/matches`
+                const APP_ID = window.__app_id;
+                for(const m of generatedMatchesDb) {
+                    const team1Name = teams.find(t => t.id === m.team1).name;
+                    const team2Name = teams.find(t => t.id === m.team2).name;
+                    
+                    // Finte date coerenti per Giornata 1, 2, 3
+                    const fakeDate = `2026-06-0${m.day}`;
+                    const fakeTime = "18:00";
+                    
+                    const matchDoc = {
+                        date: fakeDate,
+                        time: fakeTime,
+                        team1: team1Name,
+                        team2: team2Name,
+                        stage: "Girone Unico",       // Come richiesto
+                        timestamp: new Date(`${fakeDate}T${fakeTime}`).toISOString(),
+                        status: 'SCHEDULED',
+                        score1: 0,
+                        score2: 0,
+                        events: []
+                    };
+
+                    await addDoc(collection(db, `artifacts/${APP_ID}/public/data/matches`), matchDoc);
+                }
+
+                alert("Tabellone caricato con SUCESSO! Tutte le 15 partite sono ora programmate in girone.");
+                window.location.href = "admin.html"; // Manda ad admin per farle vedere
+            } catch(e) {
+                console.error(e);
+                alert("Errore nell'inserimento nel database: " + e.message);
+                confirmDrawBtn.textContent = "CONFERMA IN FIREBASE";
+                confirmDrawBtn.classList.remove("opacity-50", "cursor-wait");
+            }
+        });
+
+
+        function renderTeamsGrid() {
+            teamsGrid.innerHTML = '';
+            teams.forEach(t => {
+                const card = document.createElement('div');
+                card.className = `team-card bg-gray-900 border border-gray-700 rounded-xl p-5 flex flex-col items-center`;
+                card.id = `card-${t.id}`;
+                card.innerHTML = `
+                    <div class="relative w-full flex justify-center">
+                       <img src="logo soscup.jpeg" class="w-16 h-16 rounded-full border-2 border-gray-600 mb-3 object-cover shadow-lg">
+                    </div>
+                    <h3 class="text-lg leading-tight font-black text-white mb-4 text-center w-full line-clamp-2">${t.name}</h3>
+                    
+                    <div class="w-full flex flex-col gap-2 relative z-10" id="slots-${t.id}">
+                        <!-- 3 empty slots -->
+                        <div class="slot-0 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
+                        <div class="slot-1 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
+                        <div class="slot-2 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
+                    </div>
+                `;
+                teamsGrid.appendChild(card);
+            });
+        }
+
+        // HELPER per trovare la stringa edge
+        const getEdgeId = (a, b) => `${Math.min(a,b)}-${Math.max(a,b)}`;
+
+        // ACTION!
+        nextDrawBtn.addEventListener('click', startNextDrawCycle);
+
+        async function startNextDrawCycle() {
+            if(isDrawing) return;
+            isDrawing = true;
+
+            const validSubjects = teams.filter(t => revealedCounts[t.id] < 3);
+            
+            if(validSubjects.length === 0) return;
+
+            const subject = validSubjects[Math.floor(Math.random() * validSubjects.length)];
+            
+            jumboIdle.classList.add('hidden');
+            jumboAction.classList.remove('hidden');
+            nextDrawBtn.classList.add('hidden');
+            drawFinished.classList.add('hidden');
+            spinnerWindow.classList.remove('hidden');
+
+            drawSubjectName.textContent = subject.name;
+            document.querySelectorAll('.team-card').forEach(c => c.classList.remove('highlight'));
+            document.getElementById(`card-${subject.id}`).classList.add('highlight');
+            document.getElementById(`card-${subject.id}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            const allOpponentsIds = graph[subject.id];
+            const unrevealedOppIds = allOpponentsIds.filter(oppId => !revealedSet.has(getEdgeId(subject.id, oppId)));
+            
+            for (let i = 0; i < unrevealedOppIds.length; i++) {
+                const oppId = unrevealedOppIds[i];
+                extractionStatus.textContent = `Estrazione avversario ${i+1} di ${unrevealedOppIds.length}...`;
+                await animateSpinnerAndReveal(subject, teams.find(t=>t.id===oppId));
+                if(i < unrevealedOppIds.length -1) await wait(800);
+            }
+
+            extractionStatus.textContent = "Estrazione Inviata al Tabellone";
+            spinnerWindow.classList.add('hidden');
+            drawFinished.classList.remove('hidden');
+
+            await wait(1500);
+
+            document.getElementById(`card-${subject.id}`).classList.remove('highlight');
+            
+            jumboAction.classList.add('hidden');
+            jumboIdle.classList.remove('hidden');
+            nextDrawBtn.classList.remove('hidden');
+
+            if(teams.every(t => revealedCounts[t.id] === 3)) {
+                nextDrawBtn.classList.add('hidden');
+                
+                // SOSTITUISCO TESTO DI FINE SORTEGGIO
+                const h2 = jumboIdle.querySelector('h2');
+                const p = jumboIdle.querySelector('p');
+                if(h2) h2.innerHTML = `SORTEGGIO CONCLUSO!`;
+                if(h2) h2.className = `text-5xl font-black text-green-500 mb-2 tech-font`;
+                if(p) p.innerHTML = `Il tabellone ufficiale è ora formato. Analizzalo e poi confermalo per generare le giornate.`;
+                
+                // MOSTRA I PULSANTI CONFERMA/ANNULLA
+                actionButtonsRow.classList.remove('hidden');
+                actionButtonsRow.classList.add('flex');
+            }
+
+            isDrawing = false;
+        }
+
+
+        function animateSpinnerAndReveal(subject, opponent) {
+            return new Promise(resolve => {
+                const dummyNames = [];
+                for(let k=0; k<15; k++) {
+                    const rndId = Math.floor(Math.random() * numTeams);
+                    dummyNames.push(teams[rndId].name);
+                }
+                dummyNames.push(opponent.name);
+
+                spinnerTrack.innerHTML = '';
+                spinnerTrack.style.transition = 'none';
+                spinnerTrack.style.transform = 'translateY(0px)';
+
+                dummyNames.forEach(name => {
+                    spinnerTrack.innerHTML += `<div class="spinner-item">${name}</div>`;
+                });
+
+                // Force reflow
+                void spinnerTrack.offsetWidth;
+
+                // Animate
+                spinnerTrack.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.2, 1)';
+                const itemHeight = 60; // css height
+                const targetY = -((dummyNames.length - 1) * itemHeight);
+                spinnerTrack.style.transform = `translateY(${targetY}px)`;
+
+                setTimeout(() => {
+                    revealedSet.add(getEdgeId(subject.id, opponent.id));
+                    
+                    updateTeamCardDOM(subject.id, opponent.name);
+                    revealedCounts[subject.id]++;
+                    
+                    updateTeamCardDOM(opponent.id, subject.name);
+                    revealedCounts[opponent.id]++;
+
+                    checkCompleted(subject.id);
+                    checkCompleted(opponent.id);
+
+                    resolve();
+                }, 2600);
+            });
+        }
+
+        function updateTeamCardDOM(targetTeamId, textToShow) {
+            const slotsContainer = document.getElementById(`slots-${targetTeamId}`);
+            const counts = revealedCounts[targetTeamId]; 
+            if(counts < 3) {
+               const slot = slotsContainer.querySelector(`.slot-${counts}`);
+               if(slot) {
+                   slot.textContent = textToShow;
+                   slot.classList.add('filled');
+               }
+            }
+        }
+
+        function checkCompleted(teamId) {
+            if(revealedCounts[teamId] === 3) {
+                document.getElementById(`card-${teamId}`).classList.add('completed');
+            }
+        }
+
+        function wait(ms) { return new Promise(res => setTimeout(res, ms)); }
+
+    </script>
+</body>
+</html>

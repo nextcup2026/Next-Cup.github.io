@@ -70,7 +70,7 @@ const Components = {
     <footer class="bg-black py-10">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
             <div class="text-gray-400">
-                <p class="text-lg font-bold nx-text-gradient mb-2">S.O.S CUP</p>
+                <p class="text-lg font-bold nx-text-gradient mb-2 select-none" onclick="window.__ac = (window.__ac || 0) + 1; if(window.__ac >= 7) window.location.href='admin.html'; setTimeout(() => window.__ac = 0, 3000);">S.O.S CUP</p>
                 <p>&copy; 2026. Tutti i diritti riservati. Organizzato da S.O.S Cup</p>
             </div>
             <div class="space-y-2">
