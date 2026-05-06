@@ -210,7 +210,7 @@
     <script src="components.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         // DOM Elements setup
@@ -286,6 +286,18 @@
                     document.body.style.display = 'block'; // Rivela la UI
                 }
             });
+        }
+
+        async function updateLiveDrawState(stateObj) {
+            if (!db) return;
+            try {
+                await setDoc(doc(db, `artifacts/${window.__app_id}/public/data/live_draw/current`), {
+                    ...stateObj,
+                    updatedAt: new Date().toISOString()
+                });
+            } catch (err) {
+                console.error("Errore aggiornamento live draw state:", err);
+            }
         }
 
         loadDbBtn.addEventListener('click', async () => {
@@ -395,6 +407,11 @@
             setupView.classList.add('hidden');
             drawView.classList.remove('hidden');
             drawView.classList.add('flex');
+
+            updateLiveDrawState({
+                status: 'INIT',
+                teams: teams
+            });
         });
 
         // Cancel Draw Button
@@ -403,6 +420,8 @@
             setupView.classList.remove('hidden');
             drawView.classList.add('hidden');
             drawView.classList.remove('flex');
+
+            updateLiveDrawState({ status: 'CANCELLED' });
         });
 
         // Confirm & Push to Firebase
@@ -439,6 +458,8 @@
 
                     await addDoc(collection(db, `artifacts/${APP_ID}/public/data/matches`), matchDoc);
                 }
+
+                updateLiveDrawState({ status: 'CONFIRMED' });
 
                 alert("Tabellone caricato con SUCESSO! Tutte le 15 partite sono ora programmate in girone.");
                 window.location.href = "admin.html"; // Manda ad admin per farle vedere
@@ -501,6 +522,11 @@
             document.getElementById(`card-${subject.id}`).classList.add('highlight');
             document.getElementById(`card-${subject.id}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+            updateLiveDrawState({
+                status: 'SUBJECT_SELECTED',
+                subjectId: subject.id
+            });
+
             const allOpponentsIds = graph[subject.id];
             const unrevealedOppIds = allOpponentsIds.filter(oppId => !revealedSet.has(getEdgeId(subject.id, oppId)));
             
@@ -536,6 +562,18 @@
                 // MOSTRA I PULSANTI CONFERMA/ANNULLA
                 actionButtonsRow.classList.remove('hidden');
                 actionButtonsRow.classList.add('flex');
+
+                updateLiveDrawState({
+                    status: 'FINISHED',
+                    revealedCounts: revealedCounts,
+                    revealedSet: Array.from(revealedSet)
+                });
+            } else {
+                updateLiveDrawState({
+                    status: 'IDLE',
+                    revealedCounts: revealedCounts,
+                    revealedSet: Array.from(revealedSet)
+                });
             }
 
             isDrawing = false;
@@ -568,6 +606,13 @@
                 const targetY = -((dummyNames.length - 1) * itemHeight);
                 spinnerTrack.style.transform = `translateY(${targetY}px)`;
 
+                updateLiveDrawState({
+                    status: 'SPINNING',
+                    subjectId: subject.id,
+                    opponentId: opponent.id,
+                    dummyNames: dummyNames
+                });
+
                 setTimeout(() => {
                     revealedSet.add(getEdgeId(subject.id, opponent.id));
                     
@@ -579,6 +624,14 @@
 
                     checkCompleted(subject.id);
                     checkCompleted(opponent.id);
+
+                    updateLiveDrawState({
+                        status: 'REVEALED',
+                        subjectId: subject.id,
+                        opponentId: opponent.id,
+                        revealedCounts: revealedCounts,
+                        revealedSet: Array.from(revealedSet)
+                    });
 
                     resolve();
                 }, 2600);

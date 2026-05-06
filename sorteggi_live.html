@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://*.gstatic.com https://*.googleapis.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.gstatic.com https://identitytoolkit.googleapis.com;">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Sorteggio Live S.O.S CUP - Guarda l'estrazione in tempo reale">
+    <title>S.O.S CUP – Live Draw Sincronizzato</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="logo%20soscup.jpeg">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .hero-section {
+            background-image: linear-gradient(to bottom, rgba(220, 38, 38, 0.1) 0%, rgba(2, 6, 23, 1) 100%);
+        }
+
+        /* Card Styles */
+        .team-card {
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card.completed {
+            border-color: #ef4444; /* red-500 */
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .team-card.completed::before {
+            content: "COMPLETA";
+            position: absolute;
+            top: 5px;
+            right: -25px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 25px;
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+
+        .team-card.highlight {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.5); /* yellow-400 */
+            border-color: #facc15;
+            z-index: 20;
+        }
+
+        .opponent-slot {
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .opponent-slot.filled {
+            opacity: 1;
+            transform: translateY(0);
+            background: rgba(31, 41, 55, 0.8);
+            border-color: #4b5563;
+            color: white;
+        }
+
+        /* Spinner Animation */
+        .spinner-window {
+            height: 60px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .spinner-track {
+            display: flex;
+            flex-direction: column;
+            transition: transform 3s cubic-bezier(0.15, 0.85, 0.35, 1);
+        }
+
+        .spinner-item {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+    </style>
+</head>
+
+<body class="antialiased relative bg-gray-950 text-white min-h-screen">
+    <div class="bg-grid"></div>
+
+    <div id="navbar-placeholder"></div>
+
+    <!-- MAIN CONTENT -->
+    <section class="min-h-[80vh] py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            
+            <!-- WAITING PHASE -->
+            <div id="waiting-view" class="max-w-2xl mx-auto glass-panel p-8 rounded-2xl flex flex-col items-center text-center">
+                <h1 class="text-4xl font-black mb-4 tech-font neon-text">IN ATTESA DELL'ESTRAZIONE</h1>
+                <p class="text-gray-400 mb-8">Il sorteggio non è ancora iniziato. Questa pagina si aggiornerà automaticamente non appena l'amministratore darà il via in sala sorteggi.</p>
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500 mb-4"></div>
+            </div>
+
+            <!-- DRAW PHASE -->
+            <div id="draw-view" class="hidden flex-col items-center">
+                
+                <!-- JUMBOTRON -->
+                <div class="w-full max-w-4xl glass-panel relative p-8 rounded-2xl mb-12 min-h-[300px] flex flex-col justify-center items-center shadow-2xl border border-red-500/30 bg-gradient-to-br from-gray-900 to-black overflow-hidden">
+                    
+                    <!-- Idle State -->
+                    <div id="jumbo-idle" class="flex flex-col items-center text-center">
+                        <h2 id="jumbo-idle-h2" class="text-5xl font-black tech-font text-white mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">LIVE DRAW</h2>
+                        <p id="jumbo-idle-p" class="text-gray-400 text-lg mb-8">L'amministratore ha inizializzato il tabellone. <br>Il calcolo del calendario equo è pronto.</p>
+                    </div>
+
+                    <!-- Action State -->
+                    <div id="jumbo-action" class="hidden flex-col items-center w-full max-w-lg z-10 text-center">
+                        <p class="text-gray-400 font-bold mb-1 tracking-widest uppercase text-sm">Squadra Protagonista</p>
+                        <h2 id="draw-subject-name" class="text-4xl font-black text-yellow-400 mb-6 drop-shadow-md">NOME SQUADRA</h2>
+                        
+                        <div id="opponents-reveal-area" class="w-full">
+                            <p id="extraction-status" class="text-white mb-3 font-semibold text-lg animate-pulse">Estrazione in corso...</p>
+                            
+                            <!-- Spinner Container -->
+                            <div class="spinner-window bg-gray-950 border-2 border-red-500 rounded-xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mx-auto">
+                                <div id="spinner-track" class="spinner-track">
+                                    <!-- Items verranno generati dal JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Success End Draw -->
+                        <div id="draw-finished" class="hidden mt-4 text-green-400 font-bold text-xl drop-shadow-md">
+                            Estrazione Completata!
+                        </div>
+                    </div>
+
+                    <!-- Overlay decorative red glow behind -->
+                    <div class="absolute inset-0 bg-red-600/10 rounded-2xl mix-blend-screen pointer-events-none filter blur-3xl"></div>
+                </div>
+
+
+                <!-- TEAMS GRID -->
+                <h3 class="text-2xl font-bold mb-6 text-white text-center w-full uppercase tracking-widest text-gray-500">TABELLONE GLOBALE</h3>
+                <div id="teams-grid" class="grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-6 w-full">
+                    <!-- Cards Generate via JS -->
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- /MAIN CONTENT -->
+
+    <div id="footer-placeholder"></div>
+
+    <!-- SCRIPTS -->
+    <script src="config.js"></script>
+    <script src="components.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        renderNavbar();
+        renderFooter();
+
+        // UI Elements
+        const waitingView = document.getElementById('waiting-view');
+        const drawView = document.getElementById('draw-view');
+        const teamsGrid = document.getElementById('teams-grid');
+        
+        const jumboIdle = document.getElementById('jumbo-idle');
+        const jumboAction = document.getElementById('jumbo-action');
+        const drawSubjectName = document.getElementById('draw-subject-name');
+        const extractionStatus = document.getElementById('extraction-status');
+        const spinnerTrack = document.getElementById('spinner-track');
+        const drawFinished = document.getElementById('draw-finished');
+        const spinnerWindow = document.querySelector('.spinner-window');
+        
+        const jumboIdleH2 = document.getElementById('jumbo-idle-h2');
+        const jumboIdleP = document.getElementById('jumbo-idle-p');
+
+        // State
+        let teams = [];
+        let revealedCounts = new Array(10).fill(0);
+        let revealedSet = new Set();
+        let lastStatus = null;
+
+        // Firebase Init
+        const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
+        if (firebaseConfig.apiKey) {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            const docRef = doc(db, `artifacts/${window.__app_id}/public/data/live_draw/current`);
+            
+            // Listen for Realtime Changes
+            onSnapshot(docRef, (snap) => {
+                if(!snap.exists()) return;
+                const data = snap.data();
+                handleStateChange(data);
+            });
+        }
+
+        function handleStateChange(data) {
+            // Cancelled
+            if(data.status === 'CANCELLED') {
+                waitingView.classList.remove('hidden');
+                waitingView.classList.add('flex');
+                drawView.classList.add('hidden');
+                drawView.classList.remove('flex');
+                
+                jumboIdle.classList.remove('hidden');
+                jumboAction.classList.add('hidden');
+                jumboIdleH2.innerHTML = `LIVE DRAW`;
+                jumboIdleH2.className = `text-5xl font-black tech-font text-white mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]`;
+                jumboIdleP.innerHTML = `Il calcolo matrice strutturata è pronto. <br>Generato calendario equo (1 Partita a Squadra al Giorno).`;
+                return;
+            }
+
+            // Init
+            if(data.status === 'INIT') {
+                teams = data.teams || [];
+                revealedCounts.fill(0);
+                revealedSet.clear();
+                
+                waitingView.classList.add('hidden');
+                waitingView.classList.remove('flex');
+                drawView.classList.remove('hidden');
+                drawView.classList.add('flex');
+                
+                jumboIdle.classList.remove('hidden');
+                jumboAction.classList.add('hidden');
+                jumboIdleH2.innerHTML = `LIVE DRAW`;
+                jumboIdleH2.className = `text-5xl font-black tech-font text-white mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]`;
+                jumboIdleP.innerHTML = `L'amministratore ha inizializzato il tabellone. <br>Il calcolo del calendario equo è pronto.`;
+
+                renderTeamsGrid();
+            }
+
+            // Sync grid on IDLE
+            if(data.status === 'IDLE') {
+                jumboAction.classList.add('hidden');
+                jumboIdle.classList.remove('hidden');
+                
+                if(data.revealedCounts) revealedCounts = data.revealedCounts;
+                if(data.revealedSet) revealedSet = new Set(data.revealedSet);
+                renderTeamsGrid(true);
+            }
+
+            // Subject Selected
+            if(data.status === 'SUBJECT_SELECTED') {
+                const subject = teams.find(t => t.id === data.subjectId);
+                if(subject) {
+                    jumboIdle.classList.add('hidden');
+                    jumboAction.classList.remove('hidden');
+                    drawFinished.classList.add('hidden');
+                    spinnerWindow.classList.remove('hidden');
+
+                    drawSubjectName.textContent = subject.name;
+                    document.querySelectorAll('.team-card').forEach(c => c.classList.remove('highlight'));
+                    const card = document.getElementById(`card-${subject.id}`);
+                    if(card) {
+                        card.classList.add('highlight');
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }
+
+            // Spinning Animation
+            if(data.status === 'SPINNING') {
+                extractionStatus.textContent = `Estrazione avversario in corso...`;
+                spinnerWindow.classList.remove('hidden');
+                drawFinished.classList.add('hidden');
+                
+                const dummyNames = data.dummyNames || [];
+                
+                spinnerTrack.innerHTML = '';
+                spinnerTrack.style.transition = 'none';
+                spinnerTrack.style.transform = 'translateY(0px)';
+
+                dummyNames.forEach(name => {
+                    spinnerTrack.innerHTML += `<div class="spinner-item">${name}</div>`;
+                });
+
+                void spinnerTrack.offsetWidth;
+
+                // Sync 2.5s animation exactly like Admin
+                spinnerTrack.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.2, 1)';
+                const itemHeight = 60;
+                const targetY = -((dummyNames.length - 1) * itemHeight);
+                spinnerTrack.style.transform = `translateY(${targetY}px)`;
+            }
+
+            // Opponent Revealed
+            if(data.status === 'REVEALED') {
+                extractionStatus.textContent = "Estrazione Inviata al Tabellone";
+                spinnerWindow.classList.add('hidden');
+                drawFinished.classList.remove('hidden');
+                
+                if(data.revealedCounts) revealedCounts = data.revealedCounts;
+                if(data.revealedSet) revealedSet = new Set(data.revealedSet);
+                renderTeamsGrid(true); 
+            }
+
+            // Draw Finished
+            if(data.status === 'FINISHED') {
+                jumboAction.classList.add('hidden');
+                jumboIdle.classList.remove('hidden');
+                
+                jumboIdleH2.innerHTML = `SORTEGGIO CONCLUSO!`;
+                jumboIdleH2.className = `text-5xl font-black text-green-500 mb-2 tech-font`;
+                jumboIdleP.innerHTML = `Il tabellone ufficiale è ora formato. L'amministratore sta inserendo i match nel calendario ufficiale.`;
+
+                if(data.revealedCounts) revealedCounts = data.revealedCounts;
+                if(data.revealedSet) revealedSet = new Set(data.revealedSet);
+                renderTeamsGrid(true);
+            }
+
+            // Confirm Push to Firebase DB Matches
+            if(data.status === 'CONFIRMED') {
+                jumboAction.classList.add('hidden');
+                jumboIdle.classList.remove('hidden');
+
+                jumboIdleH2.innerHTML = `IL TABELLONE È SALVATO`;
+                jumboIdleH2.className = `text-5xl font-black text-green-500 mb-2 tech-font`;
+                jumboIdleP.innerHTML = `Tutte le partite sono state sincronizzate con il Database. Puoi visualizzarle nella pagina Torneo o Calendario.`;
+            }
+
+            lastStatus = data.status;
+        }
+
+        // Render Cards and fill slots
+        function renderTeamsGrid(preserveFilled = false) {
+            teamsGrid.innerHTML = '';
+            teams.forEach(t => {
+                const card = document.createElement('div');
+                const isCompleted = revealedCounts[t.id] === 3;
+                card.className = `team-card bg-gray-900 border border-gray-700 rounded-xl p-5 flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
+                card.id = `card-${t.id}`;
+                card.innerHTML = `
+                    <div class="relative w-full flex justify-center">
+                       <img src="logo soscup.jpeg" class="w-16 h-16 rounded-full border-2 border-gray-600 mb-3 object-cover shadow-lg">
+                    </div>
+                    <h3 class="text-lg leading-tight font-black text-white mb-4 text-center w-full line-clamp-2">${t.name}</h3>
+                    
+                    <div class="w-full flex flex-col gap-2 relative z-10" id="slots-${t.id}">
+                        <div class="slot-0 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
+                        <div class="slot-1 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
+                        <div class="slot-2 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
+                    </div>
+                `;
+                teamsGrid.appendChild(card);
+            });
+
+            if(preserveFilled && revealedSet) {
+                const localCounts = new Array(10).fill(0);
+                
+                revealedSet.forEach(edgeStr => {
+                    const [a, b] = edgeStr.split('-').map(Number);
+                    
+                    const tA = teams.find(x => x.id === a);
+                    const tB = teams.find(x => x.id === b);
+                    
+                    if(tA && tB) {
+                        const idxA = localCounts[a];
+                        const slotA = document.querySelector(`#slots-${a} .slot-${idxA}`);
+                        if(slotA) {
+                            slotA.textContent = tB.name;
+                            slotA.classList.add('filled');
+                        }
+                        localCounts[a]++;
+                        
+                        const idxB = localCounts[b];
+                        const slotB = document.querySelector(`#slots-${b} .slot-${idxB}`);
+                        if(slotB) {
+                            slotB.textContent = tA.name;
+                            slotB.classList.add('filled');
+                        }
+                        localCounts[b]++;
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
