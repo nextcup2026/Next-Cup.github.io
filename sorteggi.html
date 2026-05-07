@@ -260,12 +260,13 @@
         const spinnerWindow = document.querySelector('.spinner-window');
 
         // State variables
-        let teams = [];       // array of { id: 0..9, name: 'String' }
+        let teams = [];       // array of { id: 0..9, name: 'String', logoUrl: 'String' }
         let graph = [];       // adjacency list graph[i] = [id_avv1, id_avv2, id_avv3]
         let generatedMatchesDb = []; // array of { team1, team2, day } used to push to Database
         let revealedSet = new Set(); // store "min(i,j)-max(i,j)" to avoid duplicate reveals
         let revealedCounts = new Array(10).fill(0); // count of revealed opponents per team
         let isDrawing = false;
+        let loadedDbTeams = []; // Cache dei team completi dal DB
 
         // Firebase Init
         const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
@@ -308,7 +309,13 @@
                 if (snap.empty) return alert("Zero squadre nel DB.");
                 
                 const dbTeams = [];
-                snap.forEach(doc => { if (doc.data().name) dbTeams.push(doc.data().name); });
+                loadedDbTeams = [];
+                snap.forEach(doc => { 
+                    if (doc.data().name) {
+                        dbTeams.push(doc.data().name); 
+                        loadedDbTeams.push(doc.data());
+                    }
+                });
                 
                 document.querySelectorAll('.team-name-input').forEach((input, i) => {
                     if (dbTeams[i]) input.value = dbTeams[i];
@@ -377,7 +384,12 @@
         // INITIALIZATION
         initDrawBtn.addEventListener('click', () => {
             const inputs = document.querySelectorAll('.team-name-input');
-            teams = Array.from(inputs).map((input, idx) => ({ id: idx, name: input.value.trim() || `Team ${idx+1}` }));
+            teams = Array.from(inputs).map((input, idx) => {
+                const name = input.value.trim() || `Team ${idx+1}`;
+                const dbTeam = loadedDbTeams.find(t => t.name === name);
+                const logoUrl = dbTeam && dbTeam.logoUrl ? dbTeam.logoUrl : 'logo soscup.jpeg';
+                return { id: idx, name, logoUrl };
+            });
             
             const names = teams.map(t => t.name);
             if(new Set(names).size !== 10) {
@@ -480,7 +492,7 @@
                 card.id = `card-${t.id}`;
                 card.innerHTML = `
                     <div class="relative w-full flex justify-center">
-                       <img src="logo soscup.jpeg" class="w-16 h-16 rounded-full border-2 border-gray-600 mb-3 object-cover shadow-lg">
+                       <img src="${t.logoUrl || 'logo soscup.jpeg'}" class="w-16 h-16 rounded-full border-2 border-gray-600 mb-3 object-cover shadow-lg bg-black">
                     </div>
                     <h3 class="text-lg leading-tight font-black text-white mb-4 text-center w-full line-clamp-2">${t.name}</h3>
                     
