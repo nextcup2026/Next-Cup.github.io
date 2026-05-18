@@ -246,7 +246,18 @@
         }
 
         function getTeamLogo(teamName) {
-            const t = teams.find(x => x.name.toLowerCase() === teamName.toLowerCase());
+            const lowerName = teamName.toLowerCase().trim();
+            // Alias per gestire le discrepanze tra tabellone fisso e database (es. "Diospuerco" vs "Diospuercos", "Iraq" vs "Goat fc")
+            const aliases = {
+                "diospuerco": ["diospuercos", "diospuerco"],
+                "iraq": ["goat fc", "iraq"]
+            };
+            const searchNames = aliases[lowerName] || [lowerName];
+            
+            const t = teams.find(x => {
+                const dbName = x.name.toLowerCase().trim();
+                return searchNames.includes(dbName) || dbName.includes(lowerName) || lowerName.includes(dbName);
+            });
             return t && t.logoUrl ? t.logoUrl : 'logo soscup.jpeg';
         }
 
