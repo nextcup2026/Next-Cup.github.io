@@ -240,10 +240,6 @@
                     return b.dr - a.dr;
                 });
 
-                const half = Math.ceil(groupTeams.length / 2);
-                const firstHalf = groupTeams.slice(0, half);
-                const secondHalf = groupTeams.slice(half);
-
                 const renderTableRows = (teamsSubset, startIndex) => {
                     return teamsSubset.map((t, i) => {
                         const globalIndex = startIndex + i + 1;
@@ -262,21 +258,21 @@
 
                         return `
                                             <tr class="hover:bg-gray-800/50 transition">
-                                                <td class="p-3 font-mono text-gray-500">${globalIndex}</td>
-                                                <td class="p-3 font-bold text-white flex items-center space-x-3">
+                                                <td class="p-4 font-mono text-gray-500">${globalIndex}</td>
+                                                <td class="p-4 font-bold text-white flex items-center space-x-3">
                                                     ${t.logoUrl ? `<img src="${t.logoUrl}" class="w-8 h-8 rounded-full bg-gray-700 object-cover border border-gray-600">` : ''}
                                                     <span>${t.name}</span>
                                                     ${isLive ? '<span class="flex h-3 w-3 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opactiy-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span></span>' : ''}
                                                 </td>
-                                                <td class="p-3 text-center font-extrabold text-yellow-400 text-lg">${t.points}</td>
-                                                <td class="p-3 text-center text-gray-400">${t.played}</td>
-                                                <td class="p-3 text-center text-gray-400 hidden sm:table-cell">${wins}</td>
-                                                <td class="p-3 text-center text-gray-400 hidden sm:table-cell">${draws}</td>
-                                                <td class="p-3 text-center text-gray-400 hidden sm:table-cell">${losses}</td>
-                                                <td class="p-3 text-center text-gray-400 hidden md:table-cell">${t.gf}</td>
-                                                <td class="p-3 text-center text-gray-400 hidden md:table-cell">${t.ga}</td>
-                                                <td class="p-3 text-center text-gray-500 hidden sm:table-cell">${t.dr > 0 ? '+' + t.dr : t.dr}</td>
-                                                <td class="p-3 text-center hidden md:table-cell">
+                                                <td class="p-4 text-center font-extrabold text-yellow-400 text-lg">${t.points}</td>
+                                                <td class="p-4 text-center text-gray-400">${t.played}</td>
+                                                <td class="p-4 text-center text-gray-400 hidden sm:table-cell">${wins}</td>
+                                                <td class="p-4 text-center text-gray-400 hidden sm:table-cell">${draws}</td>
+                                                <td class="p-4 text-center text-gray-400 hidden sm:table-cell">${losses}</td>
+                                                <td class="p-4 text-center text-gray-400 hidden md:table-cell">${t.gf}</td>
+                                                <td class="p-4 text-center text-gray-400 hidden md:table-cell">${t.ga}</td>
+                                                <td class="p-4 text-center text-gray-500 hidden sm:table-cell">${t.dr > 0 ? '+' + t.dr : t.dr}</td>
+                                                <td class="p-4 text-center hidden md:table-cell">
                                                     <div class="flex items-center justify-center space-x-1">${formBadges || '<span class="text-gray-600">-</span>'}</div>
                                                 </td>
                                             </tr>
@@ -284,46 +280,32 @@
                     }).join('');
                 };
 
-                const renderTable = (teamsSubset, startIndex) => {
-                    if(teamsSubset.length === 0) return '';
-                    return `
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="text-gray-400 text-sm border-b border-gray-700">
-                                    <th class="p-3 font-semibold">#</th>
-                                    <th class="p-3 font-semibold">Squadra</th>
-                                    <th class="p-3 font-semibold text-center">PT</th>
-                                    <th class="p-3 font-semibold text-center">G</th>
-                                    <th class="p-3 font-semibold text-center hidden sm:table-cell">V</th>
-                                    <th class="p-3 font-semibold text-center hidden sm:table-cell">N</th>
-                                    <th class="p-3 font-semibold text-center hidden sm:table-cell">P</th>
-                                    <th class="p-3 font-semibold text-center hidden md:table-cell">GF</th>
-                                    <th class="p-3 font-semibold text-center hidden md:table-cell">GS</th>
-                                    <th class="p-3 font-semibold text-center hidden sm:table-cell">DR</th>
-                                    <th class="p-3 font-semibold text-center hidden md:table-cell">Forma</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-800">
-                                ${renderTableRows(teamsSubset, startIndex)}
-                            </tbody>
-                        </table>
-                    `;
-                };
-
                 const html = `
                     <div class="glass-panel rounded-xl overflow-hidden shadow-xl">
                         <div class="bg-gray-800 px-6 py-4 border-b border-gray-700 flex justify-between items-center">
                             <h3 class="text-2xl font-bold text-yellow-400">GIRONE ${groupName}</h3>
                         </div>
-                        <div class="flex flex-col xl:flex-row gap-0 xl:gap-4 overflow-x-auto p-2">
-                            <div class="flex-1 min-w-[500px]">
-                                ${renderTable(firstHalf, 0)}
-                            </div>
-                            ${secondHalf.length > 0 ? `
-                            <div class="flex-1 min-w-[500px] mt-6 xl:mt-0 xl:border-l xl:border-gray-700 xl:pl-4">
-                                ${renderTable(secondHalf, half)}
-                            </div>
-                            ` : ''}
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="text-gray-400 text-sm border-b border-gray-700">
+                                        <th class="p-4 font-semibold">#</th>
+                                        <th class="p-4 font-semibold">Squadra</th>
+                                        <th class="p-4 font-semibold text-center">PT</th>
+                                        <th class="p-4 font-semibold text-center">G</th>
+                                        <th class="p-4 font-semibold text-center hidden sm:table-cell">V</th>
+                                        <th class="p-4 font-semibold text-center hidden sm:table-cell">N</th>
+                                        <th class="p-4 font-semibold text-center hidden sm:table-cell">P</th>
+                                        <th class="p-4 font-semibold text-center hidden md:table-cell">GF</th>
+                                        <th class="p-4 font-semibold text-center hidden md:table-cell">GS</th>
+                                        <th class="p-4 font-semibold text-center hidden sm:table-cell">DR</th>
+                                        <th class="p-4 font-semibold text-center hidden md:table-cell">Forma</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-800">
+                                    ${renderTableRows(groupTeams, 0)}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 `;
