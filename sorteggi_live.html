@@ -193,205 +193,92 @@
 
         // State
         let teams = [];
-        let revealedCounts = new Array(10).fill(0);
-        let revealedSet = new Set();
-        let lastStatus = null;
+        const hardcodedDraws = {
+            "Diospuerco": ["PDM", "PAUL DE PINK", "BRASILE"],
+            "Iraq": ["ATLETICO BAMBA", "PORTOGALLO FUTSAL", "MARITTIMO FC"],
+            "Atletico Bamba": ["PDM", "IRAQ", "REAL VILLA"],
+            "PDM": ["ATLETICO BAMBA", "MARITTIMO FC", "DIOSPUERCO"],
+            "Real Villa": ["ATLETICO BAMBA", "PORTOGALLO FUTSAL", "SPAGNA"],
+            "Paul De Pink": ["SPAGNA", "DIOSPUERCO", "BRASILE"],
+            "Spagna": ["PORTOGALLO FUTSAL", "REAL VILLA", "PAUL DE PINK"],
+            "Brasile": ["PAUL DE PINK", "DIOSPUERCO", "MARITTIMO FC"],
+            "Marittimo FC": ["PDM", "BRASILE", "IRAQ"],
+            "Portogallo Futsal": ["IRAQ", "REAL VILLA", "SPAGNA"]
+        };
 
-        // Firebase Init
+        // Firebase Init per recuperare solo i loghi delle squadre
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
         const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
         if (firebaseConfig.apiKey) {
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
 
-            const docRef = doc(db, `artifacts/${window.__app_id}/public/data/live_draw/current`);
+            const teamsRef = collection(db, `artifacts/${window.__app_id}/public/data/teams`);
             
-            // Listen for Realtime Changes
-            onSnapshot(docRef, (snap) => {
-                if(!snap.exists()) return;
-                const data = snap.data();
-                handleStateChange(data);
+            getDocs(teamsRef).then((snap) => {
+                teams = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                showFinishedState();
+            }).catch(e => {
+                console.error("Errore nel recupero squadre", e);
+                // Fallback rendering
+                showFinishedState();
             });
+        } else {
+            showFinishedState();
         }
 
-        function handleStateChange(data) {
-            // Cancelled
-            if(data.status === 'CANCELLED') {
-                waitingView.classList.remove('hidden');
-                waitingView.classList.add('flex');
-                drawView.classList.add('hidden');
-                drawView.classList.remove('flex');
-                
-                jumboIdle.classList.remove('hidden');
-                jumboAction.classList.add('hidden');
-                jumboIdleH2.innerHTML = `LIVE DRAW`;
-                jumboIdleH2.className = `text-5xl font-black tech-font text-white mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]`;
-                jumboIdleP.innerHTML = `Il calcolo matrice strutturata è pronto. <br>Generato calendario equo (1 Partita a Squadra al Giorno).`;
-                return;
-            }
+        function showFinishedState() {
+            // Mostra Jumbotron in stato Completato
+            waitingView.classList.add('hidden');
+            waitingView.classList.remove('flex');
+            drawView.classList.remove('hidden');
+            drawView.classList.add('flex');
+            
+            jumboAction.classList.add('hidden');
+            jumboIdle.classList.remove('hidden');
+            
+            jumboIdleH2.innerHTML = `SORTEGGIO CONCLUSO!`;
+            jumboIdleH2.className = `text-5xl font-black text-green-500 mb-2 tech-font`;
+            jumboIdleP.innerHTML = `Il tabellone ufficiale è ora formato ed è definitivo.`;
 
-            // Init
-            if(data.status === 'INIT') {
-                teams = data.teams || [];
-                revealedCounts.fill(0);
-                revealedSet.clear();
-                
-                waitingView.classList.add('hidden');
-                waitingView.classList.remove('flex');
-                drawView.classList.remove('hidden');
-                drawView.classList.add('flex');
-                
-                jumboIdle.classList.remove('hidden');
-                jumboAction.classList.add('hidden');
-                jumboIdleH2.innerHTML = `LIVE DRAW`;
-                jumboIdleH2.className = `text-5xl font-black tech-font text-white mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]`;
-                jumboIdleP.innerHTML = `L'amministratore ha inizializzato il tabellone. <br>Il calcolo del calendario equo è pronto.`;
-
-                renderTeamsGrid();
-            }
-
-            // Sync grid on IDLE
-            if(data.status === 'IDLE') {
-                jumboAction.classList.add('hidden');
-                jumboIdle.classList.remove('hidden');
-                
-                if(data.revealedCounts) revealedCounts = data.revealedCounts;
-                if(data.revealedSet) revealedSet = new Set(data.revealedSet);
-                renderTeamsGrid(true);
-            }
-
-            // Subject Selected
-            if(data.status === 'SUBJECT_SELECTED') {
-                const subject = teams.find(t => t.id === data.subjectId);
-                if(subject) {
-                    jumboIdle.classList.add('hidden');
-                    jumboAction.classList.remove('hidden');
-                    drawFinished.classList.add('hidden');
-                    spinnerWindow.classList.remove('hidden');
-
-                    drawSubjectName.textContent = subject.name;
-                    document.querySelectorAll('.team-card').forEach(c => c.classList.remove('highlight'));
-                    const card = document.getElementById(`card-${subject.id}`);
-                    if(card) {
-                        card.classList.add('highlight');
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }
-            }
-
-            // Spinning Animation
-            if(data.status === 'SPINNING') {
-                extractionStatus.textContent = `Estrazione avversario in corso...`;
-                spinnerWindow.classList.remove('hidden');
-                drawFinished.classList.add('hidden');
-                
-                const dummyNames = data.dummyNames || [];
-                
-                spinnerTrack.innerHTML = '';
-                spinnerTrack.style.transition = 'none';
-                spinnerTrack.style.transform = 'translateY(0px)';
-
-                dummyNames.forEach(name => {
-                    spinnerTrack.innerHTML += `<div class="spinner-item">${name}</div>`;
-                });
-
-                void spinnerTrack.offsetWidth;
-
-                // Sync 2.5s animation exactly like Admin
-                spinnerTrack.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.2, 1)';
-                const itemHeight = 60;
-                const targetY = -((dummyNames.length - 1) * itemHeight);
-                spinnerTrack.style.transform = `translateY(${targetY}px)`;
-            }
-
-            // Opponent Revealed
-            if(data.status === 'REVEALED') {
-                extractionStatus.textContent = "Estrazione Inviata al Tabellone";
-                spinnerWindow.classList.add('hidden');
-                drawFinished.classList.remove('hidden');
-                
-                if(data.revealedCounts) revealedCounts = data.revealedCounts;
-                if(data.revealedSet) revealedSet = new Set(data.revealedSet);
-                renderTeamsGrid(true); 
-            }
-
-            // Draw Finished
-            if(data.status === 'FINISHED') {
-                jumboAction.classList.add('hidden');
-                jumboIdle.classList.remove('hidden');
-                
-                jumboIdleH2.innerHTML = `SORTEGGIO CONCLUSO!`;
-                jumboIdleH2.className = `text-5xl font-black text-green-500 mb-2 tech-font`;
-                jumboIdleP.innerHTML = `Il tabellone ufficiale è ora formato. L'amministratore sta inserendo i match nel calendario ufficiale.`;
-
-                if(data.revealedCounts) revealedCounts = data.revealedCounts;
-                if(data.revealedSet) revealedSet = new Set(data.revealedSet);
-                renderTeamsGrid(true);
-            }
-
-            // Confirm Push to Firebase DB Matches
-            if(data.status === 'CONFIRMED') {
-                jumboAction.classList.add('hidden');
-                jumboIdle.classList.remove('hidden');
-
-                jumboIdleH2.innerHTML = `IL TABELLONE È SALVATO`;
-                jumboIdleH2.className = `text-5xl font-black text-green-500 mb-2 tech-font`;
-                jumboIdleP.innerHTML = `Tutte le partite sono state sincronizzate con il Database. Puoi visualizzarle nella pagina Torneo o Calendario.`;
-            }
-
-            lastStatus = data.status;
+            renderHardcodedGrid();
         }
 
-        // Render Cards and fill slots
-        function renderTeamsGrid(preserveFilled = false) {
+        function getTeamLogo(teamName) {
+            const t = teams.find(x => x.name.toLowerCase() === teamName.toLowerCase());
+            return t && t.logoUrl ? t.logoUrl : 'logo soscup.jpeg';
+        }
+
+        function renderHardcodedGrid() {
             teamsGrid.innerHTML = '';
-            teams.forEach(t => {
+            
+            // Ordine come da richiesta / screenshot
+            const teamNames = Object.keys(hardcodedDraws);
+            
+            teamNames.forEach((tName, idx) => {
                 const card = document.createElement('div');
-                const isCompleted = revealedCounts[t.id] === 3;
-                card.className = `team-card bg-gray-900 border border-gray-700 rounded-xl p-5 flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
-                card.id = `card-${t.id}`;
+                card.className = `team-card bg-gray-900 border border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)] rounded-xl p-5 flex flex-col items-center completed`;
+                
+                const logo = getTeamLogo(tName);
+                const opponents = hardcodedDraws[tName] || ["?", "?", "?"];
+
                 card.innerHTML = `
                     <div class="relative w-full flex justify-center">
-                       <img src="${t.logoUrl || 'logo soscup.jpeg'}" class="w-16 h-16 rounded-full border-2 border-gray-600 mb-3 object-cover shadow-lg bg-black">
+                       <img src="${logo}" class="w-16 h-16 rounded-full border-2 border-gray-600 mb-3 object-cover shadow-lg bg-black">
                     </div>
-                    <h3 class="text-lg leading-tight font-black text-white mb-4 text-center w-full line-clamp-2">${t.name}</h3>
+                    <h3 class="text-lg leading-tight font-black text-white mb-4 text-center w-full line-clamp-2">${tName}</h3>
                     
-                    <div class="w-full flex flex-col gap-2 relative z-10" id="slots-${t.id}">
-                        <div class="slot-0 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
-                        <div class="slot-1 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
-                        <div class="slot-2 opponent-slot border border-gray-700 bg-gray-950 text-gray-600 rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center">?</div>
+                    <div class="w-full flex flex-col gap-2 relative z-10">
+                        ${opponents.map((opp, i) => `
+                            <div class="opponent-slot filled border border-gray-600 bg-gray-800 text-white rounded p-1.5 text-center text-xs font-bold uppercase truncate h-8 flex items-center justify-center opacity-100 translate-y-0 shadow-inner">
+                                ${opp}
+                            </div>
+                        `).join('')}
                     </div>
                 `;
                 teamsGrid.appendChild(card);
             });
-
-            if(preserveFilled && revealedSet) {
-                const localCounts = new Array(10).fill(0);
-                
-                revealedSet.forEach(edgeStr => {
-                    const [a, b] = edgeStr.split('-').map(Number);
-                    
-                    const tA = teams.find(x => x.id === a);
-                    const tB = teams.find(x => x.id === b);
-                    
-                    if(tA && tB) {
-                        const idxA = localCounts[a];
-                        const slotA = document.querySelector(`#slots-${a} .slot-${idxA}`);
-                        if(slotA) {
-                            slotA.textContent = tB.name;
-                            slotA.classList.add('filled');
-                        }
-                        localCounts[a]++;
-                        
-                        const idxB = localCounts[b];
-                        const slotB = document.querySelector(`#slots-${b} .slot-${idxB}`);
-                        if(slotB) {
-                            slotB.textContent = tA.name;
-                            slotB.classList.add('filled');
-                        }
-                        localCounts[b]++;
-                    }
-                });
-            }
         }
     </script>
 </body>

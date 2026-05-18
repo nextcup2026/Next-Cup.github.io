@@ -121,9 +121,9 @@
         import {
             getFirestore, collection, doc, addDoc, setDoc, deleteDoc, getDoc,
             query, onSnapshot, getDocs, writeBatch, where, setLogLevel, increment,
-            // NON serve più FieldValue, ma importiamo direttamente
-            serverTimestamp as firebaseServerTimestamp // Rinominiamo per evitare conflitti, se necessario
+            serverTimestamp as firebaseServerTimestamp
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const firebaseConfig = (() => {
             try { return JSON.parse(window.__firebase_config ?? "{}"); } catch (e) { console.error(e); return {}; }
@@ -156,6 +156,46 @@
             getTeamsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/teams`),
             getResultsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/results`),
             getNewsCollectionRef: () => collection(db, `artifacts/${window.__app_id}/public/data/news`),
+
+            uploadLogo: async (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                        const img = new Image();
+                        img.src = reader.result;
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const MAX_WIDTH = 256;
+                            const MAX_HEIGHT = 256;
+                            let width = img.width;
+                            let height = img.height;
+
+                            if (width > height) {
+                                if (width > MAX_WIDTH) {
+                                    height *= MAX_WIDTH / width;
+                                    width = MAX_WIDTH;
+                                }
+                            } else {
+                                if (height > MAX_HEIGHT) {
+                                    width *= MAX_HEIGHT / height;
+                                    height = MAX_HEIGHT;
+                                }
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            // Comprimi in WebP o JPEG
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            resolve(dataUrl);
+                        };
+                        img.onerror = () => reject(new Error("Impossibile processare l'immagine"));
+                    };
+                    reader.onerror = () => reject(new Error("Impossibile leggere il file"));
+                });
+            },
 
             // --- CRUD TEAMS ---
             addTeam: (data) => addDoc(collection(db, `artifacts/${window.__app_id}/public/data/teams`), data),
@@ -467,6 +507,76 @@
                         batch.set(ref, { name: player, team: team, red: increment(1), yellow: increment(0) }, { merge: true });
                     }
                 });
+
+                await batch.commit();
+            },
+
+            // --- RENAME TEAM CASCADE ---
+            renameTeamWithCascade: async (teamId, oldName, newName, teamData) => {
+                const batch = writeBatch(db);
+                const appId = window.__app_id;
+
+                // 1. Update team document
+                const teamRef = doc(db, `artifacts/${appId}/public/data/teams`, teamId);
+                batch.set(teamRef, teamData, { merge: true });
+
+                // 2. Update matches
+                const matchesRef = collection(db, `artifacts/${appId}/public/data/matches`);
+                const q1 = query(matchesRef, where("team1", "==", oldName));
+                const q2 = query(matchesRef, where("team2", "==", oldName));
+                const [s1, s2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+                
+                const processMatch = (d) => {
+                    const data = d.data();
+                    let updated = false;
+                    const updates = {};
+                    if (data.team1 === oldName) { updates.team1 = newName; updated = true; }
+                    if (data.team2 === oldName) { updates.team2 = newName; updated = true; }
+                    
+                    if (data.events) {
+                        const newEvents = data.events.map(e => e.team === oldName ? { ...e, team: newName } : e);
+                        if (JSON.stringify(newEvents) !== JSON.stringify(data.events)) {
+                            updates.events = newEvents;
+                            updated = true;
+                        }
+                    }
+                    if (updated) batch.update(d.ref, updates);
+                };
+                s1.docs.forEach(processMatch);
+                s2.docs.forEach(processMatch);
+
+                // 3. Update stats
+                const statsBase = `artifacts/${appId}/public/data`;
+                const statsCollections = ['scorers', 'assists', 'cleanSheets', 'cards'];
+                for (const colName of statsCollections) {
+                    const q = query(collection(db, `${statsBase}/${colName}`), where("team", "==", oldName));
+                    const snap = await getDocs(q);
+                    snap.docs.forEach(d => {
+                        const data = d.data();
+                        data.team = newName;
+                        // new id
+                        const newId = `${newName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${data.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`;
+                        const newRef = doc(db, `${statsBase}/${colName}`, newId);
+                        batch.set(newRef, data);
+                        batch.delete(d.ref);
+                    });
+                }
+
+                // 4. Update legacy results
+                const resultsRef = collection(db, `artifacts/${appId}/public/data/results`);
+                const qR1 = query(resultsRef, where("team1", "==", oldName));
+                const qR2 = query(resultsRef, where("team2", "==", oldName));
+                const [sR1, sR2] = await Promise.all([getDocs(qR1), getDocs(qR2)]);
+                const processResult = (d) => {
+                    const data = d.data();
+                    const updates = {};
+                    let updated = false;
+                    if (data.team1 === oldName) { updates.team1 = newName; updated = true; }
+                    if (data.team2 === oldName) { updates.team2 = newName; updated = true; }
+                    if (updated) batch.update(d.ref, updates);
+                };
+                sR1.docs.forEach(processResult);
+                sR2.docs.forEach(processResult);
 
                 await batch.commit();
             }
@@ -967,6 +1077,7 @@
         const TeamManager = ({ authReady, currentTeams, showMessage, firebaseTools }) => {
             const [teamName, setTeamName] = useState('');
             const [logoUrl, setLogoUrl] = useState(''); // NEW: Logo URL
+            const [logoFile, setLogoFile] = useState(null); // File del logo
             const [group, setGroup] = useState('A'); // NEW: Group
 
             // Players ora è array di oggetti: { name, number, age, role }
@@ -1000,6 +1111,7 @@
             const resetForm = () => {
                 setTeamName('');
                 setLogoUrl(''); // Reset logo
+                setLogoFile(null); // Reset logo file
                 setGroup('A'); // Reset group
                 setPlayers(Array(5).fill({ name: '', number: '', age: '', role: 'Giocatore' }));
                 setEditTeam(null);
@@ -1008,6 +1120,7 @@
             const startEdit = (team) => {
                 setTeamName(team.name);
                 setLogoUrl(team.logoUrl || ''); // Load logo
+                setLogoFile(null);
                 setGroup(team.group || 'A'); // Load group
 
                 // Migrazione dati vecchi (stringhe) -> oggetti
@@ -1045,9 +1158,20 @@
                 }
 
                 try {
+                    let finalLogoUrl = logoUrl;
+                    if (logoFile) {
+                        try {
+                            finalLogoUrl = await firebaseTools.uploadLogo(logoFile);
+                        } catch (uploadError) {
+                            showMessage("Errore Storage: " + uploadError.message, 'error');
+                            setIsSaving(false);
+                            return;
+                        }
+                    }
+
                     const teamData = {
                         name: trimmedName,
-                        logoUrl: logoUrl.trim(), // Save logo
+                        logoUrl: finalLogoUrl.trim(), // Save logo
                         group: group, // Save group
                         players: validPlayers.map(p => ({
                             name: p.name.trim(),
@@ -1059,8 +1183,13 @@
                     };
 
                     if (isEditMode) {
-                        await firebaseTools.updateTeam(editTeam.id, teamData);
-                        showMessage(`Squadra ${trimmedName} aggiornata con successo!`, 'success', 'team');
+                        if (editTeam.name !== trimmedName) {
+                            await firebaseTools.renameTeamWithCascade(editTeam.id, editTeam.name, trimmedName, teamData);
+                            showMessage(`Squadra ${editTeam.name} rinominata in ${trimmedName} con aggiornamento a cascata!`, 'success', 'team');
+                        } else {
+                            await firebaseTools.updateTeam(editTeam.id, teamData);
+                            showMessage(`Squadra ${trimmedName} aggiornata con successo!`, 'success', 'team');
+                        }
                     } else {
                         await firebaseTools.addTeam(teamData);
                         showMessage(`Squadra ${trimmedName} aggiunta con successo!`, 'success', 'team');
@@ -1068,7 +1197,7 @@
                     resetForm();
                 } catch (error) {
                     console.error("Errore nel salvataggio della squadra:", error);
-                    showMessage("Errore nel salvataggio della squadra: " + (error.message || String(error)), 'error', 'team');
+                    showMessage("Errore: " + (error.message || String(error)), 'error');
                 } finally {
                     setIsSaving(false);
                 }
@@ -1114,9 +1243,10 @@
                                 </select>
                             </div>
                             <div className="md:w-1/3">
-                                <label className="block text-sm text-gray-400 mb-1">URL Logo (Opzionale)</label>
-                                <input type="text" className={styles.input} placeholder="https://..."
-                                    value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} disabled={isSaving || !authReady} />
+                                <label className="block text-sm text-gray-400 mb-1">Logo Squadra (File immagine)</label>
+                                <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files[0])} disabled={isSaving || !authReady} className="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400" />
+                                {logoUrl && !logoFile && <img src={logoUrl} alt="Logo" className="mt-2 h-10 w-10 object-cover rounded-full border border-gray-600" />}
+                                {logoFile && <p className="text-xs text-gray-400 mt-1">Selezionato: {logoFile.name}</p>}
                             </div>
                         </div>
 
